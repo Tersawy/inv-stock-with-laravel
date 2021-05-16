@@ -1,10 +1,10 @@
-import uiUitils from "../../components/uiUitils";
+import uiUtils from "../../components/uiUtils";
 
-export const setSuccess = (state, message) => uiUitils.showToast(message, "danger");
+export const setSuccess = (state, message) => uiUtils.showToast(message, "danger");
 
 export const setErrors = (state, { message, errors }) => {
 	state.errors = errors;
-	uiUitils.showToast(message, "danger");
+	uiUtils.showToast(message, "danger");
 };
 
 export const removeErrors = (state) => (state.errors = {});
