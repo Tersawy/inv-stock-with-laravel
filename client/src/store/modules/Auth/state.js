@@ -1,7 +1,7 @@
 const state = {
-    user: {},
-    token: null,
-    permission: {}
+	user: {},
+	token: null,
+	permission: {},
 };
 
-export default state
+export default state;

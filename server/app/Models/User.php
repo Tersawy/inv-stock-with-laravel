@@ -1,14 +1,21 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
+
+
+    const OWNER_TYPE = 0;
+    const ADMIN_TYPE = 1;
+    const USER_TYPE = 2;
+    const CUSTOMER_TYPE = 3;
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +23,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'username', 'fullname', 'phone', 'email', 'password', 'type'
     ];
 
     /**
