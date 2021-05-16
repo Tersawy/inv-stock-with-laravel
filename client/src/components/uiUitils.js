@@ -1,14 +1,16 @@
 import { BToast } from "bootstrap-vue";
 
 class uiUtils {
-	showToast(message, title) {
+	showToast(message, variant) {
 		let bootStrapToaster = new BToast();
 
 		bootStrapToaster.$bvToast.toast(message, {
-			title: title,
+			title: message,
 			toaster: "b-toaster-top-right",
 			solid: true,
-			appendToast: false
+			appendToast: false,
+			bodyClass: "d-none",
+			variant
 		});
 	}
 }

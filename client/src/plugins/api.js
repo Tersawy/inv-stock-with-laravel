@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import router from "@/router";
 import store from "@/store";
 
@@ -30,7 +29,7 @@ export let getApi = async (route, callback) => {
 
 		isCallback ? callback(null, res.data) : null;
 	} catch ({ response: { status, data } }) {
-		// store.commit("setErrors", data);
+		store.commit("setErrors", data);
 
 		if (status === 401) {
 			store.commit("Auth/unAuth");
@@ -49,6 +48,8 @@ export let postApi = async (route, data, callback) => {
 
 		isCallback ? callback(null, res.data) : null;
 	} catch ({ response: { status, data } }) {
+		store.commit("setErrors", data);
+
 		if (status === 401) {
 			store.commit("Auth/unAuth");
 			if (router.history.current.name != "Login") router.push("/login");

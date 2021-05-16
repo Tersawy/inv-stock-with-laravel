@@ -1,10 +1,8 @@
-import store from "@/store";
-
 import { /* getApi, */ postApi } from "@/plugins/api";
 
 export const login = async ({ commit }, payload) => {
 	postApi("login", payload, (err, res) => {
-		if (err) return store.commit("setErrors", err);
+		if (err) return;
 		commit("login", res.data);
 	});
 };
