@@ -1,4 +1,4 @@
-// import uiUitils from "../../components/uiUitils";
+import uiUitils from "../../components/uiUitils";
 
 export const setSuccess = (state, msg) => {
 	state.successMsg = msg;
@@ -25,7 +25,7 @@ export const setErrors = (state, { message, errors }) => {
 	state.errorDismissSecs = 5;
 	state.errors = errors;
 	console.log(message);
-	// uiUitils.showToast(message, "text");
+	uiUitils.showToast(message, "text");
 };
 
 export const removeErrors = (state) => {
