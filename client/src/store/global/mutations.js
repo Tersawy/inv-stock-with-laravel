@@ -1,6 +1,6 @@
 import uiUtils from "../../components/uiUtils";
 
-export const setSuccess = (state, message) => uiUtils.showToast(message, "danger");
+export const setSuccess = (state, message) => uiUtils.showToast(message, "success");
 
 export const setErrors = (state, { message, errors }) => {
 	state.errors = errors;
