@@ -6,7 +6,4 @@ import global from "./global";
 
 Vue.use(Vuex);
 
-const store = new Vuex.Store({ ...global, modules: { ...modules } });
-
-export default store;
-export { store };
+export default new Vuex.Store({ ...global, modules: { ...modules } });
