@@ -3,16 +3,16 @@ const state = {
 		docs: {},
 		total: 0,
 		page: 1,
-		perPage: 15,
+		perPage: 15
 	},
 	one: {
 		sales: {
 			docs: {},
 			total: 0,
 			page: 1,
-			perPage: 15,
-		},
-	},
+			perPage: 15
+		}
+	}
 };
 
 export default state;

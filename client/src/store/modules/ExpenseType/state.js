@@ -3,9 +3,9 @@ const state = {
 		docs: {},
 		total: 0,
 		page: 1,
-		perPage: 15,
+		perPage: 15
 	},
-	one: {},
+	one: {}
 };
 
 export default state;
