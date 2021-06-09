@@ -1,23 +1,51 @@
-export const all = (state, suppliers) => {
-	console.log(suppliers);
+export const all = (state, res) => {
+	state.all.docs = res.data;
 };
 
-export const one = (state, supplier) => {
-	console.log(supplier);
+export const options = (state, res) => {
+	let opts = res.data.map((opt) => ({ ...opt, disabled: false }));
+	state.options = [{ text: "Choose Supplier", value: null, disabled: true }, ...opts];
 };
 
-export const create = (state, supplier) => {
-	console.log(supplier);
+export const one = (state, res) => {
+	state.one = res.data;
 };
 
-export const update = (state, supplier) => {
-	console.log(supplier);
+export const create = (state, res) => {
+	state.all.docs = [res.data, ...state.all.docs];
 };
 
-export const moveToTrash = (state, supplier) => {
-	console.log(supplier);
+export const update = (state, res) => {
+	state.all.docs = state.all.docs.map((doc) => {
+		if (+doc.id == +res.data.id) {
+			for (let d in doc) {
+				doc[d] = res.data[d];
+			}
+		}
+		return doc;
+	});
+	state.options = state.options.map((option) => {
+		if (+option.id == +res.data.id) {
+			for (let d in option) {
+				option[d] = res.data[d];
+			}
+		}
+		return option;
+	});
 };
 
-export const remove = (state, supplier) => {
-	console.log(supplier);
+export const moveToTrash = (state, res) => {
+	state.all.docs = state.all.docs.filter((doc) => doc.id != +res.data);
+};
+
+export const trashed = (state, res) => {
+	state.all.docs = res.data;
+};
+
+export const restore = (state, res) => {
+	state.all.docs = state.all.docs.filter((doc) => doc.id != +res.data);
+};
+
+export const remove = (state, res) => {
+	state.all.docs = state.all.docs.filter((doc) => doc.id != +res.data);
 };

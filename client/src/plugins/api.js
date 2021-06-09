@@ -4,31 +4,37 @@ import store from "@/store";
 
 axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 
-let api = (method, route, data) => {
-	let $api, params, headers;
+let api = async (method, route, data, callback, formData = false) => {
+	let params, config, isCallback;
 
-	headers = {
+	config = {
 		headers: {
-			"Content-Type": "application/json",
+			"Content-Type": formData ? "multipart/form-data" : "application/json",
 			Authorization: `Bearer ${store.state.Auth.token}`
 		}
 	};
 
 	params = method == "get" ? [route] : [route, data];
 
-	$api = axios[method](...params, headers);
+	callback = typeof data === "function" ? data : callback;
 
-	return $api;
-};
+	isCallback = typeof callback === "function";
 
-export let getApi = async (route, callback) => {
-	let isCallback = typeof callback === "function";
+	store.commit("removeErrors");
 
 	try {
-		let res = await api("get", route);
+		let res = await axios[method](...params, config);
+
+		if (res.data.message) store.commit("setSuccess", res.data.message);
 
 		isCallback ? callback(null, res.data) : null;
-	} catch ({ response: { status, data } }) {
+	} catch (err) {
+		if (!err.response) return;
+
+		const {
+			response: { status, data }
+		} = err;
+
 		store.commit("setErrors", data);
 
 		if (status === 401) {
@@ -40,23 +46,61 @@ export let getApi = async (route, callback) => {
 	}
 };
 
-export let postApi = async (route, data, callback) => {
-	let isCallback = typeof callback === "function";
+export default api;
 
-	try {
-		let res = await api("post", route, data);
+// let api = (method, route, data) => {
+// 	let $api, params, headers;
 
-		isCallback ? callback(null, res.data) : null;
-	} catch ({ response: { status, data } }) {
-		store.commit("setErrors", data);
+// 	headers = {
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 			Authorization: `Bearer ${store.state.Auth.token}`
+// 		}
+// 	};
 
-		if (status === 401) {
-			store.commit("Auth/unAuth");
-			if (router.history.current.name != "Login") router.push("/login");
-		}
+// 	params = method == "get" ? [route] : [route, data];
 
-		isCallback ? callback(data) : null;
-	}
-};
+// 	$api = axios[method](...params, headers);
 
-export default axios;
+// 	return $api;
+// };
+
+// export let getApi = async (route, callback) => {
+// 	let isCallback = typeof callback === "function";
+
+// 	try {
+// 		let res = await api("get", route);
+
+// 		isCallback ? callback(null, res.data) : null;
+// 	} catch ({ response: { status, data } }) {
+// 		store.commit("setErrors", data);
+
+// 		if (status === 401) {
+// 			store.commit("Auth/unAuth");
+// 			if (router.history.current.name != "Login") router.push("/login");
+// 		}
+
+// 		isCallback ? callback(data) : null;
+// 	}
+// };
+
+// export let postApi = async (route, data, callback) => {
+// 	let isCallback = typeof callback === "function";
+
+// 	try {
+// 		let res = await api("post", route, data);
+
+// 		isCallback ? callback(null, res.data) : null;
+// 	} catch ({ response: { status, data } }) {
+// 		store.commit("setErrors", data);
+
+// 		if (status === 401) {
+// 			store.commit("Auth/unAuth");
+// 			if (router.history.current.name != "Login") router.push("/login");
+// 		}
+
+// 		isCallback ? callback(data) : null;
+// 	}
+// };
+
+// export default axios;

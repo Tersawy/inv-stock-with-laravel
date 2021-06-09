@@ -10,7 +10,7 @@ export const login = (state, data) => {
 		return router.push("/");
 	}
 
-	return router.push("/customer");
+	return router.push({ name: "CustomerDashboard" });
 };
 
 export const setAuth = (state) => {

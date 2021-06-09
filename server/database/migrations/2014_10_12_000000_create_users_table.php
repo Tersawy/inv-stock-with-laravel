@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->integer('type')->default(User::USER_TYPE); // 0 owner, 1 admins, 2 users, 3 customer
             $table->string('password');
             $table->timestamp('email_verified_at')->nullable();
-            $table->tinyInteger($column = "deleted")->default(0);
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

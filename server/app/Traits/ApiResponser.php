@@ -23,11 +23,7 @@ trait ApiResponser
      */
     protected function success($data, string $message = null, int $code = 200)
     {
-        return response()->json([
-            'status' => 'Success',
-            'message' => $message,
-            'data' => $data
-        ], $code);
+        return response()->json([ 'status' => $code, 'message' => $message, 'data' => $data ], $code);
     }
 
     /**
@@ -40,10 +36,6 @@ trait ApiResponser
      */
     protected function error(string $message = null, int $code, $errors = null)
     {
-        return response()->json([
-            'status' => 'Error',
-            'message' => $message,
-            'errors' => $errors
-        ], $code);
+        return response()->json([ 'status' => $code, 'message' => $message, 'errors' => $errors ], $code);
     }
 }

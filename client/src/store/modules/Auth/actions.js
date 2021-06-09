@@ -1,14 +1,14 @@
-import { /* getApi, */ postApi } from "@/plugins/api";
+import api from "@/plugins/api";
 
 export const login = async ({ commit }, payload) => {
-	postApi("login", payload, (err, res) => {
+	api("post", "login", payload, (err, res) => {
 		if (err) return;
 		commit("login", res.data);
 	});
 };
 
 export const logout = ({ commit }) => {
-	postApi("logout", {}, (err, res) => {
+	api("post", "logout", {}, (err, res) => {
 		if (err) return;
 		commit("logout", res.data);
 	});

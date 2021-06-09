@@ -9,21 +9,20 @@
 	import Navbar from "@/components/layout/Navbar.vue";
 	export default {
 		name: "App",
-		components: { Navbar },
-		mounted() {
-			this.$store.commit("Auth/setAuth");
-		}
+		components: { Navbar }
 	};
 </script>
 
 <style lang="scss">
-	.alert-msg {
-		position: absolute !important;
-		top: 72px;
-		left: -100%;
-		transition: 0.2s ease-in-out;
-		&.show {
-			left: 16px;
+	.close-btn {
+		cursor: pointer;
+	}
+	.action-btn {
+		transition: 0.1s ease-in-out;
+		cursor: pointer;
+		opacity: 0.7;
+		&:hover {
+			opacity: 1;
 		}
 	}
 </style>

@@ -2,19 +2,29 @@ import Vue from "vue";
 import App from "@/App.vue";
 import router from "@/router";
 
-import { BootstrapVue } from "bootstrap-vue";
-import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap-vue/dist/bootstrap-vue.css";
+import "@fortawesome/fontawesome-free/js/all";
+import "@fortawesome/fontawesome-free/css/all.css";
+
+import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 Vue.use(BootstrapVue);
+Vue.use(BootstrapVueIcons);
+
+import "@/assets/scss/main.scss";
 
 import store from "@/store";
 Vue.prototype.$store = store;
 
-import userMixin from "./mixins/userMixin";
-Vue.mixin(userMixin);
-
 import $axios from "@/plugins/api";
 Vue.prototype.$axios = $axios;
+
+import EditIcon from "@/components/ui/EditIcon.vue";
+Vue.component("EditIcon", EditIcon);
+
+import DeleteIcon from "@/components/ui/DeleteIcon.vue";
+Vue.component("DeleteIcon", DeleteIcon);
+
+import { runGlobalMixins } from "@/mixins";
+runGlobalMixins();
 
 Vue.config.productionTip = false;
 

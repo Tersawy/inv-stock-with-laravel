@@ -42,7 +42,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
-        $this->mapApiRoutes();
+        $this->mapAppRoutes();
 
         $this->mapWebRoutes();
 
@@ -70,11 +70,25 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function mapApiRoutes()
+    protected function mapAppRoutes()
     {
-        Route::prefix('api/v1')
-            ->middleware('api')
-            ->namespace($this->namespace)
-            ->group(base_path('routes/api.php'));
+        $route = Route::prefix('api/v1')->middleware('api');
+
+        // Auth routes
+        $route->group(base_path('routes/api/auth.php'));
+        // Warehouse routes
+        $route->group(base_path('routes/api/warehouse.php'));
+        // Category routes
+        $route->group(base_path('routes/api/category.php'));
+        // Brand routes
+        $route->group(base_path('routes/api/brand.php'));
+        // MainUnit routes
+        $route->group(base_path('routes/api/mainUnit.php'));
+        // SubUnit routes
+        $route->group(base_path('routes/api/subUnit.php'));
+        // Product routes
+        $route->group(base_path('routes/api/product.php'));
+        // Supplier routes
+        $route->group(base_path('routes/api/supplier.php'));
     }
 }
