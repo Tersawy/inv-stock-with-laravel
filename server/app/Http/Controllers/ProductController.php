@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use App\Models\ProductVariant;
+use App\Requests\ProductRequest;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -84,7 +85,7 @@ class ProductController extends Controller
 
   public function create(Request $req)
   {
-    $attr = $req->validate(Product::ruleOfCreate($req));
+    $attr = $req->validate(ProductRequest::ruleOfCreate($req));
 
     // this is because we set them in $req in ruleOfCreate based on variants or images data
     $attr['has_variants'] = $req->has_variants;
@@ -104,7 +105,7 @@ class ProductController extends Controller
   {
     $req->merge(['id' => $req->route('id')]);
 
-    $attr = $req->validate(Product::ruleOfUpdate($req));
+    $attr = $req->validate(ProductRequest::ruleOfUpdate($req));
 
     // this is because we set them in $req in ruleOfCreate based on variants or images data
     $attr['has_variants'] = $req->has_variants;
