@@ -10,7 +10,7 @@
 
 <style lang="scss">
 	.input-error {
-		font-size: 12.8px;
-		margin-top: 4px;
+		font-size: 10px;
+		margin-top: 2px;
 	}
 </style>

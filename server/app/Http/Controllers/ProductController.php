@@ -55,9 +55,34 @@ class ProductController extends Controller
 
   public function options()
   {
-    $products = Product::all(['id AS value', 'name AS text']);
+    $variants = ["variants" => function ($query) {
+      $query->select(['id', 'name', 'product_id']);
+    }];
 
-    return $this->success($products);
+    $products = Product::with($variants)->get(['id', 'name', 'code', 'has_variants']);
+
+    $newProducts = [];
+
+    foreach ($products as $product) {
+      $newProduct = [
+        'id'    => $product->id,
+        'name'  => $product->name,
+        'code'  => $product->code
+      ];
+
+      if (!$product->has_variants) {
+        $newProducts[] = $newProduct;
+        break;
+      }
+
+      foreach ($product->variants as $variant) {
+        $newProduct['variant'] = $variant->name;
+        $newProduct['variant_id'] = $variant->id;
+        $newProducts[] = $newProduct;
+      }
+    }
+
+    return $this->success($newProducts);
   }
 
 

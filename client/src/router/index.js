@@ -16,6 +16,7 @@ import ProductForm from "@/components/ProductForm.vue";
 import Supplier from "@/views/Supplier.vue";
 import SupplierForm from "@/components/SupplierForm.vue";
 import SupplierTrashed from "@/views/Trashed/Supplier.vue";
+import PurchaseForm from "@/components/PurchaseForm.vue";
 import CustomerDashboard from "@/views/Customer/Dashboard.vue";
 
 Vue.use(VueRouter);
@@ -127,6 +128,18 @@ const routes = [
 		path: "/supplier/trashed",
 		name: "SupplierTrashed",
 		component: SupplierTrashed,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/purchase/create",
+		name: "PurchaseCreate",
+		component: PurchaseForm,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/purchase/:purchaseId/update",
+		name: "PurchaseUpdate",
+		component: PurchaseForm,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{

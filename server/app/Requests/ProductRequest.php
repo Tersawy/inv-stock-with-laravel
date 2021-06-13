@@ -4,6 +4,7 @@ namespace App\Requests;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductRequest
 {
@@ -16,6 +17,7 @@ class ProductRequest
       'price'             => ['required', 'numeric', 'min:1', 'gte:cost'],
       'minimum'           => ['required', 'numeric', 'min:0'],
       'tax'               => ['required', 'numeric', 'min:0'],
+      'tax_method'        => ['required', Rule::in(Product::TAX_METHODS)],
       'note'              => ['string', 'max:255', 'nullable'],
       'category_id'       => ['required', 'numeric', 'min:1', 'exists:categories,id'],
       'brand_id'          => ['exclude_if:brand_id,0', 'required', 'numeric', 'min:1', 'exists:brands,id'],
@@ -56,7 +58,7 @@ class ProductRequest
 
   public static function ruleOfCreate(Request $req)
   {
-    $rules = Product::rules($req);
+    $rules = ProductRequest::rules($req);
 
     $newRules = [
       'name' => ['required', 'string', 'max:255', 'min:3', 'unique:products'],
@@ -69,7 +71,7 @@ class ProductRequest
 
   public static function ruleOfUpdate(Request $req)
   {
-    $rules = Product::rules($req);
+    $rules = ProductRequest::rules($req);
 
     $newRules = [
       'id'    => ['required', 'numeric', 'min:1'],

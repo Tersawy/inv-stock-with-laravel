@@ -1,12 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
+
+$font-size-base: 0.8125rem; // Assumes the browser default, typically `16px`
+$font-size-lg: $font-size-base * 1.25;
+$font-size-sm: $font-size-base * 0.8;
+$font-family-base: "Open Sans", sans-serif;
+
+$input-btn-focus-width: 0.06rem;
+$btn-focus-box-shadow: none !important;
+$btn-box-shadow: none;
+$btn-active-box-shadow: none;
+
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~bootstrap-vue/src/index.scss";
+
 $mainFontSize: 13px;
-body,
-* {
-	font-size: $mainFontSize;
-	font-family: "Open Sans", sans-serif;
-}
 
 .font-sm {
 	font-size: 10px !important;

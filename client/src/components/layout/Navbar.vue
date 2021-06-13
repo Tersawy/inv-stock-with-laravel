@@ -8,6 +8,7 @@
 		<router-link to="/product">products</router-link> | <router-link to="/product/create">create a product</router-link> |
 		<router-link to="/supplier">supplier</router-link> | <router-link to="/supplier/create">create a supplier</router-link> |
 		<router-link to="/supplier/trashed">supplier trashed</router-link>
+		| <router-link to="/purchase/create">create a purchase</router-link> |
 		<b-btn @click="logout" variant="danger">logout</b-btn>
 	</div>
 </template>

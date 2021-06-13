@@ -2,12 +2,12 @@
 	<div class="warehouse-form">
 		<b-container fluid>
 			<b-form @submit.prevent="handleSave">
-				<DefaultInput type="text" placeholder="name" v-model="warehouse.name" field="name" />
-				<DefaultInput type="tel" placeholder="phone" v-model="warehouse.phone" field="phone" />
-				<DefaultInput type="text" placeholder="country" v-model="warehouse.country" field="country" />
-				<DefaultInput type="text" placeholder="city" v-model="warehouse.city" field="city" />
-				<DefaultInput type="email" placeholder="email" v-model="warehouse.email" field="email" />
-				<DefaultInput type="text" placeholder="zip_code" v-model="warehouse.zip_code" field="zip_code" />
+				<DefaultInput type="text" placeholder="Name" v-model="warehouse.name" field="name" />
+				<DefaultInput type="tel" placeholder="Phone" v-model="warehouse.phone" field="phone" />
+				<DefaultInput type="text" placeholder="Country" v-model="warehouse.country" field="country" />
+				<DefaultInput type="text" placeholder="City" v-model="warehouse.city" field="city" />
+				<DefaultInput type="email" placeholder="Email" v-model="warehouse.email" field="email" />
+				<DefaultInput type="text" placeholder="Zip code" v-model="warehouse.zip_code" field="zip_code" />
 				<b-btn :variant="`${warehouseId ? 'success' : 'primary'}`" type="submit">save</b-btn>
 			</b-form>
 		</b-container>

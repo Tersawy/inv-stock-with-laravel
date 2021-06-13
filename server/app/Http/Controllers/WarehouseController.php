@@ -58,7 +58,7 @@ class WarehouseController extends Controller
     {
         $req->merge(['id' => $req->route('id')]);
 
-        $attr = $req->validate([
+        $req->validate([
             'id'        => ['required', 'numeric', 'min:1'],
             'name'      => ['required', 'string', 'max:255', 'unique:warehouses,name,' . $req->id],
             'phone'     => ['required', 'string', 'max:255'],
@@ -98,7 +98,7 @@ class WarehouseController extends Controller
     }
 
 
-    public function trashed(Request $req)
+    public function trashed()
     {
         $warehouses = Warehouse::onlyTrashed()->get();
 

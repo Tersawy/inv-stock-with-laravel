@@ -151,7 +151,7 @@
 				cost: null,
 				minimum: 0,
 				tax: 0,
-				tax_method: 1,
+				tax_method: 0,
 				note: null,
 				category_id: null,
 				brand_id: 0,

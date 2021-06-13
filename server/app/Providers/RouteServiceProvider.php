@@ -90,5 +90,7 @@ class RouteServiceProvider extends ServiceProvider
         $route->group(base_path('routes/api/product.php'));
         // Supplier routes
         $route->group(base_path('routes/api/supplier.php'));
+        // Purchase routes
+        $route->group(base_path('routes/api/purchase.php'));
     }
 }

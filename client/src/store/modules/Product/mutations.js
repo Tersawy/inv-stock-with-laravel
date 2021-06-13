@@ -4,7 +4,7 @@ export const all = (state, res) => {
 
 export const options = (state, res) => {
 	let opts = res.data.map((opt) => ({ ...opt, disabled: false }));
-	state.options = [{ text: "select product", value: null, disabled: true }, ...opts];
+	state.options = [/* { text: "select product", value: null, disabled: true }, */ ...opts];
 };
 
 export const one = (state, res) => {
