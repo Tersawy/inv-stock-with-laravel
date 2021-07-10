@@ -25,4 +25,9 @@ class Purchase extends Model
         'note',
         'date'
     ];
+
+    public function details()
+    {
+        return $this->hasMany(PurchaseDetail::class);
+    }
 }
