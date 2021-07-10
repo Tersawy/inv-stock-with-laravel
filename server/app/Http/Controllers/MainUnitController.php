@@ -37,11 +37,11 @@ class MainUnitController extends Controller
         ]);
 
         $attr['value'] = 1;
-        $attr['operator'] = '/';
+        $attr['operator'] = '*';
 
         $mainUnit = MainUnit::create($attr);
 
-        $attr['operator'] = '*';
+        $attr['operator'] = '/';
         $attr['main_unit_id'] = $mainUnit->id;
 
         $subUnit = SubUnit::create($attr);
