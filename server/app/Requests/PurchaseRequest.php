@@ -24,7 +24,8 @@ class PurchaseRequest
       // Products Validations
       'products'                    => ['required', 'array', 'min:1'],
       'products.*'                  => ['required', 'array', 'min:1'],
-      'products.*.product_id'       => ['required', 'numeric', 'distinct', 'min:1', 'exists:products,id'],
+      'products.*.product_id'       => ['required', 'numeric', 'min:1', 'exists:products,id'],
+      'products.*.variant_id'       => ['numeric', 'min:1', 'exists:product_variants,id', 'nullable'],
       'products.*.tax'              => ['required', 'numeric', 'min:0'],
       'products.*.tax_method'       => ['required', 'numeric', Rule::in(Product::TAX_METHODS)],
       'products.*.discount'         => ['required', 'numeric', 'min:0'],
