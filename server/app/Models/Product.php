@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\ProductDetailsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, ProductDetailsAttributes;
 
     const TAX_EXCLUSIVE = 0;
     const TAX_INCLUSIVE = 1;
