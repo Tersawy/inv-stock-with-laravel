@@ -17,7 +17,7 @@ class SubUnitController extends Controller
             'main_unit_id'     => ['required', 'numeric', 'min:1', 'exists:main_units,id']
         ]);
 
-        $attr['operator'] = '*';
+        $attr['operator'] = '/';
 
         $subUnit = SubUnit::create($attr);
 
