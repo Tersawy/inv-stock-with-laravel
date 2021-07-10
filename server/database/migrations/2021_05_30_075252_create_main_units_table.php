@@ -18,7 +18,7 @@ class CreateMainUnitsTable extends Migration
             $table->string('name')->unique();
             $table->string('short_name')->unique();
             $table->integer('value')->default(1);
-            $table->string('operator')->default("/");
+            $table->string('operator')->default("*");
             $table->timestamps();
         });
     }

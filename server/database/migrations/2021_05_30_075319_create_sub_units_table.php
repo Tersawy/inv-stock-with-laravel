@@ -18,7 +18,7 @@ class CreateSubUnitsTable extends Migration
             $table->string('name')->unique();
             $table->string('short_name')->unique();
             $table->integer('value');
-            $table->string('operator')->default("*");
+            $table->string('operator')->default("/");
             $table->unsignedBigInteger('main_unit_id');
             $table->foreign('main_unit_id')->references('id')->on('main_units')->onDelete('restrict');
             $table->timestamps();
