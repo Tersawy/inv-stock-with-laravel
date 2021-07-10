@@ -13,7 +13,7 @@ class MainUnitSeeder extends Seeder
     public function run()
     {
         DB::table('main_units')->insert([
-            ['name' => 'piece', 'short_name' => 'pc'],
+            ['name' => 'Dezon Box', 'short_name' => 'Box'],
             ['name' => 'ton', 'short_name' => 'ton'],
         ]);
     }
