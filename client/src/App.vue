@@ -1,15 +1,23 @@
 <template>
-	<div id="app">
+	<v-app>
 		<Navbar v-if="isAuth" />
-		<router-view />
-	</div>
+		<Sidebar v-if="isAuth" />
+		<v-main>
+			<router-view />
+		</v-main>
+	</v-app>
 </template>
 
 <script>
 	import Navbar from "@/components/layout/Navbar.vue";
+	import Sidebar from "@/components/layout/Sidebar.vue";
 	export default {
 		name: "App",
-		components: { Navbar }
+		components: { Navbar, Sidebar },
+
+		data: () => ({
+			//
+		})
 	};
 </script>
 

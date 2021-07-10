@@ -23,6 +23,13 @@ export const one = ({ commit }, itemId) => {
 	});
 };
 
+export const details = ({ commit }, itemId) => {
+	return api("get", `${prefix}/details/${itemId}`, (err, res) => {
+		if (err) return;
+		commit("details", res);
+	});
+};
+
 export const create = ({ commit }, item) => {
 	return api(
 		"post",

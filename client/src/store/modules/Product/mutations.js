@@ -11,6 +11,10 @@ export const one = (state, res) => {
 	state.one = res.data;
 };
 
+export const details = (state, res) => {
+	state.details = res.data;
+};
+
 export const create = (state, res) => {
 	state.all.docs = [res.data, ...state.all.docs];
 };

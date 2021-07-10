@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<div class="warehouse">Welcome to warehouse page</div>
+		<v-btn link :to="{ name: 'WarehouseCreate' }">Create a warehouse</v-btn>
 		<table class="table mt-5">
 			<thead>
 				<th v-for="header in headers" :key="header">{{ header }}</th>

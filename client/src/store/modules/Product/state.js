@@ -6,6 +6,7 @@ const state = {
 		perPage: 15
 	},
 	one: {},
+	details: {},
 	options: []
 };
 

@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<div class="product">Welcome to product page</div>
+		<v-btn :to="{ name: 'ProductCreate' }" elevation="1" color="primary" link>Create a new product</v-btn>
 		<table class="table mt-5">
 			<thead>
 				<th v-for="header in headers" :key="header" class="text-center">{{ header }}</th>

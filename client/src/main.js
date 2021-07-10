@@ -24,6 +24,7 @@ import DeleteIcon from "@/components/ui/DeleteIcon.vue";
 Vue.component("DeleteIcon", DeleteIcon);
 
 import { runGlobalMixins } from "@/mixins";
+import vuetify from "./plugins/vuetify";
 runGlobalMixins();
 
 Vue.config.productionTip = false;
@@ -54,5 +55,6 @@ router.beforeEach(async (to, from, next) => {
 new Vue({
 	store,
 	router,
+	vuetify,
 	render: (h) => h(App)
 }).$mount("#app");
