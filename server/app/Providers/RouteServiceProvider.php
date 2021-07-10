@@ -74,23 +74,33 @@ class RouteServiceProvider extends ServiceProvider
     {
         $route = Route::prefix('api/v1')->middleware('api');
 
-        // Auth routes
-        $route->group(base_path('routes/api/auth.php'));
-        // Warehouse routes
-        $route->group(base_path('routes/api/warehouse.php'));
-        // Category routes
-        $route->group(base_path('routes/api/category.php'));
-        // Brand routes
-        $route->group(base_path('routes/api/brand.php'));
-        // MainUnit routes
-        $route->group(base_path('routes/api/mainUnit.php'));
-        // SubUnit routes
-        $route->group(base_path('routes/api/subUnit.php'));
-        // Product routes
-        $route->group(base_path('routes/api/product.php'));
-        // Supplier routes
-        $route->group(base_path('routes/api/supplier.php'));
-        // Purchase routes
-        $route->group(base_path('routes/api/purchase.php'));
+        $base = 'routes/api/';
+
+        $fileRoutes = array_diff(scandir(base_path($base)), ['.', '..']);
+
+        foreach ($fileRoutes as $file) {
+            if (is_file(base_path($base . $file))) {
+                $route->group(base_path($base . $file));
+            }
+        }
+
+        // // Auth routes
+        // $route->group(base_path('routes/api/auth.php'));
+        // // Warehouse routes
+        // $route->group(base_path('routes/api/warehouse.php'));
+        // // Category routes
+        // $route->group(base_path('routes/api/category.php'));
+        // // Brand routes
+        // $route->group(base_path('routes/api/brand.php'));
+        // // MainUnit routes
+        // $route->group(base_path('routes/api/mainUnit.php'));
+        // // SubUnit routes
+        // $route->group(base_path('routes/api/subUnit.php'));
+        // // Product routes
+        // $route->group(base_path('routes/api/product.php'));
+        // // Supplier routes
+        // $route->group(base_path('routes/api/supplier.php'));
+        // // Purchase routes
+        // $route->group(base_path('routes/api/purchase.php'));
     }
 }
