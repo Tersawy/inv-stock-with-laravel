@@ -24,8 +24,13 @@ class CreatePurchaseDetailsTable extends Migration
             $table->integer('discount')->default(0);
             $table->tinyInteger("discount_method")->default(Product::DISCOUNT_FIXED); // 0 Fixed, 1 Percent
 
+            $table->bigInteger('variant_id')->nullable();
+
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+
+            $table->unsignedBigInteger('purchase_id');
+            $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('cascade');
 
             $table->timestamps();
         });
