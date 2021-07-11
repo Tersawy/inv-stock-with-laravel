@@ -27,10 +27,17 @@ class Purchase extends Model
         'date'
     ];
 
+    protected $append = ['reference'];
+
     protected $fieldActionName = 'cost';
 
     public function details()
     {
         return $this->hasMany(PurchaseDetail::class);
+    }
+
+    public function getReferenceAttribute()
+    {
+        return 'PR_' . (1110 + $this->id);
     }
 }

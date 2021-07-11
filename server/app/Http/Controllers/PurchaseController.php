@@ -33,7 +33,7 @@ class PurchaseController extends Controller
         $purchases = $purchases->map(function ($purchase) {
             return [
                 'id'                => $purchase->id,
-                'reference'         => 'PR_' . (1110 + $purchase->id),
+                'reference'         => $purchase->reference,
                 'supplier'          => $purchase->supplier,
                 'warehouse'         => $purchase->warehouse,
                 'status'            => $purchase->status,
