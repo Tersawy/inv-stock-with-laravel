@@ -3,110 +3,156 @@
 namespace App\Traits;
 
 use App\Models\Product;
+use Illuminate\Support\Arr;
 
 trait ProductDetailsAttributes
 {
 
   public function getUnitCostAttribute()
   {
-    return $this->getValueByUnitOperator('cost');
+    return $this->getUnitValue('cost');
   }
 
 
   public function getUnitPriceAttribute()
   {
-    return $this->getValueByUnitOperator('price');
+    return $this->getUnitValue('price');
   }
 
 
   public function getNetCostAttribute()
   {
-    $cost = $this->getUnitCostAttribute();
-
-    if ($this->attributes['tax_method'] === Product::TAX_INCLUSIVE) {
-      $cost = $cost - $this->getTaxAmountByField('cost');
-    }
-
-    return $cost;
+    return $this->getNetValue('cost');
   }
 
 
   public function getNetPriceAttribute()
   {
-    $price = $this->getUnitPriceAttribute();
-
-    if ($this->attributes['tax_method'] === Product::TAX_INCLUSIVE) {
-      $price = $price - $this->getTaxAmountByField('price');
-    }
-
-    return $price;
+    return $this->getNetValue('price');
   }
 
 
   public function getTaxCostAttribute()
   {
-    return $this->getTaxAmountByField('cost');
+    return $this->getTaxValue('cost');
   }
 
 
   public function getTaxPriceAttribute()
   {
-    return $this->getTaxAmountByField('price');
+    return $this->getTaxValue('price');
   }
 
 
   public function getTotalCostAttribute()
   {
-    return $this->getNetCostAttribute() + $this->getTaxAmountByField('cost');
+    return $this->getTotalValue('cost');
   }
 
 
   public function getTotalPriceAttribute()
   {
-    return $this->getNetPriceAttribute() + $this->getTaxAmountByField('price');
+    return $this->getTotalValue('price');
   }
 
 
-  public function details()
+  private function getGrandTotalCost()
   {
-    $this->thisProduct()->append($this->thisProduct()->getMutatedAttributes());
+    return $this->getGrandTotalValue('cost');
+  }
 
-    return [
-      'id'            => $this->thisProduct()->id,
-      'instock'       => $this->thisProduct()->instock,
-      'unit_cost'     => $this->thisProduct()->unit_cost,
-      'unit_price'    => $this->thisProduct()->unit_price,
-      'net_cost'      => $this->thisProduct()->net_cost,
-      'net_price'     => $this->thisProduct()->net_price,
-      'tax'           => $this->thisProduct()->tax,
-      'tax_method'    => $this->thisProduct()->tax_method,
-      'tax_cost'      => $this->thisProduct()->tax_cost,
-      'tax_price'     => $this->thisProduct()->tax_price,
-      'total_cost'    => $this->thisProduct()->total_cost,
-      'total_price'   => $this->thisProduct()->total_price,
-      'purchase_unit' => $this->thisProduct()->purchase_unit->short_name,
-      'sale_unit'     => $this->thisProduct()->sale_unit->short_name
-    ];
+  private function getGrandTotalPrice()
+  {
+    return $this->getGrandTotalValue('price');
   }
 
 
-  protected function getValueByUnitOperator($attrName) // cost or price
+  private function getNetValue($attrName)
   {
-    $value = $this->attributes[$attrName];
+    $value = $this->getValueExcludingDiscount($attrName);
 
-    $product = $this->thisProduct();
-
-    $unit = $attrName == 'cost' ? 'purchase_unit' : 'sale_unit';
-
-    $value = $value / $product->{$unit}->value;
+    if ($this->attributes['tax_method'] === Product::TAX_INCLUSIVE) {
+      $value = $value - $this->getTaxValue($attrName);
+    }
 
     return $value;
   }
 
 
-  protected function getTaxAmountByField($attrName)
+  private function getTotalValue($attrName)
   {
-    $unitValue = $this->getValueByUnitOperator($attrName); // cost or price
+    return $this->getNetValue($attrName) + $this->getTaxValue($attrName);
+  }
+
+
+  public function getGrandTotalValue($attrName)
+  {
+    return $this->getTotalValue($attrName) * $this->quantity;
+  }
+
+
+  public function details()
+  {
+    $this->append($this->getMutatedAttributes());
+
+    return [
+      'id'            => $this->id,
+      'instock'       => $this->instock,
+      'unit_cost'     => $this->unit_cost,
+      'unit_price'    => $this->unit_price,
+      'net_cost'      => $this->net_cost,
+      'net_price'     => $this->net_price,
+      'tax'           => $this->tax,
+      'tax_method'    => $this->tax_method,
+      'tax_cost'      => $this->tax_cost,
+      'tax_price'     => $this->tax_price,
+      'total_cost'    => $this->total_cost,
+      'total_price'   => $this->total_price,
+      'purchase_unit' => $this->purchase_unit->short_name,
+      'sale_unit'     => $this->sale_unit->short_name
+    ];
+  }
+
+
+  private function getDiscount($attrName)
+  {
+    $discount = Arr::get($this, 'discount', 0);
+
+    $method = Arr::get($this, 'discount_method', 0);
+
+    if ($method == Product::DISCOUNT_FIXED) {
+      return $discount;
+    }
+
+    return $discount * ($this->getUnitValue($attrName) / 100);
+  }
+
+
+  private function getValueExcludingDiscount($attrName)
+  {
+    return $this->getUnitValue($attrName) - $this->getDiscount($attrName);
+  }
+
+
+  private function getUnitValue($attrName) // cost or price
+  {
+    $value = $this->attributes[$attrName];
+
+    if (!$this->isProductModal()) {
+      return $value;
+    }
+
+    $unit = $attrName == 'cost' ? 'purchase_unit' : 'sale_unit';
+
+    $value = $value / $this->{$unit}->value;
+
+    return $value;
+  }
+
+
+  private function getTaxValue($attrName)
+  {
+    $unitValue = $this->getValueExcludingDiscount($attrName); // cost or price
 
     if ($this->attributes['tax_method'] === Product::TAX_INCLUSIVE) {
 
@@ -127,13 +173,9 @@ trait ProductDetailsAttributes
   }
 
 
-  protected function thisProduct()
+  private function isProductModal()
   {
-    $isProductModel = static::class === Product::class;
-
-    $product = $isProductModel ? $this : $this->attributes['product'];
-
-    return $product;
+    return static::class === Product::class;
   }
 
 
