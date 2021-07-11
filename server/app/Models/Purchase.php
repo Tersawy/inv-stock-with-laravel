@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\InvoiceAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Purchase extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, InvoiceAttributes;
 
     const RECEIVED  = 0;
     const PENDING   = 1;
@@ -25,6 +26,8 @@ class Purchase extends Model
         'note',
         'date'
     ];
+
+    protected $fieldActionName = 'cost';
 
     public function details()
     {
