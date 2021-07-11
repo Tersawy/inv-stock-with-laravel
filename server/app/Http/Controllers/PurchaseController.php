@@ -16,6 +16,38 @@ class PurchaseController extends Controller
     use InvoiceOperations;
 
 
+    public function index()
+    {
+        $supplier = ['supplier' => function ($query) {
+            $query->select(['id', 'name']);
+        }];
+
+        $warehouse = ['warehouse' => function ($query) {
+            $query->select(['id', 'name']);
+        }];
+
+        $withFields = array_merge([], $supplier, $warehouse);
+
+        $purchases = Purchase::with($withFields)->get();
+
+        $purchases = $purchases->map(function ($purchase) {
+            return [
+                'id'                => $purchase->id,
+                'reference'         => 'PR_' . (1110 + $purchase->id),
+                'supplier'          => $purchase->supplier,
+                'warehouse'         => $purchase->warehouse,
+                'status'            => $purchase->status,
+                'grand_total'       => $purchase->grand_total,
+                'paid'              => $purchase->paid,
+                'due'               => $purchase->due,
+                'payment_status'    => $purchase->payment_status,
+            ];
+        });
+
+        return $this->success($purchases);
+    }
+
+
     public function create(Request $req)
     {
         $attr = $req->validate(PurchaseRequest::ruleOfCreate());
