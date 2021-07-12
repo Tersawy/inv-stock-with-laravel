@@ -11,11 +11,11 @@ class PurchasePaymentController extends Controller
 {
   public function create(Request $req, $purchaseId)
   {
-    $req->merge(['purchase_id' => $purchaseId]);
-
-    $attr = $req->validate(PurchasePaymentRequest::ruleOfCreate());
+    $attr = PurchasePaymentRequest::validationCreate($req);
 
     $purchase = Purchase::find($purchaseId);
+
+    if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
 
     if ($purchase->payment_status == 'Paid') {
       return $this->error('This purchase invoice has been paid !', 422);
@@ -29,9 +29,7 @@ class PurchasePaymentController extends Controller
 
   public function update(Request $req, $purchaseId, $id)
   {
-    $req->merge(['id' => $id, 'purchase_id' => $purchaseId]);
-
-    $attr = $req->validate(PurchasePaymentRequest::ruleOfUpdate());
+    $attr = PurchasePaymentRequest::validationUpdate($req);
 
     $payment = PurchasePayment::find($id);
 

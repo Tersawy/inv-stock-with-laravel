@@ -2,6 +2,7 @@
 
 namespace App\Requests;
 
+use Illuminate\Http\Request;
 use App\Models\PurchasePayment;
 use Illuminate\Validation\Rule;
 
@@ -33,5 +34,17 @@ class PurchasePaymentRequest
     $newRules = ['id' => ['required', 'numeric', 'min:1']];
 
     return array_merge($rules, $newRules);
+  }
+
+
+  public static function validationRemove(Request $req)
+  {
+    $req->merge(['id' => $req->route('id'), 'purchase_id' => $req->route('purchaseId')]);
+
+    $rule = ['required', 'numeric', 'min:1'];
+
+    $rules = ['id' => $rule, 'purchase_id' => $rule];
+
+    return $req->validate($rules);
   }
 }
