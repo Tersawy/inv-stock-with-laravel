@@ -26,6 +26,7 @@ class PurchasePaymentController extends Controller
     return $this->success([], 'The Payment has been added successfully');
   }
 
+
   public function update(Request $req, $purchaseId, $id)
   {
     $req->merge(['id' => $id, 'purchase_id' => $purchaseId]);
@@ -43,5 +44,19 @@ class PurchasePaymentController extends Controller
     $payment->save();
 
     return $this->success([], 'The Payment has been updated successfully');
+  }
+
+
+  public function remove(Request $req, $purchaseId, $id)
+  {
+    PurchasePaymentRequest::validationRemove($req);
+
+    $payment = PurchasePayment::find($id);
+
+    if (!$payment) return $this->error('This payment is not found', 404);
+
+    $payment->delete();
+
+    return $this->success([], 'The Payment has been deleted successfully');
   }
 }
