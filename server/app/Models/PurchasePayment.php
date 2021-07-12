@@ -19,4 +19,6 @@ class PurchasePayment extends Model
         PurchasePayment::PAYMENT_WESTREN_UNION,
         PurchasePayment::PAYMENT_BANK_TRANSFER
     ];
+
+    protected $fillable = ['amount', 'payment_method', 'note', 'purchase_id'];
 }
