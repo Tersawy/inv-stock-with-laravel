@@ -11,7 +11,7 @@ class PurchasePaymentRequest
   private static function rules()
   {
     return [
-      'purchase_id'     => ['required', 'numeric', 'min:1', 'exists:purchases,id'],
+      'purchase_id'     => ['required', 'numeric', 'min:1'],
       'amount'          => ['required', 'numeric', 'min:1'],
       'payment_method'  => ['required', Rule::in(PurchasePayment::PAYMENT_METHODS)],
       'note'            => ['string', 'max:255', 'nullable']
@@ -19,21 +19,23 @@ class PurchasePaymentRequest
   }
 
 
-  public static function ruleOfCreate()
+  public static function validationCreate(Request $req)
   {
     $rules = PurchasePaymentRequest::rules();
 
-    return $rules;
+    return $req->validate($rules);
   }
 
 
-  public static function ruleOfUpdate()
+  public static function validationUpdate(Request $req)
   {
+    $req->merge(['id' => $req->route('id'), 'purchase_id' => $req->route('purchaseId')]);
+
     $rules = PurchasePaymentRequest::rules();
 
-    $newRules = ['id' => ['required', 'numeric', 'min:1']];
+    $rules['id'] = ['required', 'numeric', 'min:1'];
 
-    return array_merge($rules, $newRules);
+    return $req->validate($rules);
   }
 
 
