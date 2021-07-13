@@ -10,6 +10,7 @@ use App\Models\ProductVariant;
 use App\Models\PurchaseDetail;
 use App\Requests\PurchaseRequest;
 use App\Traits\InvoiceOperations;
+use Egulias\EmailValidator\Warning\TLD;
 
 class PurchaseController extends Controller
 {
@@ -284,5 +285,55 @@ class PurchaseController extends Controller
         PurchaseDetail::insert($newDetails);
 
         return $this->success([], "The Purchase has been updated successfully");
+    }
+
+
+    public function moveToTrash(Request $req, $id)
+    {
+        PurchaseRequest::validationId($req);
+
+        $purchase = Purchase::find($id);
+
+        if (!$purchase) return $this->error('This purchase is not found', 404);
+
+        if ($purchase->status === Purchase::RECEIVED) {
+            return $this->error('Sorry, you can\'t remove this purchase because it received but you can create returned purchase invoice', 422);
+        }
+
+        $purchase->delete();
+
+        return $this->success('The purchase has been moved to trash successfully');
+    }
+
+
+    public function trashed()
+    {
+        $purchases = Purchase::onlyTrashed()->get();
+
+        return $this->success($purchases);
+    }
+
+
+    public function restore(Request $req, $id)
+    {
+        PurchaseRequest::validationId($req);
+
+        $isDone = Purchase::onlyTrashed()->where('id', $id)->restore();
+
+        if (!$isDone) return $this->error('The purchase invoice is not in the trash', 404);
+
+        return $this->success($id, 'The purchase invoice has been restored successfully');
+    }
+
+
+    public function remove(Request $req, $id)
+    {
+        PurchaseRequest::validationId($req);
+
+        $isDone = Purchase::onlyTrashed()->where('id', $id)->forceDelete();
+
+        if (!$isDone) return $this->error('The purchase invoice is not in the trash', 404);
+
+        return $this->success($id, 'The purchase invoice has been deleted successfully');
     }
 }
