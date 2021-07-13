@@ -8,6 +8,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'purchase'], functio
 
     Route::get('/', [PurchaseController::class, 'index']);
 
+    Route::get('/trashed', [PurchaseController::class, 'trashed']);
+
     Route::get('/{id}', [PurchaseController::class, 'show']);
 
     Route::post('/create', [PurchaseController::class, 'create']);
@@ -15,8 +17,6 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'purchase'], functio
     Route::put('/{id}', [PurchaseController::class, 'update']);
 
     Route::post('/{id}/trash', [PurchaseController::class, 'moveToTrash']);
-
-    Route::get('/trashed', [PurchaseController::class, 'trashed']);
 
     Route::post('/{id}/restore', [PurchaseController::class, 'restore']);
 
