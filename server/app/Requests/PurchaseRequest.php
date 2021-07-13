@@ -4,6 +4,7 @@ namespace App\Requests;
 
 use App\Models\Product;
 use App\Models\Purchase;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class PurchaseRequest
@@ -52,5 +53,15 @@ class PurchaseRequest
     $newRules = ['id' => ['required', 'numeric', 'min:1']];
 
     return array_merge($rules, $newRules);
+  }
+
+
+  public static function validationId(Request $req)
+  {
+    $req->merge(['id' => $req->route('id')]);
+
+    $rules = ['id' => ['required', 'numeric', 'min:1']];
+
+    return $req->validate($rules);
   }
 }
