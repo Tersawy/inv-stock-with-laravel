@@ -38,21 +38,23 @@ class PurchaseRequest
   }
 
 
-  public static function ruleOfCreate()
+  public static function validationCreate(Request $req)
   {
     $rules = PurchaseRequest::rules();
 
-    return $rules;
+    return $req->validate($rules);
   }
 
 
-  public static function ruleOfUpdate()
+  public static function validationUpdate(Request $req)
   {
+    $req->merge(['id' => $req->route('id')]);
+
     $rules = PurchaseRequest::rules();
 
-    $newRules = ['id' => ['required', 'numeric', 'min:1']];
+    $rules['id'] = ['required', 'numeric', 'min:1'];
 
-    return array_merge($rules, $newRules);
+    return $req->validate($rules);
   }
 
 

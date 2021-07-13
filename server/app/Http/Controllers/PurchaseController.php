@@ -10,7 +10,6 @@ use App\Models\ProductVariant;
 use App\Models\PurchaseDetail;
 use App\Requests\PurchaseRequest;
 use App\Traits\InvoiceOperations;
-use Egulias\EmailValidator\Warning\TLD;
 
 class PurchaseController extends Controller
 {
@@ -51,7 +50,7 @@ class PurchaseController extends Controller
 
     public function create(Request $req)
     {
-        $attr = $req->validate(PurchaseRequest::ruleOfCreate());
+        $attr = PurchaseRequest::validationCreate($req);
 
         list($isValid, $errMsg) = $this->checkDistinct($attr['products']);
 
@@ -149,10 +148,8 @@ class PurchaseController extends Controller
      */
     public function update(Request $req, $id)
     {
-        $req->merge(['id' => $id]);
-
         # [1]
-        $attr = $req->validate(PurchaseRequest::ruleOfUpdate());
+        $attr = PurchaseRequest::validationUpdate($req);
 
         # [4]
         $newDetails = &$attr['products'];
