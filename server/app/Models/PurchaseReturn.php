@@ -11,8 +11,8 @@ class PurchaseReturn extends Model
 {
     use SoftDeletes, InvoiceAttributes;
 
-    const PENDING  = 0;
-    const COMPLETED   = 1;
+    const COMPLETED = 0;
+    const PENDING   = 1;
     const STATUS = [PurchaseReturn::PENDING, PurchaseReturn::COMPLETED];
 
     protected $fillable = [
