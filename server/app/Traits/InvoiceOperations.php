@@ -147,6 +147,45 @@ trait InvoiceOperations
   }
 
   /**
+   * Checking if product or variants - detail->quantity >= 0
+   * because we don't need to have instock with minus
+   * This check must be after checking Distinct and Relations
+   * @param array $details
+   * @param \App\Models\Product[] $products
+   * @param \App\Models\ProductVariant[] $variants
+   * @return array [true] | [false, errorMsg] 
+   */
+  private function checkingQuantity($details, $products, $variants): array
+  {
+    $result = [true, null];
+
+    foreach ($details as $detail) {
+
+      $product = $this->getProductById($products, $detail['product_id']);
+
+      if ($product->has_variants) {
+
+        $variant = $this->getVariantByDetail($variants, $detail);
+
+        $final = $variant['instock'] - $detail['quantity'];
+
+        if ($final < 0) {
+          return [false, "{$product->name}-{$variant['name']} has {$variant['instock']} and you try to make return {$detail['quantity']}!"];
+        }
+      } else {
+
+        $final = $product['instock'] - $detail['quantity'];
+
+        if ($final < 0) {
+          return [false, "{$product->name} has {$product['instock']} and you try to make return {$detail['quantity']}!"];
+        }
+      }
+    }
+
+    return $result;
+  }
+
+  /**
    * @param array $detailsHasVariants
    * @return ProductVariant[]
    */
