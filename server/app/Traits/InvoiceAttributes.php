@@ -27,12 +27,6 @@ trait InvoiceAttributes
   }
 
 
-  public function payments()
-  {
-    return $this->hasMany(PurchasePayment::class);
-  }
-
-
   public function getGrandTotalAttribute()
   {
     return $this->getTotalExcludingDiscount() + $this->getTaxValue() + $this->shipping;

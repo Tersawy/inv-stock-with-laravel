@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\PurchaseReturnPayment;
 use App\Traits\InvoiceAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,8 +36,13 @@ class PurchaseReturn extends Model
         return $this->hasMany(PurchaseReturnDetail::class);
     }
 
+    public function payments()
+    {
+        return $this->hasMany(PurchaseReturnPayment::class);
+    }
+
     public function getReferenceAttribute()
     {
-        return 'PR_' . (1110 + $this->id);
+        return 'RT_' . (1110 + $this->id);
     }
 }
