@@ -113,7 +113,7 @@ class PurchaseReturnController extends Controller
             }
         }
 
-        return $this->success([], "The Purchase Return has been created successfully");
+        return $this->success([], "The Purchase return invoice has been created successfully");
     }
 
 
@@ -171,7 +171,7 @@ class PurchaseReturnController extends Controller
         # [3]
         $purchase = PurchaseReturn::find($id);
 
-        if (!$purchase) return $this->error('The purchase was not found', 404);
+        if (!$purchase) return $this->error('The purchase return invoice was not found', 404);
 
         # [4]
         $oldDetails = &$purchase->details;
@@ -298,6 +298,56 @@ class PurchaseReturnController extends Controller
         # [19]
         PurchaseReturnDetail::insert($newDetails);
 
-        return $this->success([], "The Purchase return has been updated successfully");
+        return $this->success([], "The Purchase return invoice has been updated successfully");
+    }
+
+
+    public function moveToTrash(Request $req, $id)
+    {
+        PurchaseReturnRequest::validationId($req);
+
+        $purchase = PurchaseReturn::find($id);
+
+        if (!$purchase) return $this->error('This purchase return invoice is not found', 404);
+
+        if ($purchase->status === PurchaseReturn::COMPLETED) {
+            return $this->error('Sorry, you can\'t remove this purchase return invoice because it completed but you can create a new purchase invoice', 422);
+        }
+
+        $purchase->delete();
+
+        return $this->success('The purchase return invoice has been moved to trash successfully');
+    }
+
+
+    public function trashed()
+    {
+        $purchases = PurchaseReturn::onlyTrashed()->get();
+
+        return $this->success($purchases);
+    }
+
+
+    public function restore(Request $req, $id)
+    {
+        PurchaseReturnRequest::validationId($req);
+
+        $isDone = PurchaseReturn::onlyTrashed()->where('id', $id)->restore();
+
+        if (!$isDone) return $this->error('The purchase return invoice is not in the trash', 404);
+
+        return $this->success($id, 'The purchase return invoice has been restored successfully');
+    }
+
+
+    public function remove(Request $req, $id)
+    {
+        PurchaseReturnRequest::validationId($req);
+
+        $isDone = PurchaseReturn::onlyTrashed()->where('id', $id)->forceDelete();
+
+        if (!$isDone) return $this->error('The purchase return invoice is not in the trash', 404);
+
+        return $this->success($id, 'The purchase return invoice has been deleted successfully');
     }
 }
