@@ -242,7 +242,7 @@ class PurchaseController extends Controller
             $newDetailsHasNoVariants = $this->filterDetailsVariants($newDetails, false);
 
             # [13] => A) => 2
-            if (count($oldDetailsHasVariants)) {
+            if (count($newDetailsHasVariants)) {
                 # [13] => A) => 2 => I)
                 $this->sumVariantsQuantity($variants, $newDetailsHasVariants);
             }
