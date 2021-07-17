@@ -10,14 +10,6 @@ class Product extends Model
 {
     use SoftDeletes, ProductDetailsAttributes;
 
-    const TAX_EXCLUSIVE = 0;
-    const TAX_INCLUSIVE = 1;
-    const TAX_METHODS   = [Product::TAX_EXCLUSIVE, Product::TAX_INCLUSIVE];
-
-    const DISCOUNT_FIXED = 0;
-    const DISCOUNT_PERCENT = 1;
-    const DISCOUNT_METHODS   = [Product::DISCOUNT_FIXED, Product::DISCOUNT_PERCENT];
-
     protected $fillable = [
         'name',
         'barcode_type',
