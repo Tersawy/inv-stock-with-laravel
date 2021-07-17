@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Constants;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Requests\PurchaseReturnRequest;
@@ -90,7 +91,7 @@ class PurchaseReturnController extends Controller
 
         PurchaseReturnDetail::insert($attr['products']);
 
-        if ($req->status === PurchaseReturn::COMPLETED) {
+        if ($req->status === Constants::INVOICE_RETURN_COMPLETED) {
 
             if (count($detailsHasVariants)) {
 
@@ -181,9 +182,9 @@ class PurchaseReturnController extends Controller
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $oldIsCompleted = $purchase->status == PurchaseReturn::COMPLETED;
+        $oldIsCompleted = $purchase->status == Constants::INVOICE_RETURN_COMPLETED;
 
-        $newIsCompleted = $req->status == PurchaseReturn::COMPLETED;
+        $newIsCompleted = $req->status == Constants::INVOICE_RETURN_COMPLETED;
 
         # [9]
         $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
@@ -249,7 +250,7 @@ class PurchaseReturnController extends Controller
 
         if (!$purchase) return $this->error('This purchase return invoice is not found', 404);
 
-        if ($purchase->status === PurchaseReturn::COMPLETED) {
+        if ($purchase->status === Constants::INVOICE_RETURN_COMPLETED) {
             return $this->error('Sorry, you can\'t remove this purchase return invoice because it completed but you can create a new purchase invoice', 422);
         }
 
