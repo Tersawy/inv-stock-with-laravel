@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Product;
 use App\Helpers\Constants;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;

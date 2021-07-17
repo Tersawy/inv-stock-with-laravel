@@ -1,7 +1,6 @@
 <?php
 
 use App\Helpers\Constants;
-use App\Models\PurchasePayment;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
