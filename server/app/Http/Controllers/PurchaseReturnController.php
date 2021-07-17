@@ -121,14 +121,14 @@ class PurchaseReturnController extends Controller
         # 3 - Get Purchase Return with details
         # 4 - Get old details
         # 5 - Set purchase return id into every new detail
-        # 6 - Get all Products
+        # 6 - Get all Products ny ids
         # 7 - Merge all details to check variants with products
         # 8 - Check Variants with Products => eg. if product has a variant and detail doesn't has a variant,
             the purchase return was created a long time ago with products doesn't have variants then
             we updated product by added variant to it then we want to update this purchase return with this product out variant !
             whats happen without this check ?!!
             it will be add quantity into product.instock but product has variant supposed to added quantity into variant.instock
-        # 9 - Filter details to get whose has variant
+        # 9  - Filter details to get whose has variant
         # 10 - check if new or old status is completed and count of detailsHasVariants > 1 to get variants and details to check relations between products with them variants
         # 11 - check quantity if the new status is completed before taking any action on the quantity to prevent it from begin set instock with a negative number
         # 12 - Sum old details quantity to instock to restore old instock if old status is completed
