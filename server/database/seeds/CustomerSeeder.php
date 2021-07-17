@@ -14,7 +14,7 @@ class CustomerSeeder extends Seeder
     {
         DB::table('customers')->insert([
             [
-                'name'      => 'IT Supply',
+                'name'      => 'Jhon Jonson',
                 'email'     => 'Customer@example.com',
                 'phone'     => '360-723-2330',
                 'country'   => 'USA',
@@ -22,7 +22,7 @@ class CustomerSeeder extends Seeder
                 'address'   => '3398 Pinnickinick Street Tigard, WA 97223',
             ],
             [
-                'name'      => 'Fruits Supply',
+                'name'      => 'Jhon parry',
                 'email'     => 'Customer2@example.com',
                 'phone'     => '510-797-5714',
                 'country'   => 'USA',
@@ -30,7 +30,7 @@ class CustomerSeeder extends Seeder
                 'address'   => '4703 Green Avenue Fremont, CA 94536',
             ],
             [
-                'name'      => 'Corwin-Pfeffer',
+                'name'      => 'Nilson Bon',
                 'email'     => 'Customer3@example.com',
                 'phone'     => '240-737-7321',
                 'country'   => 'USA',
