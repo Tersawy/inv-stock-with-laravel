@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Helpers\Constants;
 use App\Models\Product;
 use Illuminate\Support\Arr;
 
@@ -71,7 +72,7 @@ trait ProductDetailsAttributes
   {
     $value = $this->getValueExcludingDiscount($attrName);
 
-    if ($this->attributes['tax_method'] === Product::TAX_INCLUSIVE) {
+    if ($this->attributes['tax_method'] === Constants::TAX_INCLUSIVE) {
       $value = $value - $this->getTaxValue($attrName);
     }
 
@@ -120,7 +121,7 @@ trait ProductDetailsAttributes
 
     $method = Arr::get($this, 'discount_method', 0);
 
-    if ($method == Product::DISCOUNT_FIXED) {
+    if ($method == Constants::DISCOUNT_FIXED) {
       return $discount;
     }
 
@@ -154,7 +155,7 @@ trait ProductDetailsAttributes
   {
     $unitValue = $this->getValueExcludingDiscount($attrName); // cost or price
 
-    if ($this->attributes['tax_method'] === Product::TAX_INCLUSIVE) {
+    if ($this->attributes['tax_method'] === Constants::TAX_INCLUSIVE) {
 
       $taxDivisor = 1 + ($this->attributes['tax'] / 100);
 

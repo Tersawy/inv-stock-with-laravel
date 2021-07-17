@@ -2,8 +2,7 @@
 
 namespace App\Traits;
 
-use App\Models\Product;
-use App\Models\PurchasePayment;
+use App\Helpers\Constants;
 use App\Models\Supplier;
 use App\Models\Warehouse;
 
@@ -80,7 +79,7 @@ trait InvoiceAttributes
 
   private function getDiscountAmount()
   {
-    if ($this->discount_method == Product::DISCOUNT_FIXED) {
+    if ($this->discount_method == Constants::DISCOUNT_FIXED) {
       return $this->discount;
     }
 
