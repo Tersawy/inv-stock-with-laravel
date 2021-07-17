@@ -9,6 +9,40 @@ use Illuminate\Support\Facades\DB;
 
 trait InvoiceOperations
 {
+  private function sumQuantity(&$variants, $details, &$products)
+  {
+    $detailsHasVariants = $this->filterDetailsVariants($details, true);
+
+    $detailsHasNoVariants = $this->filterDetailsVariants($details, false);
+
+    if (count($variants) && count($detailsHasVariants)) {
+      $this->sumVariantsQuantity($variants, $detailsHasVariants);
+    }
+
+    if (count($detailsHasNoVariants)) {
+      $productsHasNoVariants = $this->filterProductsVariants($products, false);
+      $this->sumProductsQuantity($productsHasNoVariants, $detailsHasNoVariants);
+    }
+  }
+
+
+  private function subtractQuantity(&$variants, $details, &$products)
+  {
+    $detailsHasVariants = $this->filterDetailsVariants($details, true);
+
+    $detailsHasNoVariants = $this->filterDetailsVariants($details, false);
+
+    if (count($variants) && count($detailsHasVariants)) {
+      $this->subtractVariantsQuantity($variants, $detailsHasVariants);
+    }
+
+    if (count($detailsHasNoVariants)) {
+      $productsHasNoVariants = $this->filterProductsVariants($products, false);
+      $this->subtractProductsQuantity($productsHasNoVariants, $detailsHasNoVariants);
+    }
+  }
+
+
   private function sumVariantsQuantity(&$variants, $detailsHasVariants)
   {
     foreach ($detailsHasVariants as $detail) {
@@ -55,6 +89,8 @@ trait InvoiceOperations
 
   private function updateMultiple($values, $model, string $fieldUpdate, string $primaryKey = 'id', string $caseField = 'id')
   {
+    if (count($values) < 1) return;
+
     $table = $model::getModel()->getTable();
 
     $cases = [];
@@ -155,15 +191,19 @@ trait InvoiceOperations
    * @param \App\Models\ProductVariant[] $variants
    * @return array [true] | [false, errorMsg] 
    */
-  private function checkingQuantity($details, $products, $variants): array
+  private function checkingQuantity($details, $products, $variants, $sumBeforeCheck, $detailsForSum): array
   {
     $result = [true, null];
+
+    if ($sumBeforeCheck) {
+      $this->sumQuantity($variants, $detailsForSum, $products);
+    }
 
     foreach ($details as $detail) {
 
       $product = $this->getProductById($products, $detail['product_id']);
 
-      if ($product->has_variants) {
+      if (Arr::get($product, 'has_variants')) {
 
         $variant = $this->getVariantByDetail($variants, $detail);
 
@@ -180,6 +220,10 @@ trait InvoiceOperations
           return [false, "{$product->name} has {$product['instock']} and you try to make return {$detail['quantity']}!"];
         }
       }
+    }
+
+    if ($sumBeforeCheck) {
+      $this->subtractQuantity($variants, $detailsForSum, $products);
     }
 
     return $result;
