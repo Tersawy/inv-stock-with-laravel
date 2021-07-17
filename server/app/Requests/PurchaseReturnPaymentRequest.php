@@ -2,8 +2,8 @@
 
 namespace App\Requests;
 
+use App\Helpers\Constants;
 use Illuminate\Http\Request;
-use App\Models\PurchasePayment;
 use Illuminate\Validation\Rule;
 use App\Models\PurchaseReturnPayment;
 
@@ -14,7 +14,7 @@ class PurchaseReturnPaymentRequest
     return [
       'purchase_id'     => ['required', 'numeric', 'min:1'],
       'amount'          => ['required', 'numeric', 'min:1'],
-      'payment_method'  => ['required', Rule::in(PurchasePayment::PAYMENT_METHODS)],
+      'payment_method'  => ['required', Rule::in(Constants::PAYMENT_METHODS)],
       'note'            => ['string', 'max:255', 'nullable']
     ];
   }

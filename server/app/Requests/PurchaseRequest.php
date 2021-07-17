@@ -2,8 +2,7 @@
 
 namespace App\Requests;
 
-use App\Models\Product;
-use App\Models\Purchase;
+use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,8 +16,8 @@ class PurchaseRequest
       'supplier_id'                 => ['required', 'numeric', 'min:1', 'exists:suppliers,id'],
       'tax'                         => ['required', 'numeric', 'min:0'],
       'discount'                    => ['required', 'numeric', 'min:0'],
-      'discount_method'             => ['required', 'numeric', Rule::in(Product::DISCOUNT_METHODS)],
-      'status'                      => ['required', 'numeric', Rule::in(Purchase::STATUS)],
+      'discount_method'             => ['required', 'numeric', Rule::in(Constants::DISCOUNT_METHODS)],
+      'status'                      => ['required', 'numeric', Rule::in(Constants::INVOICE_STATUS)],
       'shipping'                    => ['required', 'numeric', 'min:0'],
       'note'                        => ['string', 'max:255', 'nullable'],
       'date'                        => ['required', 'string', 'max:10', 'date_format:Y-m-d'],
@@ -28,9 +27,9 @@ class PurchaseRequest
       'products.*.product_id'       => ['required', 'numeric', 'min:1', 'exists:products,id'],
       'products.*.variant_id'       => ['numeric', 'min:1', 'exists:product_variants,id', 'nullable'],
       'products.*.tax'              => ['required', 'numeric', 'min:0'],
-      'products.*.tax_method'       => ['required', 'numeric', Rule::in(Product::TAX_METHODS)],
+      'products.*.tax_method'       => ['required', 'numeric', Rule::in(Constants::TAX_METHODS)],
       'products.*.discount'         => ['required', 'numeric', 'min:0'],
-      'products.*.discount_method'  => ['required', 'numeric', Rule::in(Product::DISCOUNT_METHODS)],
+      'products.*.discount_method'  => ['required', 'numeric', Rule::in(Constants::DISCOUNT_METHODS)],
       'products.*.quantity'         => ['required', 'numeric', 'min:1']
     ];
 

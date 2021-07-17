@@ -2,7 +2,7 @@
 
 namespace App\Requests;
 
-use App\Models\Product;
+use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +17,7 @@ class ProductRequest
       'price'             => ['required', 'numeric', 'min:1', 'gte:cost'],
       'minimum'           => ['required', 'numeric', 'min:0'],
       'tax'               => ['required', 'numeric', 'min:0'],
-      'tax_method'        => ['required', Rule::in(Product::TAX_METHODS)],
+      'tax_method'        => ['required', Rule::in(Constants::TAX_METHODS)],
       'note'              => ['string', 'max:255', 'nullable'],
       'category_id'       => ['required', 'numeric', 'min:1', 'exists:categories,id'],
       'brand_id'          => ['exclude_if:brand_id,0', 'required', 'numeric', 'min:1', 'exists:brands,id'],
