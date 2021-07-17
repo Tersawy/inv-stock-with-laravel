@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\Constants;
 use App\Models\Product;
 use App\Models\PurchaseReturn;
 use Illuminate\Support\Facades\Schema;
@@ -20,8 +21,8 @@ class CreatePurchaseReturnsTable extends Migration
 
             $table->integer('tax')->default(0);
             $table->integer('discount')->default(0);
-            $table->tinyInteger("discount_method")->default(Product::DISCOUNT_FIXED); // 0 Fixed, 1 Percent
-            $table->tinyInteger('status')->default(PurchaseReturn::COMPLETED);
+            $table->tinyInteger("discount_method")->default(Constants::DISCOUNT_FIXED); // 0 Fixed, 1 Percent
+            $table->tinyInteger('status')->default(Constants::INVOICE_RETURN_COMPLETED);
             $table->integer('shipping')->default(0);
 
             $table->text('note')->nullable();

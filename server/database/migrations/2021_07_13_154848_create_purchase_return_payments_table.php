@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\Constants;
 use App\Models\PurchasePayment;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,7 +18,7 @@ class CreatePurchaseReturnPaymentsTable extends Migration
         Schema::create('purchase_return_payments', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('amount');
-            $table->bigInteger('payment_method')->default(PurchasePayment::PAYMENT_CASH);
+            $table->bigInteger('payment_method')->default(Constants::PAYMENT_CASH);
             $table->text('note')->nullable();
 
             $table->unsignedBigInteger('purchase_return_id');

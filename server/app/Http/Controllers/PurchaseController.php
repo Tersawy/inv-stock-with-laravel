@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Constants;
 use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Support\Arr;
@@ -84,7 +85,7 @@ class PurchaseController extends Controller
 
         PurchaseDetail::insert($attr['products']);
 
-        if ($req->status === Purchase::RECEIVED) {
+        if ($req->status === Constants::INVOICE_RECEIVED) {
 
             if (count($detailsHasVariants)) {
 
@@ -173,9 +174,9 @@ class PurchaseController extends Controller
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $oldIsReceived = $purchase->status == Purchase::RECEIVED;
+        $oldIsReceived = $purchase->status == Constants::INVOICE_RECEIVED;
 
-        $newIsReceived = $req->status == Purchase::RECEIVED;
+        $newIsReceived = $req->status == Constants::INVOICE_RECEIVED;
 
         # [9]
         $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
@@ -235,7 +236,7 @@ class PurchaseController extends Controller
 
         if (!$purchase) return $this->error('This purchase is not found', 404);
 
-        if ($purchase->status === Purchase::RECEIVED) {
+        if ($purchase->status === Constants::INVOICE_RECEIVED) {
             return $this->error('Sorry, you can\'t remove this purchase because it received but you can create returned purchase invoice', 422);
         }
 

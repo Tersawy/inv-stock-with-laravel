@@ -1,9 +1,10 @@
 <?php
 
 use App\Models\Product;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Helpers\Constants;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateProductsTable extends Migration
 {
@@ -26,7 +27,7 @@ class CreateProductsTable extends Migration
             $table->integer("instock")->default(0);
             $table->integer("minimum")->default(0);
             $table->integer("tax")->default(0);
-            $table->integer("tax_method")->default(Product::TAX_EXCLUSIVE); // 0 Exclusive, 1 Inclusive
+            $table->integer("tax_method")->default(Constants::TAX_EXCLUSIVE); // 0 Exclusive, 1 Inclusive
             $table->text("note")->nullable();
 
             $table->boolean("has_variants")->default(0);
