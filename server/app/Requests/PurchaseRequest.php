@@ -26,6 +26,7 @@ class PurchaseRequest
       'products.*'                  => ['required', 'array', 'min:1'],
       'products.*.product_id'       => ['required', 'numeric', 'min:1', 'exists:products,id'],
       'products.*.variant_id'       => ['numeric', 'min:1', 'exists:product_variants,id', 'nullable'],
+      'products.*.cost'             => ['required', 'numeric', 'min:1'],
       'products.*.tax'              => ['required', 'numeric', 'min:0'],
       'products.*.tax_method'       => ['required', 'numeric', Rule::in(Constants::TAX_METHODS)],
       'products.*.discount'         => ['required', 'numeric', 'min:0'],
