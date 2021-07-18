@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sale;
-use App\Models\Product;
-use App\Helpers\Constants;
-use App\Models\SaleDetail;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use App\Helpers\Constants;
+use App\Models\Sale;
+use App\Models\SaleDetail;
+use App\Models\Product;
 use App\Requests\SaleRequest;
-use App\Models\ProductVariant;
 use App\Traits\InvoiceOperations;
 
 class SaleController extends Controller
@@ -89,19 +88,138 @@ class SaleController extends Controller
 
         if ($req->status === Constants::INVOICE_RECEIVED) {
 
-            list($isValid, $errMsg) = $this->checkingQuantity($details, $products, $variants, false, []);
+            list($isValid, $errMsg) = $this->checkingQuantity($details, $products, $variants);
 
             if (!$isValid) return $this->error($errMsg, 422);
 
             $this->subtractQuantity($variants, $details, $products);
 
-            $productsHasNoVariants = $this->filterProductsVariants($products, false);
-
-            $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
-
-            $this->updateMultiple($variants, ProductVariant::class, 'instock');
+            $this->updateInstock($products, $variants);
         }
 
-        return $this->success([], "The Sale has been created successfully");
+        return $this->success([], "The sale invoice has been created successfully");
+    }
+
+    /**
+        # 1 - Make validation for request update rule
+        # 2 - Make Distinct validation for new details
+        # 3 - Get Sale with details
+        # 4 - Get old details
+        # 5 - Set sale id into every new detail
+        # 6 - Get all Products by ids
+        # 7 - Merge all details to check variants with products
+        # 8 - Check Variants with Products => eg. if product has a variant and detail doesn't has a variant,
+            the sale was created a long time ago with products doesn't have variants then
+            we updated product by added variant to it then we want to update this sale with this product out variant !
+            whats happen without this check ?!!
+            it will be add quantity into product.instock but product has variant supposed to added quantity into variant.instock
+        # 9  - Filter details to get whose has variant
+        # 10 - check if new or old status is received and count of detailsHasVariants > 1 to get variants and details to check relations between products with them variants
+        # 11 - Sum quantity to old products has not variants and variants by old details
+        # 12 - check quantity if the new status is received before taking any action on the quantity to prevent it from begin set instock with a negative number,
+            to show what is the broplem happen create sale with any product with quantity 5 and status is received then go to create sale return with the same product
+            with quantity 5 and status completed if you check instock of this products will be 0 because be saled and returned it, so if you update sale with any status
+            exept received whats happen ?! the product instock now is -5 !!!
+        # 13 - Subtract quantity from old products has not variants and variants by old details
+        # 14 - delete old details from `sale_details` by $sale->id
+        # 15 - if old or new status is received update instock
+        # 16 - update sale with new data
+        # 17 - insert new details
+     */
+    public function update(Request $req, $id)
+    {
+        # [1]
+        $attr = SaleRequest::validationUpdate($req);
+
+        $newDetails = &$attr['products'];
+
+        # [2]
+        list($isValid, $errMsg) = $this->checkDistinct($newDetails);
+
+        if (!$isValid) return $this->error($errMsg, 422);
+
+        # [3]
+        $sale = Sale::find($id);
+
+        if (!$sale) return $this->error('The sale invoice was not found', 404);
+
+        # [4]
+        $oldDetails = &$sale->details;
+
+        # [5]
+        foreach ($newDetails as &$detail) {
+            $detail['sale_id'] = $sale->id;
+            $detail['variant_id'] = Arr::get($detail, 'variant_id');
+        }
+
+        $oldProductsIds = Arr::pluck($oldDetails, 'product_id');
+
+        $newProductsIds = Arr::pluck($newDetails, 'product_id');
+
+        $ids = [...$oldProductsIds, ...$newProductsIds];
+
+        # [6]
+        $products = Product::find($ids);
+
+        # [7]
+        $allDetails = [...$newDetails, ...$oldDetails];
+
+        # [8]
+        list($isValid, $errMsg) = $this->checkProductsWithVariants($allDetails, $products);
+
+        if (!$isValid) return $this->error($errMsg, 422);
+
+        $oldIsReceived = $sale->status == Constants::INVOICE_RECEIVED;
+
+        $newIsReceived = $req->status == Constants::INVOICE_RECEIVED;
+
+        # [9]
+        $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
+
+        $variants = [];
+
+        # [10]
+        if (($newIsReceived || $oldIsReceived) && count($detailsHasVariants)) {
+
+            $variants = $this->getVariants($detailsHasVariants);
+
+            list($isValid, $errMsg) = $this->checkingRelations($detailsHasVariants, $variants, $products);
+
+            if (!$isValid) return $this->error($errMsg, 422);
+        }
+
+        # [11] Sum Old Quantity
+        if ($oldIsReceived) {
+            $this->sumQuantity($variants, $oldDetails, $products);
+        }
+
+        if ($newIsReceived) {
+
+            # [12] Check Quantity before subtract
+            list($isValid, $errMsg) = $this->checkingQuantity($newDetails, $products, $variants);
+
+            if (!$isValid) return $this->error($errMsg, 422);
+
+            # [13] Subtract New Quantity
+            $this->subtractQuantity($variants, $newDetails, $products);
+        }
+
+        # [14]
+        SaleDetail::where('sale_id', $sale->id)->delete();
+
+        # [15]
+        if ($oldIsReceived || $newIsReceived) {
+            $this->updateInstock($products, $variants);
+        }
+
+        $sale->fill($attr);
+
+        # [16]
+        $sale->save();
+
+        # [17]
+        SaleDetail::insert($newDetails);
+
+        return $this->success([], "The sale invoice has been updated successfully");
     }
 }
