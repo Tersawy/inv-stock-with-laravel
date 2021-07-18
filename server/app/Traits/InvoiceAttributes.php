@@ -2,9 +2,10 @@
 
 namespace App\Traits;
 
-use App\Helpers\Constants;
+use App\Models\Customer;
 use App\Models\Supplier;
 use App\Models\Warehouse;
+use App\Helpers\Constants;
 
 trait InvoiceAttributes
 {
@@ -16,7 +17,7 @@ trait InvoiceAttributes
 
   public function customer()
   {
-    // return $this->belongsTo(Customer::class);
+    return $this->belongsTo(Customer::class);
   }
 
 
