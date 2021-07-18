@@ -124,12 +124,16 @@ class PurchaseController extends Controller
             it will be add quantity into product.instock but product has variant supposed to added quantity into variant.instock
         # 9  - Filter details to get whose has variant
         # 10 - check if new or old status is received and count of detailsHasVariants > 1 to get variants and details to check relations between products with them variants
-        # 11 - Subtract quantity from old products has not variants and variants by old details
-        # 12 - Sum quantity to new products has not variants and variants by new details
-        # 13 - delete old details from `purchase_details` by $purchase->id
-        # 14 - if old or new status is received update multiple products and variants
-        # 15 - update purchase with new data
-        # 16 - insert new details
+        # 11 - check quantity if the old status is received before taking any action on the quantity to prevent it from begin set instock with a negative number,
+            to show what is the broplem happen create purchase with any product with quantity 5 and status is received then go to create purchase return with the same product
+            with quantity 5 and status completed if you check instock of this products will be 0 because be purchased and returned it, so if you update purchase with any status
+            exept received whats happen ?! the product instock now is -5 !!!
+        # 12 - Subtract quantity from old products has not variants and variants by old details
+        # 13 - Sum quantity to new products has not variants and variants by new details
+        # 14 - delete old details from `purchase_details` by $purchase->id
+        # 15 - if old or new status is received update multiple products and variants
+        # 16 - update purchase with new data
+        # 17 - insert new details
      */
     public function update(Request $req, $id)
     {
@@ -193,20 +197,26 @@ class PurchaseController extends Controller
             if (!$isValid) return $this->error($errMsg, 422);
         }
 
-        # [11] Subtract Old Quantity
         if ($oldIsReceived) {
+
+            # [11]
+            list($isValid, $errMsg) = $this->checkingQuantity($oldDetails, $products, $variants, false, []);
+
+            if (!$isValid) return $this->error($errMsg, 422);
+
+            # [12] Subtract Old Quantity
             $this->subtractQuantity($variants, $oldDetails, $products);
         }
 
-        # [12] Sum New Quantity
+        # [13] Sum New Quantity
         if ($newIsReceived) {
             $this->sumQuantity($variants, $newDetails, $products);
         }
 
-        # [13]
+        # [14]
         PurchaseDetail::where('purchase_id', $purchase->id)->delete();
 
-        # [14]
+        # [15]
         if ($oldIsReceived || $newIsReceived) {
 
             $productsHasNoVariants = $this->filterProductsVariants($products, false);
@@ -218,10 +228,10 @@ class PurchaseController extends Controller
 
         $purchase->fill($attr);
 
-        # [15]
+        # [16]
         $purchase->save();
 
-        # [16]
+        # [17]
         PurchaseDetail::insert($newDetails);
 
         return $this->success([], "The Purchase has been updated successfully");
