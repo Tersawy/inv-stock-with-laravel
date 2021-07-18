@@ -222,4 +222,54 @@ class SaleController extends Controller
 
         return $this->success([], "The sale invoice has been updated successfully");
     }
+
+
+    public function moveToTrash(Request $req, $id)
+    {
+        SaleRequest::validationId($req);
+
+        $sale = Sale::find($id);
+
+        if (!$sale) return $this->error('This sale is not found', 404);
+
+        if ($sale->status === Constants::INVOICE_RECEIVED) {
+            return $this->error('Sorry, you can\'t remove this sale invoice because it received but you can create returned sale invoice', 422);
+        }
+
+        $sale->delete();
+
+        return $this->success('The sale invoice has been moved to trash successfully');
+    }
+
+
+    public function trashed()
+    {
+        $sales = Sale::onlyTrashed()->get();
+
+        return $this->success($sales);
+    }
+
+
+    public function restore(Request $req, $id)
+    {
+        SaleRequest::validationId($req);
+
+        $isDone = Sale::onlyTrashed()->where('id', $id)->restore();
+
+        if (!$isDone) return $this->error('The sale invoice is not in the trash', 404);
+
+        return $this->success($id, 'The sale invoice has been restored successfully');
+    }
+
+
+    public function remove(Request $req, $id)
+    {
+        SaleRequest::validationId($req);
+
+        $isDone = Sale::onlyTrashed()->where('id', $id)->forceDelete();
+
+        if (!$isDone) return $this->error('The sale invoice is not in the trash', 404);
+
+        return $this->success($id, 'The sale invoice has been deleted successfully');
+    }
 }
