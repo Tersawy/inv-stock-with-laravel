@@ -191,13 +191,9 @@ trait InvoiceOperations
    * @param \App\Models\ProductVariant[] $variants
    * @return array [true] | [false, errorMsg] 
    */
-  private function checkingQuantity($details, $products, $variants, $sumBeforeCheck, $detailsForSum): array
+  private function checkingQuantity($details, $products, $variants): array
   {
     $result = [true, null];
-
-    if ($sumBeforeCheck) {
-      $this->sumQuantity($variants, $detailsForSum, $products);
-    }
 
     foreach ($details as $detail) {
 
@@ -220,10 +216,6 @@ trait InvoiceOperations
           return [false, "{$product->name} has {$product['instock']} instock and you try to make {$detail['quantity']} quantity!"];
         }
       }
-    }
-
-    if ($sumBeforeCheck) {
-      $this->subtractQuantity($variants, $detailsForSum, $products);
     }
 
     return $result;
