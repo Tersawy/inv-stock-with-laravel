@@ -53,19 +53,21 @@ class PurchaseController extends Controller
     {
         $attr = PurchaseRequest::validationCreate($req);
 
-        list($isValid, $errMsg) = $this->checkDistinct($attr['products']);
+        $details = &$attr['products'];
+
+        list($isValid, $errMsg) = $this->checkDistinct($details);
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $ids = Arr::pluck($attr['products'], 'product_id');
+        $ids = Arr::pluck($details, 'product_id');
 
         $products = Product::find($ids);
 
-        list($isValid, $errMsg) = $this->checkProductsWithVariants($attr['products'], $products);
+        list($isValid, $errMsg) = $this->checkProductsWithVariants($details, $products);
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $detailsHasVariants = $this->filterDetailsVariants($attr['products'], true);
+        $detailsHasVariants = $this->filterDetailsVariants($details, true);
 
         if (count($detailsHasVariants)) {
 
@@ -78,32 +80,22 @@ class PurchaseController extends Controller
 
         $purchase = Purchase::create($attr);
 
-        foreach ($attr['products'] as &$detail) {
+        foreach ($details as &$detail) {
             $detail['purchase_id'] = $purchase->id;
             $detail['variant_id'] = Arr::get($detail, 'variant_id');
         }
 
-        PurchaseDetail::insert($attr['products']);
+        PurchaseDetail::insert($details);
 
         if ($req->status === Constants::INVOICE_RECEIVED) {
 
-            if (count($detailsHasVariants)) {
-
-                $this->sumVariantsQuantity($variants, $detailsHasVariants);
-
-                $this->updateMultiple($variants, ProductVariant::class, 'instock');
-            }
+            $this->sumQuantity($variants, $details, $products);
 
             $productsHasNoVariants = $this->filterProductsVariants($products, false);
 
-            if (count($productsHasNoVariants)) {
+            $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
 
-                $detailsHasNoVariants = $this->filterDetailsVariants($attr['products'], false);
-
-                $this->sumProductsQuantity($productsHasNoVariants, $detailsHasNoVariants);
-
-                $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
-            }
+            $this->updateMultiple($variants, ProductVariant::class, 'instock');
         }
 
         return $this->success([], "The Purchase has been created successfully");
