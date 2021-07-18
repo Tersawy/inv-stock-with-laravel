@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Requests\PurchaseReturnRequest;
 use App\Traits\InvoiceOperations;
 use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Models\PurchaseReturn;
 use App\Models\PurchaseReturnDetail;
 
@@ -53,19 +52,21 @@ class PurchaseReturnController extends Controller
     {
         $attr = PurchaseReturnRequest::validationCreate($req);
 
-        list($isValid, $errMsg) = $this->checkDistinct($attr['products']);
+        $details = &$attr['products'];
+
+        list($isValid, $errMsg) = $this->checkDistinct($details);
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $ids = Arr::pluck($attr['products'], 'product_id');
+        $ids = Arr::pluck($details, 'product_id');
 
         $products = Product::find($ids);
 
-        list($isValid, $errMsg) = $this->checkProductsWithVariants($attr['products'], $products);
+        list($isValid, $errMsg) = $this->checkProductsWithVariants($details, $products);
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $detailsHasVariants = $this->filterDetailsVariants($attr['products'], true);
+        $detailsHasVariants = $this->filterDetailsVariants($details, true);
 
         $variants = [];
 
@@ -78,38 +79,24 @@ class PurchaseReturnController extends Controller
             if (!$isValid) return $this->error($errMsg, 422);
         }
 
-        list($isValid, $errMsg) = $this->checkingQuantity($attr['products'], $products, $variants);
+        list($isValid, $errMsg) = $this->checkingQuantity($details, $products, $variants);
 
         if (!$isValid) return $this->error($errMsg, 422);
 
         $purchase = PurchaseReturn::create($attr);
 
-        foreach ($attr['products'] as &$detail) {
+        foreach ($details as &$detail) {
             $detail['purchase_return_id'] = $purchase->id;
             $detail['variant_id'] = Arr::get($detail, 'variant_id');
         }
 
-        PurchaseReturnDetail::insert($attr['products']);
+        PurchaseReturnDetail::insert($details);
 
         if ($req->status === Constants::INVOICE_RETURN_COMPLETED) {
 
-            if (count($detailsHasVariants)) {
+            $this->subtractQuantity($variants, $details, $products);
 
-                $this->subtractVariantsQuantity($variants, $detailsHasVariants);
-
-                $this->updateMultiple($variants, ProductVariant::class, 'instock');
-            }
-
-            $productsHasNoVariants = $this->filterProductsVariants($products, false);
-
-            if (count($productsHasNoVariants)) {
-
-                $detailsHasNoVariants = $this->filterDetailsVariants($attr['products'], false);
-
-                $this->subtractProductsQuantity($productsHasNoVariants, $detailsHasNoVariants);
-
-                $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
-            }
+            $this->updateInstock($products, $variants);
         }
 
         return $this->success([], "The Purchase return invoice has been created successfully");
@@ -222,12 +209,7 @@ class PurchaseReturnController extends Controller
 
         # [15]
         if ($oldIsCompleted || $newIsCompleted) {
-
-            $productsHasNoVariants = $this->filterProductsVariants($products, false);
-
-            $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
-
-            $this->updateMultiple($variants, ProductVariant::class, 'instock');
+            $this->updateInstock($products, $variants);
         }
 
         $purchase->fill($attr);
