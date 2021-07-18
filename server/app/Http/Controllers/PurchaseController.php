@@ -91,11 +91,7 @@ class PurchaseController extends Controller
 
             $this->sumQuantity($variants, $details, $products);
 
-            $productsHasNoVariants = $this->filterProductsVariants($products, false);
-
-            $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
-
-            $this->updateMultiple($variants, ProductVariant::class, 'instock');
+            $this->updateInstock($products, $variants);
         }
 
         return $this->success([], "The Purchase has been created successfully");
@@ -210,12 +206,7 @@ class PurchaseController extends Controller
 
         # [15]
         if ($oldIsReceived || $newIsReceived) {
-
-            $productsHasNoVariants = $this->filterProductsVariants($products, false);
-
-            $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
-
-            $this->updateMultiple($variants, ProductVariant::class, 'instock');
+            $this->updateInstock($products, $variants);
         }
 
         $purchase->fill($attr);
