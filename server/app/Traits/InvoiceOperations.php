@@ -87,6 +87,16 @@ trait InvoiceOperations
   }
 
 
+  private function updateInstock($products, $variants)
+  {
+    $productsHasNoVariants = $this->filterProductsVariants($products, false);
+
+    $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
+
+    $this->updateMultiple($variants, ProductVariant::class, 'instock');
+  }
+
+
   private function updateMultiple($values, $model, string $fieldUpdate, string $primaryKey = 'id', string $caseField = 'id')
   {
     if (count($values) < 1) return;
