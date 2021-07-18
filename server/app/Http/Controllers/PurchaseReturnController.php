@@ -118,8 +118,8 @@ class PurchaseReturnController extends Controller
             it will be add quantity into product.instock but product has variant supposed to added quantity into variant.instock
         # 9  - Filter details to get whose has variant
         # 10 - check if new or old status is completed and count of detailsHasVariants > 1 to get variants and details to check relations between products with them variants
-        # 11 - check quantity if the new status is completed before taking any action on the quantity to prevent it from begin set instock with a negative number
-        # 12 - Sum old details quantity to instock to restore old instock if old status is completed
+        # 11 - Sum old details quantity to instock to restore old instock if old status is completed
+        # 12 - check quantity if the new status is completed before taking any action on the quantity to prevent it from begin set instock with a negative number
         # 13 - Subtract new details quantity from instock if new status is completed
         # 14 - delete old details from `purchase_return_details` by $purchase_return->id
         # 15 - if old or new status is completed update multiple products and variants
@@ -188,14 +188,14 @@ class PurchaseReturnController extends Controller
             if (!$isValid) return $this->error($errMsg, 422);
         }
 
-        # [12] Sum Old Quantity
+        # [11] Sum Old Quantity
         if ($oldIsCompleted) {
             $this->sumQuantity($variants, $oldDetails, $products);
         }
 
         if ($newIsCompleted) {
 
-            # [11] Check Quantity before subtract
+            # [12] Check Quantity before subtract
             list($isValid, $errMsg) = $this->checkingQuantity($newDetails, $products, $variants);
 
             if (!$isValid) return $this->error($errMsg, 422);
