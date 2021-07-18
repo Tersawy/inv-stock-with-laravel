@@ -78,7 +78,7 @@ class PurchaseReturnController extends Controller
             if (!$isValid) return $this->error($errMsg, 422);
         }
 
-        list($isValid, $errMsg) = $this->checkingQuantity($attr['products'], $products, $variants, false, []);
+        list($isValid, $errMsg) = $this->checkingQuantity($attr['products'], $products, $variants);
 
         if (!$isValid) return $this->error($errMsg, 422);
 
@@ -201,19 +201,19 @@ class PurchaseReturnController extends Controller
             if (!$isValid) return $this->error($errMsg, 422);
         }
 
-        # [11] Check Quantity before subtract
-        if ($newIsCompleted) {
-            list($isValid, $errMsg) = $this->checkingQuantity($newDetails, $products, $variants, $oldIsCompleted, $oldDetails);
-            if (!$isValid) return $this->error($errMsg, 422);
-        }
-
         # [12] Sum Old Quantity
         if ($oldIsCompleted) {
             $this->sumQuantity($variants, $oldDetails, $products);
         }
 
-        # [13] Subtract New Quantity
         if ($newIsCompleted) {
+
+            # [11] Check Quantity before subtract
+            list($isValid, $errMsg) = $this->checkingQuantity($newDetails, $products, $variants);
+
+            if (!$isValid) return $this->error($errMsg, 422);
+
+            # [13] Subtract New Quantity
             $this->subtractQuantity($variants, $newDetails, $products);
         }
 

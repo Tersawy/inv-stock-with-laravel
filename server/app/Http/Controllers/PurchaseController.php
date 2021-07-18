@@ -200,7 +200,7 @@ class PurchaseController extends Controller
         if ($oldIsReceived) {
 
             # [11]
-            list($isValid, $errMsg) = $this->checkingQuantity($oldDetails, $products, $variants, false, []);
+            list($isValid, $errMsg) = $this->checkingQuantity($oldDetails, $products, $variants);
 
             if (!$isValid) return $this->error($errMsg, 422);
 
