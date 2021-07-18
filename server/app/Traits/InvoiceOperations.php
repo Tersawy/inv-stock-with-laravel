@@ -210,14 +210,14 @@ trait InvoiceOperations
         $final = $variant['instock'] - $detail['quantity'];
 
         if ($final < 0) {
-          return [false, "{$product->name}-{$variant['name']} has {$variant['instock']} and you try to make return {$detail['quantity']}!"];
+          return [false, "{$product->name}-{$variant['name']} has {$variant['instock']} instock and you try to make {$detail['quantity']} quantity!"];
         }
       } else {
 
         $final = $product['instock'] - $detail['quantity'];
 
         if ($final < 0) {
-          return [false, "{$product->name} has {$product['instock']} and you try to make return {$detail['quantity']}!"];
+          return [false, "{$product->name} has {$product['instock']} instock and you try to make {$detail['quantity']} quantity!"];
         }
       }
     }
