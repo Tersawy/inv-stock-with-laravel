@@ -25,7 +25,7 @@ class CreateProductWarehousesTable extends Migration
             $table->unsignedBigInteger('product_variant_id')->nullable();
             $table->foreign('product_variant_id')->references('id')->on('product_variants')->onDelete('cascade');
 
-            $table->float('instock', 10, 0);
+            $table->float('instock', 10, 0)->default(0);
 
             $table->timestamps();
         });
