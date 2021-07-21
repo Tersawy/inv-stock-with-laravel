@@ -3,10 +3,11 @@
 namespace App\Requests;
 
 use App\Helpers\Constants;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class ProductRequest
+class ProductRequest extends ValidateRequest
 {
 
   public static function rules(Request $req)
@@ -27,27 +28,16 @@ class ProductRequest
       'has_variants'      => ['required', 'boolean'],
       'has_images'        => ['required', 'boolean'],
     ];
-
-    $variants_rules = [
-      'variants'              => ['required', 'array', 'max:54', 'min:1'],
-      'variants.*'            => ['required', 'array', 'max:54', 'min:1'],
-      'variants.*.name'       => ['required', 'string', 'distinct', 'max:54', 'min:3']
-    ];
-
-    if ($req->has_variants && is_array($req->variants) && count($req->variants)) {
-      $rules = array_merge($rules, $variants_rules);
-    } else {
-      $req->has_variants = false;
-    }
-
+    
     $images_rules = [
       'images'            => ['required', 'array', 'max:54', 'min:1'],
       'images.*'          => ['required', 'array', 'max:54', 'min:1'],
       'images.*.path'     => ['required', 'base64_image:jpeg,png,jpg']
     ];
 
-    if ($req->has_images) {
+    if (count(Arr::get('images', []))) {
       $rules = array_merge($rules, $images_rules);
+      $req->has_images = true;
     } else {
       $req->has_images = false;
     }
@@ -56,7 +46,7 @@ class ProductRequest
   }
 
 
-  public static function ruleOfCreate(Request $req)
+  public static function validationCreate(Request $req)
   {
     $rules = ProductRequest::rules($req);
 
@@ -65,11 +55,13 @@ class ProductRequest
       'code' => ['required', 'string', 'max:54', 'min:3', 'unique:products']
     ];
 
-    return array_merge($rules, $newRules);
+    $rules = array_merge($rules, $newRules);
+
+    return $req->validate($rules);
   }
 
 
-  public static function ruleOfUpdate(Request $req)
+  public static function validationUpdate(Request $req)
   {
     $rules = ProductRequest::rules($req);
 
@@ -79,6 +71,8 @@ class ProductRequest
       'code'  => ['required', 'string', 'max:54', 'min:3', 'unique:products,code,' . $req->id]
     ];
 
-    return array_merge($rules, $newRules);
+    $rules = array_merge($rules, $newRules);
+
+    return $req->validate($rules);
   }
 }
