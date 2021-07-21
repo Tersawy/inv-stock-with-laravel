@@ -27,6 +27,7 @@ class CreateProductWarehousesTable extends Migration
 
             $table->float('instock', 10, 0)->default(0);
 
+            $table->softDeletes();
             $table->timestamps();
         });
     }
