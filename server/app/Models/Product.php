@@ -70,6 +70,11 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    public function warehouses()
+    {
+        return $this->hasMany(ProductWarehouse::class, 'product_variant_id');
+    }
+
     // const BARCODE_UPC_TYPE       = "UPC";
     // const BARCODE_EAN8_TYPE      = "EAN-8";
     // const BARCODE_EAN13_TYPE     = "EAN-13";
