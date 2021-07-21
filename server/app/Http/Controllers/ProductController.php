@@ -6,14 +6,16 @@ use App\Models\Product;
 use Illuminate\Support\Arr;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
-use App\Models\ProductVariant;
+use App\Models\ProductWarehouse;
 use App\Requests\ProductRequest;
-use GuzzleHttp\Handler\Proxy;
+use App\Traits\ProductWarehouseOperations;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+  use ProductWarehouseOperations;
+
   public function index()
   {
     $category = ['category' => function ($query) {
@@ -142,11 +144,7 @@ class ProductController extends Controller
 
   public function create(Request $req)
   {
-    $attr = $req->validate(ProductRequest::ruleOfCreate($req));
-
-    // this is because we set them in $req in ruleOfCreate based on variants or images data
-    $attr['has_variants'] = $req->has_variants;
-    $attr['has_images'] = $req->has_images;
+    $attr = ProductRequest::validationCreate($req);
 
     $product = Product::create($attr);
 
@@ -154,19 +152,15 @@ class ProductController extends Controller
 
     if ($req->has_variants) $this->createVariants($req, $product);
 
-    return $this->success([], 'The Product has been created successfully');
+    $this->addProductToWarehouses($product);
+
+    return $this->success([], 'The product has been created successfully');
   }
 
 
   public function update(Request $req)
   {
-    $req->merge(['id' => $req->route('id')]);
-
-    $attr = $req->validate(ProductRequest::ruleOfUpdate($req));
-
-    // this is because we set them in $req in ruleOfCreate based on variants or images data
-    $attr['has_variants'] = $req->has_variants;
-    $attr['has_images'] = $req->has_images;
+    $attr = ProductRequest::validationUpdate($req);
 
     $product = Product::find($req->id);
 
@@ -176,37 +170,76 @@ class ProductController extends Controller
 
     $product->save();
 
-    $oldImages = ProductImage::where('product_id', $req->id)->get(['name', 'id']);
-
-    if (count($oldImages)) {
-
-      $imagesNames = Arr::pluck($oldImages, 'name');
-
-      $imagesIds = Arr::pluck($oldImages, 'id');
-
-      $images = array_map(function ($value) {
-        return public_path('images/products/') . $value;
-      }, $imagesNames);
-
-      File::delete($images);
-
-      ProductImage::destroy($imagesIds);
-    }
-
-    $oldVariants = ProductVariant::where('product_id', $req->id)->get(['id', 'product_id']);
-
-    if (count($oldVariants)) {
-
-      $variantsIds = Arr::pluck($oldVariants, 'id');
-
-      ProductVariant::destroy($variantsIds);
-    }
+    if ($product->has_images) $this->deleteImages($product->images);
 
     if ($req->has_images) $this->createImages($req, $product);
 
-    if ($req->has_variants) $this->createVariants($req, $product);
+    return $this->success($product, 'The product has been updated successfully');
+  }
 
-    return $this->success(Arr::pluck($oldVariants, 'id'), 'The Product has been updated successfully');
+
+  public function moveToTrash(Request $req)
+  {
+    ProductRequest::validationId($req);
+
+    $product = Product::find($req->id);
+
+    if (!$product) return $this->error('The product was not found', 404);
+
+    if ($product->has_variants) {
+
+      $variants = $product->variants;
+
+      foreach ($variants as $variant) {
+        if ($variant->instock > 0) {
+          return $this->error("Sorry, You can\'t remove this product because it has a variant ({$variant->name}) has instock", 422);
+        }
+      }
+    } else {
+      if ($product->instock > 0) {
+        return $this->error('Sorry, You can\'t remove this product because it has instock', 422);
+      }
+    }
+
+    ProductWarehouse::where('product_id', $product->id)->update(['deleted_at', now()]);
+
+    $product->delete();
+
+    return $this->success('The product has been moved to trash successfully');
+  }
+
+
+  public function trashed()
+  {
+    $products = Product::onlyTrashed()->get();
+
+    return $this->success($products);
+  }
+
+
+  public function restore(Request $req)
+  {
+    ProductRequest::validationId($req);
+
+    $isDone = Product::onlyTrashed()->where('id', $req->id)->restore();
+
+    if (!$isDone) return $this->error('The product is not in the trash', 404);
+
+    ProductWarehouse::where('product_id', $req->id)->update(['deleted_at', null]);
+
+    return $this->success($req->id, 'The product has been restored successfully');
+  }
+
+
+  public function remove(Request $req)
+  {
+    ProductRequest::validationId($req);
+
+    $isDone = Product::onlyTrashed()->where('id', $req->id)->forceDelete();
+
+    if (!$isDone) return $this->error('The product is not in the trash', 404);
+
+    return $this->success($req->id, 'The product has been deleted successfully');
   }
 
 
@@ -237,40 +270,18 @@ class ProductController extends Controller
   }
 
 
-  private function createVariants(Request $req, Product $product)
+  private function deleteImages(ProductImage ...$images)
   {
-    $variants = [];
+    $imagesNames = Arr::pluck($images, 'name');
 
-    foreach ($req->variants as $variant) {
-      $variants[] = ['product_id' => $product->id, 'name' => $variant['name']];
-    }
+    $imagesIds = Arr::pluck($images, 'id');
 
-    ProductVariant::insert($variants);
+    $images = array_map(function ($value) {
+      return public_path('images/products/') . $value;
+    }, $imagesNames);
+
+    File::delete($images);
+
+    ProductImage::destroy($imagesIds);
   }
 }
-
-
-
-    // if ($req->has_images) {
-
-    //   $images = [];
-
-    //   // return $this->success($req->file('images'));
-
-    //   foreach ($req->file('images') as $file) {
-
-    //     $code = $req->code;
-
-    //     $date = date('_y_m_d_s_') . explode('.', explode(' ', microtime())[0])[1];
-
-    //     $ext = '.' . $file['path']->getClientOriginalExtension();
-
-    //     $imageName = 'product_' . $code . $date . $ext;
-
-    //     $file['path']->move(public_path('/images/products'), $imageName);
-
-    //     $images[] = ['product_id' => $product->id, 'name' => $imageName];
-    //   }
-
-    //   ProductImage::insert($images);
-    // }
