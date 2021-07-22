@@ -56,7 +56,7 @@ trait ProductWarehouseOperations
   }
 
 
-  function sumWarehouseQuantity($warehouseId, $details, $products, $unitName)
+  function sumWarehouseQuantity($warehouseId, $details, $products, $unitName) // $unitName => sale_unit, purchase_unit
   {
     foreach ($details as $detail) {
 
