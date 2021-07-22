@@ -95,6 +95,9 @@ class SaleController extends Controller
             $this->subtractQuantity($variants, $details, $products);
 
             $this->updateInstock($products, $variants);
+
+            $this->subtractWarehouseQuantity($req->warehouse_id, $details, $products, 'sale_unit');
+
         }
 
         return $this->success([], "The sale invoice has been created successfully");
@@ -202,6 +205,14 @@ class SaleController extends Controller
 
             # [13] Subtract New Quantity
             $this->subtractQuantity($variants, $newDetails, $products);
+        }
+
+        if ($oldIsReceived) {
+            $this->sumWarehouseQuantity($req->warehouse_id, $oldDetails, $products, 'sale_unit');
+        }
+        
+        if ($newIsReceived) {
+            $this->subtractWarehouseQuantity($req->warehouse_id, $newDetails, $products, 'sale_unit');
         }
 
         # [14]

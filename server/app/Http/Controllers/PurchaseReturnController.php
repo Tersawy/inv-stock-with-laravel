@@ -97,6 +97,8 @@ class PurchaseReturnController extends Controller
             $this->subtractQuantity($variants, $details, $products);
 
             $this->updateInstock($products, $variants);
+
+            $this->subtractWarehouseQuantity($req->warehouse_id, $details, $products, 'purchase_unit');
         }
 
         return $this->success([], "The Purchase return invoice has been created successfully");
@@ -202,6 +204,14 @@ class PurchaseReturnController extends Controller
 
             # [13] Subtract New Quantity
             $this->subtractQuantity($variants, $newDetails, $products);
+        }
+
+        if ($oldIsCompleted) {
+            $this->sumWarehouseQuantity($req->warehouse_id, $oldDetails, $products, 'purchase_unit');
+        }
+        
+        if ($newIsCompleted) {
+            $this->subtractWarehouseQuantity($req->warehouse_id, $newDetails, $products, 'purchase_unit');
         }
 
         # [14]

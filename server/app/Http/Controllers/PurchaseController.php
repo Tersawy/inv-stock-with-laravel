@@ -7,14 +7,14 @@ use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use App\Models\ProductVariant;
 use App\Models\PurchaseDetail;
 use App\Requests\PurchaseRequest;
 use App\Traits\InvoiceOperations;
+use App\Traits\ProductWarehouseOperations;
 
 class PurchaseController extends Controller
 {
-    use InvoiceOperations;
+    use InvoiceOperations, ProductWarehouseOperations;
 
 
     public function index()
@@ -92,6 +92,8 @@ class PurchaseController extends Controller
             $this->sumQuantity($variants, $details, $products);
 
             $this->updateInstock($products, $variants);
+
+            $this->sumWarehouseQuantity($req->warehouse_id, $details, $products, 'purchase_unit');
         }
 
         return $this->success([], "The Purchase has been created successfully");
@@ -194,11 +196,15 @@ class PurchaseController extends Controller
 
             # [12] Subtract Old Quantity
             $this->subtractQuantity($variants, $oldDetails, $products);
+
+            $this->subtractWarehouseQuantity($req->warehouse_id, $oldDetails, $products, 'purchase_unit');
         }
 
         # [13] Sum New Quantity
         if ($newIsReceived) {
             $this->sumQuantity($variants, $newDetails, $products);
+
+            $this->sumWarehouseQuantity($req->warehouse_id, $newDetails, $products, 'purchase_unit');
         }
 
         # [14]

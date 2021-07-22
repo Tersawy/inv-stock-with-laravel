@@ -97,6 +97,8 @@ class SaleReturnController extends Controller
             $this->sumQuantity($variants, $details, $products);
 
             $this->updateInstock($products, $variants);
+
+            $this->sumWarehouseQuantity($req->warehouse_id, $details, $products, 'sale_unit');
         }
 
         return $this->success([], "The Sale return invoice has been created successfully");
@@ -197,11 +199,15 @@ class SaleReturnController extends Controller
 
             # [11] Subtract Old Quantity
             $this->subtractQuantity($variants, $oldDetails, $products);
+
+            $this->subtractWarehouseQuantity($req->warehouse_id, $newDetails, $products, 'sale_unit');
         }
 
         # [13] Sum New Quantity
         if ($newIsCompleted) {
             $this->sumQuantity($variants, $newDetails, $products);
+
+            $this->sumWarehouseQuantity($req->warehouse_id, $oldDetails, $products, 'sale_unit');
         }
 
         # [14]
