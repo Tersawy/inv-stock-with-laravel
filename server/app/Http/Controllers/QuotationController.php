@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Models\Quotation;
-use App\Helpers\Constants;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Models\QuotationDetail;
