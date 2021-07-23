@@ -51,19 +51,19 @@ trait InvoiceAttributes
   }
 
 
-  public function getPaymentStatusAttribute()
-  {
-    $total = $this->getGrandTotalAttribute();
+  // public function getPaymentStatusAttribute()
+  // {
+  //   $total = $this->getGrandTotalAttribute();
 
-    $due = $this->getDueAttribute();
+  //   $due = $this->getDueAttribute();
 
-    if ($due === $total) return "Unpaid";
+  //   if ($due === $total) return "Unpaid";
 
-    if ($due <= 0) return "Paid";
+  //   if ($due <= 0) return "Paid";
 
-    // if ($due > 0 && $due < $total) return "Partial";
-    return "Partial";
-  }
+  //   // if ($due > 0 && $due < $total) return "Partial";
+  //   return "Partial";
+  // }
 
 
   private function getTotalPriceOfDetails()
