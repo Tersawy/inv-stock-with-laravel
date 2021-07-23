@@ -27,7 +27,7 @@ class CreateQuotationDetailsTable extends Migration
             $table->bigInteger('variant_id')->nullable();
 
             $table->unsignedBigInteger('product_id');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
 
             $table->unsignedBigInteger('quotation_id');
             $table->foreign('quotation_id')->references('id')->on('quotations')->onDelete('cascade');

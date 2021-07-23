@@ -27,7 +27,7 @@ class CreateSaleReturnDetailsTable extends Migration
             $table->bigInteger('variant_id')->nullable();
 
             $table->unsignedBigInteger('product_id');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
 
             $table->unsignedBigInteger('sale_return_id');
             $table->foreign('sale_return_id')->references('id')->on('sale_returns')->onDelete('cascade');
