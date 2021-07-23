@@ -92,4 +92,50 @@ class QuotationController extends Controller
 
         return $this->success([], "The quotation has been updated successfully");
     }
+
+
+    public function moveToTrash(Request $req, $id)
+    {
+        QuotationRequest::validationId($req);
+
+        $quotation = Quotation::find($id);
+
+        if (!$quotation) return $this->error('This quotation is not found', 404);
+
+        $quotation->delete();
+
+        return $this->success('The quotation has been moved to trash successfully');
+    }
+
+
+    public function trashed()
+    {
+        $quotations = Quotation::onlyTrashed()->get();
+
+        return $this->success($quotations);
+    }
+
+
+    public function restore(Request $req, $id)
+    {
+        QuotationRequest::validationId($req);
+
+        $isDone = Quotation::onlyTrashed()->where('id', $id)->restore();
+
+        if (!$isDone) return $this->error('The quotation is not in the trash', 404);
+
+        return $this->success($id, 'The quotation has been restored successfully');
+    }
+
+
+    public function remove(Request $req, $id)
+    {
+        QuotationRequest::validationId($req);
+
+        $isDone = Quotation::onlyTrashed()->where('id', $id)->forceDelete();
+
+        if (!$isDone) return $this->error('The quotation is not in the trash', 404);
+
+        return $this->success($id, 'The quotation has been deleted successfully');
+    }
 }
