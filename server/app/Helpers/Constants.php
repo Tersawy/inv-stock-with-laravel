@@ -31,6 +31,11 @@ class Constants
   const QUOTATION_STATUS  = [Constants::QUOTATION_SENT, Constants::QUOTATION_PENDING];
 
 
+  const ADJUSTMENT_ADDITION    = 0;
+  const ADJUSTMENT_SUBTRACTION = 1;
+  const ADJUSTMENT_STATUS  = [Constants::ADJUSTMENT_ADDITION, Constants::ADJUSTMENT_SUBTRACTION];
+
+
   const TAX_EXCLUSIVE = 0;
   const TAX_INCLUSIVE = 1;
   const TAX_METHODS   = [Constants::TAX_EXCLUSIVE, Constants::TAX_INCLUSIVE];
