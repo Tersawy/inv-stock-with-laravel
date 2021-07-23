@@ -20,6 +20,7 @@ class SaleReturn extends Model
         'status',
         'shipping',
         'note',
+        'payment_status',
         'date'
     ];
 

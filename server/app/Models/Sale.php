@@ -19,6 +19,7 @@ class Sale extends Model
         'status',
         'shipping',
         'note',
+        'payment_status',
         'date'
     ];
 
