@@ -51,6 +51,21 @@ trait InvoiceAttributes
   }
 
 
+  public function getNewPaymentStatusAttribute()
+  {
+    $total = $this->getGrandTotalAttribute();
+
+    $due = $this->getDueAttribute();
+
+    if ($due === $total) return Constants::PAYMENT_STATUS_UNPAID;
+
+    if ($due <= 0) return Constants::PAYMENT_STATUS_PAID;
+
+    // if ($due > 0 && $due < $total) return "Partial";
+    return Constants::PAYMENT_STATUS_PARTIAL;
+  }
+
+
   // public function getPaymentStatusAttribute()
   // {
   //   $total = $this->getGrandTotalAttribute();
