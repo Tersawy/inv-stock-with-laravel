@@ -61,4 +61,35 @@ class QuotationController extends Controller
 
         return $this->success([], "The quotation has been created successfully");
     }
+
+
+    public function update(Request $req, $id)
+    {
+        $attr = QuotationRequest::validationUpdate($req);
+
+        $newDetails = &$attr['products'];
+
+        list($isValid, $errMsg) = $this->checkDistinct($newDetails);
+
+        if (!$isValid) return $this->error($errMsg, 422);
+
+        $quotation = Quotation::find($id);
+
+        if (!$quotation) return $this->error('The quotation was not found', 404);
+
+        foreach ($newDetails as &$detail) {
+            $detail['quotation_id'] = $quotation->id;
+            $detail['variant_id'] = Arr::get($detail, 'variant_id');
+        }
+
+        QuotationDetail::where('quotation_id', $quotation->id)->delete();
+
+        $quotation->fill($attr);
+
+        $quotation->save();
+
+        QuotationDetail::insert($newDetails);
+
+        return $this->success([], "The quotation has been updated successfully");
+    }
 }
