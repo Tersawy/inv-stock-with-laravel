@@ -92,7 +92,7 @@ class PurchaseReturnController extends Controller
 
         PurchaseReturnDetail::insert($details);
 
-        if ($req->status === Constants::INVOICE_RETURN_COMPLETED) {
+        if ($req->status === Constants::PURCHASE_RETURN_COMPLETED) {
 
             $this->subtractQuantity($variants, $details, $products);
 
@@ -171,9 +171,9 @@ class PurchaseReturnController extends Controller
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $oldIsCompleted = $purchase->status == Constants::INVOICE_RETURN_COMPLETED;
+        $oldIsCompleted = $purchase->status == Constants::PURCHASE_RETURN_COMPLETED;
 
-        $newIsCompleted = $req->status == Constants::INVOICE_RETURN_COMPLETED;
+        $newIsCompleted = $req->status == Constants::PURCHASE_RETURN_COMPLETED;
 
         # [9]
         $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
@@ -242,7 +242,7 @@ class PurchaseReturnController extends Controller
 
         if (!$purchase) return $this->error('This purchase return invoice is not found', 404);
 
-        if ($purchase->status === Constants::INVOICE_RETURN_COMPLETED) {
+        if ($purchase->status === Constants::PURCHASE_RETURN_COMPLETED) {
             return $this->error('Sorry, you can\'t remove this purchase return invoice because it completed but you can create a new purchase invoice', 422);
         }
 

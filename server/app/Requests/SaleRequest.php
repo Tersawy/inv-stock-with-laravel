@@ -17,7 +17,7 @@ class SaleRequest extends ValidateRequest
       'tax'                         => ['required', 'numeric', 'min:0'],
       'discount'                    => ['required', 'numeric', 'min:0'],
       'discount_method'             => ['required', 'numeric', Rule::in(Constants::DISCOUNT_METHODS)],
-      'status'                      => ['required', 'numeric', Rule::in(Constants::INVOICE_STATUS)],
+      'status'                      => ['required', 'numeric', Rule::in(Constants::SALE_STATUS)],
       'shipping'                    => ['required', 'numeric', 'min:0'],
       'note'                        => ['string', 'max:255', 'nullable'],
       'date'                        => ['required', 'string', 'max:10', 'date_format:Y-m-d'],

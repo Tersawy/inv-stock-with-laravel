@@ -87,7 +87,7 @@ class PurchaseController extends Controller
 
         PurchaseDetail::insert($details);
 
-        if ($req->status === Constants::INVOICE_RECEIVED) {
+        if ($req->status === Constants::PURCHASE_RECEIVED) {
 
             $this->sumQuantity($variants, $details, $products);
 
@@ -168,9 +168,9 @@ class PurchaseController extends Controller
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $oldIsReceived = $purchase->status == Constants::INVOICE_RECEIVED;
+        $oldIsReceived = $purchase->status == Constants::PURCHASE_RECEIVED;
 
-        $newIsReceived = $req->status == Constants::INVOICE_RECEIVED;
+        $newIsReceived = $req->status == Constants::PURCHASE_RECEIVED;
 
         # [9]
         $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
@@ -235,7 +235,7 @@ class PurchaseController extends Controller
 
         if (!$purchase) return $this->error('This purchase is not found', 404);
 
-        if ($purchase->status === Constants::INVOICE_RECEIVED) {
+        if ($purchase->status === Constants::PURCHASE_RECEIVED) {
             return $this->error('Sorry, you can\'t remove this purchase because it received but you can create returned purchase invoice', 422);
         }
 

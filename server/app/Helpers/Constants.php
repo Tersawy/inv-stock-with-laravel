@@ -4,15 +4,26 @@ namespace App\Helpers;
 
 class Constants
 {
-  const INVOICE_RECEIVED  = 0;
-  const INVOICE_PENDING   = 1;
-  const INVOICE_ORDERED   = 2;
-  const INVOICE_STATUS    = [Constants::INVOICE_RECEIVED, Constants::INVOICE_PENDING, Constants::INVOICE_ORDERED];
+  const PURCHASE_RECEIVED = 0;
+  const PURCHASE_PENDING  = 1;
+  const PURCHASE_ORDERED  = 2;
+  const PURCHASE_STATUS   = [Constants::PURCHASE_RECEIVED, Constants::PURCHASE_PENDING, Constants::PURCHASE_ORDERED];
 
 
-  const INVOICE_RETURN_COMPLETED = 0;
-  const INVOICE_RETURN_PENDING   = 1;
-  const INVOICE_RETURN_STATUS    = [Constants::INVOICE_RETURN_COMPLETED, Constants::INVOICE_RETURN_PENDING];
+  const PURCHASE_RETURN_COMPLETED = 0;
+  const PURCHASE_RETURN_PENDING   = 1;
+  const PURCHASE_RETURN_STATUS    = [Constants::PURCHASE_RETURN_COMPLETED, Constants::PURCHASE_RETURN_PENDING];
+
+
+  const SALE_COMPLETED = 0;
+  const SALE_PENDING   = 1;
+  const SALE_ORDERED   = 2;
+  const SALE_STATUS    = [Constants::SALE_COMPLETED, Constants::SALE_PENDING, Constants::SALE_ORDERED];
+
+
+  const SALE_RETURN_RECEIVED = 0;
+  const SALE_RETURN_PENDING  = 1;
+  const SALE_RETURN_STATUS   = [Constants::SALE_RETURN_RECEIVED, Constants::SALE_RETURN_PENDING];
 
 
   const TAX_EXCLUSIVE = 0;

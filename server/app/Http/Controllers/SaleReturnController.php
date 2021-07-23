@@ -92,7 +92,7 @@ class SaleReturnController extends Controller
 
         SaleReturnDetail::insert($details);
 
-        if ($req->status === Constants::INVOICE_RETURN_COMPLETED) {
+        if ($req->status === Constants::SALE_RETURN_RECEIVED) {
 
             $this->sumQuantity($variants, $details, $products);
 
@@ -171,9 +171,9 @@ class SaleReturnController extends Controller
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $oldIsCompleted = $sale->status == Constants::INVOICE_RETURN_COMPLETED;
+        $oldIsCompleted = $sale->status == Constants::SALE_RETURN_RECEIVED;
 
-        $newIsCompleted = $req->status == Constants::INVOICE_RETURN_COMPLETED;
+        $newIsCompleted = $req->status == Constants::SALE_RETURN_RECEIVED;
 
         # [9]
         $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
@@ -238,7 +238,7 @@ class SaleReturnController extends Controller
 
         if (!$sale) return $this->error('This sale return invoice is not found', 404);
 
-        if ($sale->status === Constants::INVOICE_RETURN_COMPLETED) {
+        if ($sale->status === Constants::SALE_RETURN_RECEIVED) {
             return $this->error('Sorry, you can\'t remove this sale return invoice because it completed but you can create a new sale invoice', 422);
         }
 

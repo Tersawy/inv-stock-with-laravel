@@ -86,7 +86,7 @@ class SaleController extends Controller
 
         SaleDetail::insert($details);
 
-        if ($req->status === Constants::INVOICE_RECEIVED) {
+        if ($req->status === Constants::SALE_COMPLETED) {
 
             list($isValid, $errMsg) = $this->checkingQuantity($details, $products, $variants);
 
@@ -172,9 +172,9 @@ class SaleController extends Controller
 
         if (!$isValid) return $this->error($errMsg, 422);
 
-        $oldIsReceived = $sale->status == Constants::INVOICE_RECEIVED;
+        $oldIsReceived = $sale->status == Constants::SALE_COMPLETED;
 
-        $newIsReceived = $req->status == Constants::INVOICE_RECEIVED;
+        $newIsReceived = $req->status == Constants::SALE_COMPLETED;
 
         # [9]
         $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
@@ -243,7 +243,7 @@ class SaleController extends Controller
 
         if (!$sale) return $this->error('This sale is not found', 404);
 
-        if ($sale->status === Constants::INVOICE_RECEIVED) {
+        if ($sale->status === Constants::SALE_COMPLETED) {
             return $this->error('Sorry, you can\'t remove this sale invoice because it received but you can create returned sale invoice', 422);
         }
 
