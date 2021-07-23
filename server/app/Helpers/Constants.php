@@ -26,6 +26,11 @@ class Constants
   const SALE_RETURN_STATUS   = [Constants::SALE_RETURN_RECEIVED, Constants::SALE_RETURN_PENDING];
 
 
+  const QUOTATION_SENT    = 0;
+  const QUOTATION_PENDING = 1;
+  const QUOTATION_STATUS  = [Constants::QUOTATION_SENT, Constants::QUOTATION_PENDING];
+
+
   const TAX_EXCLUSIVE = 0;
   const TAX_INCLUSIVE = 1;
   const TAX_METHODS   = [Constants::TAX_EXCLUSIVE, Constants::TAX_INCLUSIVE];
@@ -52,9 +57,9 @@ class Constants
   ];
 
 
-  const PAYMENT_STATUS_PAID = 0;
-  const PAYMENT_STATUS_UNPAID = 1;
-  const PAYMENT_STATUS_PARTIAL = 2;
+  const PAYMENT_STATUS_PAID     = 0;
+  const PAYMENT_STATUS_UNPAID   = 1;
+  const PAYMENT_STATUS_PARTIAL  = 2;
 
   const PAYMENT_STATUS = [
     Constants::PAYMENT_STATUS_PAID,
