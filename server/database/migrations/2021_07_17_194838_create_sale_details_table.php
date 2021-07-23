@@ -18,7 +18,7 @@ class CreateSaleDetailsTable extends Migration
             $table->id();
 
             $table->integer("price");
-            $table->integer("quantity");
+            $table->float("quantity");
             $table->integer('tax')->default(0);
             $table->tinyInteger("tax_method")->default(Constants::TAX_EXCLUSIVE); // 0 Exclusive, 1 Inclusive
             $table->integer('discount')->default(0);
