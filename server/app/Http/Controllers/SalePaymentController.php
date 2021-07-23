@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sale;
-use Illuminate\Http\Request;
+use App\Helpers\Constants;
 use App\Models\SalePayment;
+use Illuminate\Http\Request;
 use App\Requests\SalePaymentRequest;
 
 class SalePaymentController extends Controller
@@ -17,11 +18,15 @@ class SalePaymentController extends Controller
 
     if (!$sale) return $this->error('The sale invoice is not found to add payment', 404);
 
-    if ($sale->payment_status == 'Paid') {
+    if ($sale->payment_status == Constants::PAYMENT_STATUS_PAID) {
       return $this->error('This sale invoice has been paid !', 422);
     }
 
     SalePayment::create($attr);
+
+    $sale->payment_status = $sale->new_payment_status;
+
+    $sale->save();
 
     return $this->success([], 'The Payment has been added successfully');
   }
@@ -30,6 +35,10 @@ class SalePaymentController extends Controller
   public function update(Request $req, $saleId, $id)
   {
     $attr = SalePaymentRequest::validationUpdate($req);
+
+    $sale = Sale::find($saleId);
+
+    if (!$sale) return $this->error('The sale invoice is not found to add payment', 404);
 
     $payment = SalePayment::find($id);
 
@@ -41,6 +50,10 @@ class SalePaymentController extends Controller
 
     $payment->save();
 
+    $sale->payment_status = $sale->new_payment_status;
+
+    $sale->save();
+
     return $this->success([], 'The Payment has been updated successfully');
   }
 
@@ -49,11 +62,19 @@ class SalePaymentController extends Controller
   {
     SalePaymentRequest::validationRemove($req);
 
+    $sale = Sale::find($saleId);
+
+    if (!$sale) return $this->error('The sale invoice is not found to add payment', 404);
+
     $payment = SalePayment::find($id);
 
     if (!$payment) return $this->error('This payment is not found', 404);
 
     $payment->delete();
+
+    $sale->payment_status = $sale->new_payment_status;
+
+    $sale->save();
 
     return $this->success([], 'The Payment has been deleted successfully');
   }

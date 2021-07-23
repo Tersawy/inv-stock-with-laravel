@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Constants;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 use App\Models\PurchasePayment;
@@ -17,11 +18,15 @@ class PurchasePaymentController extends Controller
 
     if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
 
-    if ($purchase->payment_status == 'Paid') {
+    if ($purchase->payment_status == Constants::PAYMENT_STATUS_PAID) {
       return $this->error('This purchase invoice has been paid !', 422);
     }
 
     PurchasePayment::create($attr);
+
+    $purchase->payment_status = $purchase->new_payment_status;
+
+    $purchase->save();
 
     return $this->success([], 'The Payment has been added successfully');
   }
@@ -30,6 +35,10 @@ class PurchasePaymentController extends Controller
   public function update(Request $req, $purchaseId, $id)
   {
     $attr = PurchasePaymentRequest::validationUpdate($req);
+
+    $purchase = Purchase::find($purchaseId);
+
+    if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
 
     $payment = PurchasePayment::find($id);
 
@@ -41,6 +50,10 @@ class PurchasePaymentController extends Controller
 
     $payment->save();
 
+    $purchase->payment_status = $purchase->new_payment_status;
+
+    $purchase->save();
+
     return $this->success([], 'The Payment has been updated successfully');
   }
 
@@ -49,11 +62,19 @@ class PurchasePaymentController extends Controller
   {
     PurchasePaymentRequest::validationRemove($req);
 
+    $purchase = Purchase::find($purchaseId);
+
+    if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
+
     $payment = PurchasePayment::find($id);
 
     if (!$payment) return $this->error('This payment is not found', 404);
 
     $payment->delete();
+
+    $purchase->payment_status = $purchase->new_payment_status;
+
+    $purchase->save();
 
     return $this->success([], 'The Payment has been deleted successfully');
   }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Constants;
+use App\Models\SaleReturn;
+use Illuminate\Http\Request;
 use App\Models\SaleReturnPayment;
 use App\Requests\SaleReturnPaymentRequest;
-use Illuminate\Http\Request;
 
 class SaleReturnPaymentController extends Controller
 {
@@ -12,15 +14,19 @@ class SaleReturnPaymentController extends Controller
     {
         $attr = SaleReturnPaymentRequest::validationCreate($req);
 
-        $sale = SaleReturnPayment::find($saleId);
+        $sale = SaleReturn::find($saleId);
 
         if (!$sale) return $this->error('The sale return invoice is not found to add payment', 404);
 
-        if ($sale->payment_status == 'Paid') {
-            return $this->error('This sale return invoice has been paid !', 422);
+        if ($sale->payment_status == Constants::PAYMENT_STATUS_PAID) {
+          return $this->error('This sale invoice has been paid !', 422);
         }
 
         SaleReturnPayment::create($attr);
+
+        $sale->payment_status = $sale->new_payment_status;
+    
+        $sale->save();
 
         return $this->success([], 'The Payment has been added successfully');
     }
@@ -29,6 +35,10 @@ class SaleReturnPaymentController extends Controller
     public function update(Request $req, $saleId, $id)
     {
         $attr = SaleReturnPaymentRequest::validationUpdate($req);
+
+        $sale = SaleReturn::find($saleId);
+
+        if (!$sale) return $this->error('The sale return invoice is not found to add payment', 404);
 
         $payment = SaleReturnPayment::find($id);
 
@@ -40,6 +50,10 @@ class SaleReturnPaymentController extends Controller
 
         $payment->save();
 
+        $sale->payment_status = $sale->new_payment_status;
+    
+        $sale->save();
+
         return $this->success([], 'The Payment has been updated successfully');
     }
 
@@ -48,11 +62,19 @@ class SaleReturnPaymentController extends Controller
     {
         SaleReturnPaymentRequest::validationRemove($req);
 
+        $sale = SaleReturn::find($saleId);
+
+        if (!$sale) return $this->error('The sale return invoice is not found to add payment', 404);
+
         $payment = SaleReturnPayment::find($id);
 
         if (!$payment) return $this->error('This payment is not found', 404);
 
         $payment->delete();
+
+        $sale->payment_status = $sale->new_payment_status;
+    
+        $sale->save();
 
         return $this->success([], 'The Payment has been deleted successfully');
     }
