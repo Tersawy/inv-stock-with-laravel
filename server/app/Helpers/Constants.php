@@ -39,4 +39,15 @@ class Constants
     Constants::PAYMENT_WESTREN_UNION,
     Constants::PAYMENT_BANK_TRANSFER
   ];
+
+
+  const PAYMENT_STATUS_PAID = 0;
+  const PAYMENT_STATUS_UNPAID = 1;
+  const PAYMENT_STATUS_PARTIAL = 2;
+
+  const PAYMENT_STATUS = [
+    Constants::PAYMENT_STATUS_PAID,
+    Constants::PAYMENT_STATUS_UNPAID,
+    Constants::PAYMENT_STATUS_PARTIAL
+  ];
 }
