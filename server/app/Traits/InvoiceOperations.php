@@ -178,7 +178,7 @@ trait InvoiceOperations
   {
     $result = [true, null];
 
-    if (count((array) $detailsHasVariants) === count($variants)) return $result;
+    // if (count((array) $detailsHasVariants) === count($variants)) return $result;
 
     foreach ($detailsHasVariants as $detail) {
       $variant = $this->getVariantByDetail($variants, $detail);
