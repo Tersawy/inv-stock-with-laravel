@@ -16,7 +16,6 @@ class Product extends Model
         'code',
         'price',
         'cost',
-        'instock',
         'minimum',
         'tax',
         'tax_method',
@@ -72,7 +71,7 @@ class Product extends Model
 
     public function warehouses()
     {
-        return $this->hasMany(ProductWarehouse::class, 'product_variant_id');
+        return $this->hasMany(ProductWarehouse::class, 'variant_id');
     }
 
     // const BARCODE_UPC_TYPE       = "UPC";
