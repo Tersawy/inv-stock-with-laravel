@@ -23,7 +23,7 @@ class CreateProductsTable extends Migration
 
             $table->integer("price");
             $table->integer("cost");
-            $table->integer("instock")->default(0);
+            // $table->integer("instock")->default(0);
             $table->integer("minimum")->default(0);
             $table->integer("tax")->default(0);
             $table->integer("tax_method")->default(Constants::TAX_EXCLUSIVE); // 0 Exclusive, 1 Inclusive

@@ -16,7 +16,7 @@ class CreateProductVariantsTable extends Migration
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('instock')->default(0);
+            // $table->integer('instock')->default(0);
             $table->unsignedBigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();
