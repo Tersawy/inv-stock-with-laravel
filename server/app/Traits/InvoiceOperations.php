@@ -2,98 +2,71 @@
 
 namespace App\Traits;
 
+use App\Helpers\CustomException;
 use App\Models\Product;
 use Illuminate\Support\Arr;
-use App\Models\ProductVariant;
+use App\Models\ProductWarehouse;
 use Illuminate\Support\Facades\DB;
 
 trait InvoiceOperations
 {
-  private function sumQuantity(&$variants, $details, &$products)
+  private function get_products_warehouse_by_details($warehouseId, $details)
   {
-    $detailsHasVariants = $this->filterDetailsVariants($details, true);
+    $query = ProductWarehouse::query();
 
-    $detailsHasNoVariants = $this->filterDetailsVariants($details, false);
+    foreach ($details as $key => $detail) {
+      $cond = [
+        ['warehouse_id', $warehouseId],
+        ['product_id', $detail['product_id']],
+        ['variant_id', Arr::get($detail, 'variant_id')]
+      ];
 
-    if (count($variants) && count($detailsHasVariants)) {
-      $this->sumVariantsQuantity($variants, $detailsHasVariants);
+      $query = $key === 0 ? $query->where($cond) : $query->orWhere($cond);
     }
 
-    if (count($detailsHasNoVariants)) {
-      $productsHasNoVariants = $this->filterProductsVariants($products, false);
-      $this->sumProductsQuantity($productsHasNoVariants, $detailsHasNoVariants);
+    $products_warehouse = $query->get();
+
+    return $products_warehouse;
+  }
+
+
+  private function sum_instock($details, &$products_warehouse, $products)
+  {
+    foreach ($details as $detail) {
+
+      $product = $this->getProductById($products, $detail['product_id']);
+
+      $unit = $product->{$this->unitName};
+
+      $quantity = $unit->operator == '/' ? $detail['quantity'] / $unit->value : $detail['quantity'] * $unit->value;
+
+      $product_warehouse = $this->getProductWarehouseByDetail($products_warehouse, $detail);
+
+      $product_warehouse->instock += $quantity;
     }
   }
 
 
-  private function subtractQuantity(&$variants, $details, &$products)
+  private function subtract_instock($details, &$products_warehouse, $products)
   {
-    $detailsHasVariants = $this->filterDetailsVariants($details, true);
+    foreach ($details as $detail) {
 
-    $detailsHasNoVariants = $this->filterDetailsVariants($details, false);
+      $product = $this->getProductById($products, $detail['product_id']);
 
-    if (count($variants) && count($detailsHasVariants)) {
-      $this->subtractVariantsQuantity($variants, $detailsHasVariants);
-    }
+      $unit = $product->{$this->unitName};
 
-    if (count($detailsHasNoVariants)) {
-      $productsHasNoVariants = $this->filterProductsVariants($products, false);
-      $this->subtractProductsQuantity($productsHasNoVariants, $detailsHasNoVariants);
-    }
-  }
+      $quantity = $unit->operator == '/' ? $detail['quantity'] / $unit->value : $detail['quantity'] * $unit->value;
 
+      $product_warehouse = $this->getProductWarehouseByDetail($products_warehouse, $detail);
 
-  private function sumVariantsQuantity(&$variants, $detailsHasVariants)
-  {
-    foreach ($detailsHasVariants as $detail) {
-
-      $variant = $this->getVariantByDetail($variants, $detail);
-
-      $variant['instock'] = $variant['instock'] + (int) $detail['quantity'];
+      $product_warehouse->instock -= $quantity;
     }
   }
 
 
-  private function sumProductsQuantity(&$productsHasNoVariants, $detailsHasNoVariants)
+  private function update_instock($products_warehouse)
   {
-    foreach ($detailsHasNoVariants as $detail) {
-
-      $product = $this->getProductById($productsHasNoVariants, $detail['product_id']);
-
-      $product['instock'] = $product['instock'] + (int) $detail['quantity'];
-    }
-  }
-
-
-  private function subtractVariantsQuantity(&$variants, $detailsHasVariants)
-  {
-    foreach ($detailsHasVariants as $detail) {
-
-      $variant = $this->getVariantByDetail($variants, $detail);
-
-      $variant['instock'] = $variant['instock'] - (int) $detail['quantity'];
-    }
-  }
-
-
-  private function subtractProductsQuantity(&$productsHasNoVariants, $detailsHasNoVariants)
-  {
-    foreach ($detailsHasNoVariants as $detail) {
-
-      $product = $this->getProductById($productsHasNoVariants, $detail['product_id']);
-
-      $product['instock'] = $product['instock'] - (int) $detail['quantity'];
-    }
-  }
-
-
-  private function updateInstock($products, $variants)
-  {
-    $productsHasNoVariants = $this->filterProductsVariants($products, false);
-
-    $this->updateMultiple($productsHasNoVariants, Product::class, 'instock');
-
-    $this->updateMultiple($variants, ProductVariant::class, 'instock');
+    $this->updateMultiple($products_warehouse, ProductWarehouse::class, 'instock');
   }
 
 
@@ -124,32 +97,28 @@ trait InvoiceOperations
   /**
    * @param details $attr['products']
    * @param \App\Models\Product[] $products
-   * @return array [true] | [false, errorMsg] 
+   * @return void
    */
-  private function checkProductsWithVariants($details, $products): array
+  private function check_products_with_variants($details, $products)
   {
-    $result = [true, null];
-
-    foreach ($details as $detail) {
+    foreach ($details as $i => $detail) {
 
       $product = $this->getProductById($products, $detail['product_id']);
 
+      $num = $i + 1;
+
       if (is_null(Arr::get($detail, 'variant_id'))) {
-        if ($product->has_variants) return [false, "{$product->name} has variants and you try to use it without variant!"];
+        if ($product->has_variants) throw CustomException::withMessage("detail.{$num}", "{$product->name} has variants and you try to use it without variant!");
         continue;
       }
 
-      if (!$product->has_variants) return [false, "Please check product {$product->name}, because it doesn't have variants"];
+      if (!$product->has_variants) throw CustomException::withMessage("detail.{$num}", "Please check product {$product->name}, because it doesn't have variants");
     }
-
-    return $result;
   }
 
 
-  private function checkDistinct($details): array
+  private function check_distinct($details)
   {
-    $result = [true, null];
-
     foreach ($details as $index => $detail) {
 
       foreach ($details as $i => $d) {
@@ -159,94 +128,58 @@ trait InvoiceOperations
         if (Arr::get($d, 'variant_id') == Arr::get($detail, 'variant_id') && $d['product_id'] == $detail['product_id']) {
           $detailNum = (int) $index + 1;
           $detailDupNum = (int) $i + 1;
-          return $result = [false, "The Product.{$detailNum} has been duplicated with Product.{$detailDupNum}"];
+          throw CustomException::withMessage("detail.{$detailNum}", "The Product.{$detailNum} has been duplicated with Product.{$detailDupNum}");
         }
       }
     }
-
-    return $result;
   }
 
   /**
    * Checking the relationship between the products table and the variant table
-   * @param array $detailsHasVariants
-   * @param \App\Models\ProductVariant[] $variants
+   * @param array $details
+   * @param \App\Models\ProductWarehouse[] $products_warehouse
    * @param \App\Models\Product[] $products
-   * @return array [true] | [false, errorMsg] 
+   * @return void
    */
-  private function checkingRelations($detailsHasVariants, $variants, $products): array
+  private function checking_relations($details, $products_warehouse, $products)
   {
-    $result = [true, null];
+    foreach ($details as $i => $detail) {
 
-    // if (count((array) $detailsHasVariants) === count($variants)) return $result;
+      $product_warehouse = $this->getProductWarehouseByDetail($products_warehouse, $detail);
 
-    foreach ($detailsHasVariants as $detail) {
-      $variant = $this->getVariantByDetail($variants, $detail);
-
-      if (is_null($variant)) {
+      if (is_null($product_warehouse)) {
         $product = $this->getProductById($products, $detail['product_id']);
-        return $result = [false, "{$product->name} has variants and you try to use it without variant!"];
+        $num = $i+1;
+        throw CustomException::withMessage("detail.{$num}", "{$product->name} has variants and you try to use it without variant!");
       }
     }
-
-    return $result;
   }
 
   /**
-   * Checking if product or variants - detail->quantity >= 0
+   * Checking if products_warehouse - detail->quantity >= 0
    * because we don't need to have instock with minus
    * This check must be after checking Distinct and Relations
    * @param array $details
+   * @param \App\Models\ProductWarehouse[] $products_warehouse
    * @param \App\Models\Product[] $products
-   * @param \App\Models\ProductVariant[] $variants
-   * @return array [true] | [false, errorMsg] 
+   * @return void
    */
-  private function checkingQuantity($details, $products, $variants): array
+  private function checking_quantity($details, $products_warehouse, $products)
   {
-    $result = [true, null];
-
-    foreach ($details as $detail) {
+    foreach ($details as $i => $detail) {
 
       $product = $this->getProductById($products, $detail['product_id']);
 
-      if (Arr::get($product, 'has_variants')) {
+      $product_warehouse = $this->getProductWarehouseByDetail($products_warehouse, $detail);
 
-        $variant = $this->getVariantByDetail($variants, $detail);
+      $num = $i + 1;
 
-        $final = $variant['instock'] - $detail['quantity'];
+      $final = $product_warehouse->instock - $detail['quantity'];
 
-        if ($final < 0) {
-          return [false, "{$product->name}-{$variant['name']} has {$variant['instock']} instock and you try to make {$detail['quantity']} quantity!"];
-        }
-      } else {
-
-        $final = $product['instock'] - $detail['quantity'];
-
-        if ($final < 0) {
-          return [false, "{$product->name} has {$product['instock']} instock and you try to make {$detail['quantity']} quantity!"];
-        }
+      if ($final < 0) {
+        throw CustomException::withMessage("detail.{$num}", "{$product->name} has {$product_warehouse->instock} quantity in stock and you try to subtract {$detail['quantity']} quantity!");
       }
     }
-
-    return $result;
-  }
-
-  /**
-   * @param array $detailsHasVariants
-   * @return ProductVariant[]
-   */
-  private function getVariants($detailsHasVariants)
-  {
-    $variants = ProductVariant::query();
-
-    foreach ($detailsHasVariants as $key => $detail) {
-      $cond = [['id', $detail['variant_id']], ['product_id', $detail['product_id']]];
-      $variants = $key === 0 ? $variants->where($cond) : $variants->orWhere($cond);
-    }
-
-    $variants = $variants->get();
-
-    return $variants;
   }
 
   /**
@@ -266,63 +199,17 @@ trait InvoiceOperations
   }
 
   /**
-   * @param \App\Models\ProductVariant[] $variants
+   * @param \App\Models\ProductWarehouse[] $products_warehouse
    * @param detail $attr['products'][$index]
-   * @return ProductVariant|null
+   * @return ProductWarehouse|null
    */
-  private function getVariantByDetail($variants, $detailHasVariant): ?ProductVariant
+  private function getProductWarehouseByDetail($products_warehouse, $detail): ?ProductWarehouse
   {
     $result = null;
 
-    foreach ($variants as $variant) {
-      if ($variant['product_id'] == $detailHasVariant['product_id'] && $variant['id'] == $detailHasVariant['variant_id']) {
-        return $result = $variant;
-      }
-    }
-
-    return $result;
-  }
-
-  /**
-   * @param details $attr['products']
-   * @param hasVariants bool
-   * @return details[] $attr['products']
-   */
-  private function filterDetailsVariants($details, bool $hasVariants): array
-  {
-    $result = [];
-
-    foreach ($details as $detail) {
-      if ($hasVariants && !is_null(Arr::get($detail, 'variant_id'))) {
-        $result[] = $detail;
-        continue;
-      }
-      if (!$hasVariants && is_null(Arr::get($detail, 'variant_id'))) {
-        $result[] = $detail;
-      }
-    }
-
-    return $result;
-  }
-
-  /**
-   * @param \App\Models\Product[] $products
-   * @param hasVariants bool
-   * @return Product[]
-   */
-  private function filterProductsVariants($products, bool $hasVariants): array
-  {
-    $result = [];
-
-    foreach ($products as $product) {
-
-      if ($hasVariants && $product->has_variants) {
-        $result[] = $product;
-        continue;
-      }
-
-      if (!$hasVariants && !$product->has_variants) {
-        $result[] = $product;
+    foreach ($products_warehouse as $product_warehouse) {
+      if ($product_warehouse->product_id == $detail['product_id'] && $product_warehouse->variant_id == Arr::get($detail, 'variant_id')) {
+        return $result = $product_warehouse;
       }
     }
 
