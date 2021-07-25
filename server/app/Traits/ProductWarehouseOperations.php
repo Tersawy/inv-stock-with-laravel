@@ -36,7 +36,7 @@ trait ProductWarehouseOperations
 
   function addAllProductsToWarehouse(Warehouse $warehouse)
   {
-    $products = Product::all();
+    $products = Product::all(['id', 'has_variants']);
 
     if (!count($products)) return;
 
@@ -73,55 +73,5 @@ trait ProductWarehouseOperations
     }
 
     ProductWarehouse::insert($variant_warehouses);
-  }
-
-
-  function sumWarehouseQuantity($warehouseId, $details, $products, $unitName) // $unitName => sale_unit, purchase_unit
-  {
-    foreach ($details as $detail) {
-
-      $product_warehouse = ProductWarehouse::where('warehouse_id', $warehouseId)->where('product_id', $detail['product_id']);
-
-      if (!is_null($detail['variant_id'])) {
-        $product_warehouse = $product_warehouse->where('variant_id', $detail['variant_id']);
-      }
-
-      $product_warehouse = $product_warehouse->first();
-
-      $product = $this->getProductById($products, $detail['product_id']);
-
-      $unit = $product->{$unitName};
-
-      $quantity = $unit->operator == '/' ? $detail['quantity'] / $unit->value : $detail['quantity'] * $unit->value;
-
-      $product_warehouse->instock += $quantity;
-
-      $product_warehouse->save();
-    }
-  }
-
-
-  function subtractWarehouseQuantity($warehouseId, $details, $products, $unitName)
-  {
-    foreach ($details as $detail) {
-
-      $product_warehouse = ProductWarehouse::where('warehouse_id', $warehouseId)->where('product_id', $detail['product_id']);
-
-      if (!is_null($detail['variant_id'])) {
-        $product_warehouse = $product_warehouse->where('variant_id', $detail['variant_id']);
-      }
-
-      $product_warehouse = $product_warehouse->first();
-
-      $product = $this->getProductById($products, $detail['product_id']);
-
-      $unit = $product->{$unitName};
-
-      $quantity = $unit->operator == '/' ? $detail['quantity'] / $unit->value : $detail['quantity'] * $unit->value;
-
-      $product_warehouse->instock -= $quantity;
-
-      $product_warehouse->save();
-    }
   }
 }
