@@ -34,6 +34,15 @@ class Product extends Model
         'has_variants'  => 'boolean',
     ];
 
+    public function getInstockAttribute()
+    {
+        $result = 0;
+        $this->warehouses->each(function ($warehouse) use (&$result) {
+            $result += $warehouse->instock;
+        });
+        return $result;
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);
