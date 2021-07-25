@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Helpers\Constants;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateAdjustmentsTable extends Migration
 {
@@ -20,6 +21,7 @@ class CreateAdjustmentsTable extends Migration
 
             $table->text('note')->nullable();
             $table->date('date')->default(date('Y-m-d'));
+            $table->tinyInteger('status')->default(Constants::ADJUSTMENT_APPROVED);
 
             $table->unsignedBigInteger('warehouse_id');
             $table->foreign('warehouse_id')->references('id')->on('warehouses')->onDelete('restrict');
