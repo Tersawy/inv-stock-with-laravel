@@ -9,7 +9,7 @@ class Adjustment extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['items_count', 'note', 'date', 'warehouse_id'];
+    protected $fillable = ['items_count', 'note', 'date', 'warehouse_id', 'status'];
 
     protected $append = ['reference'];
 
