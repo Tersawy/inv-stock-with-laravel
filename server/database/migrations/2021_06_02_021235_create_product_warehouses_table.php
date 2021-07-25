@@ -17,13 +17,13 @@ class CreateProductWarehousesTable extends Migration
             $table->id();
 
             $table->unsignedBigInteger('product_id')->nullable();
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
 
             $table->unsignedBigInteger('warehouse_id');
             $table->foreign('warehouse_id')->references('id')->on('warehouses')->onDelete('cascade');
 
-            $table->unsignedBigInteger('product_variant_id')->nullable();
-            $table->foreign('product_variant_id')->references('id')->on('product_variants')->onDelete('cascade');
+            $table->unsignedBigInteger('variant_id')->nullable();
+            $table->foreign('variant_id')->references('id')->on('product_variants')->onDelete('cascade');
 
             $table->float('instock', 10, 0)->default(0);
 
