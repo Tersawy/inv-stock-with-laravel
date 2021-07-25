@@ -9,5 +9,5 @@ class ProductWarehouse extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['product_id', 'warehouse_id', 'product_variant_id', 'instock'];
+    protected $fillable = ['product_id', 'warehouse_id', 'variant_id', 'instock'];
 }

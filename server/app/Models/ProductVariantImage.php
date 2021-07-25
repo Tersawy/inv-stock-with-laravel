@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductVariantImage extends Model
 {
-    protected $fillable = ['name', 'product_variant_id'];
+    protected $fillable = ['name', 'variant_id'];
 
     protected $appends = ['path'];
 
