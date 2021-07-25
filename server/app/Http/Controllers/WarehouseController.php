@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use App\Models\ProductWarehouse;
+use Illuminate\Support\Facades\DB;
+use App\Traits\ProductWarehouseOperations;
 
 class WarehouseController extends Controller
 {
+    use ProductWarehouseOperations;
+
     public function index()
     {
         $warehouses = Warehouse::all();
@@ -50,6 +55,8 @@ class WarehouseController extends Controller
 
         $warehouse = Warehouse::create($attr);
 
+        $this->addAllProductsToWarehouse($warehouse);
+
         return $this->success($warehouse, 'The warehouse has been created successfully');
     }
 
@@ -91,6 +98,10 @@ class WarehouseController extends Controller
         $warehouse = Warehouse::find($req->id);
 
         if (!$warehouse) return $this->error('The warehouse was not found', 404);
+        
+        $products = DB::table('product_warehouses')->where('warehouse_id', $req->id)->select(DB::raw('SUM(instock) as total'))->get();
+
+        if (!$products->total > 0) return $this->error('The warehouse cannot be remove because it has products with quantity', 422);
 
         $warehouse->delete();
 
@@ -129,6 +140,8 @@ class WarehouseController extends Controller
         $isDone = Warehouse::onlyTrashed()->where('id', $req->id)->forceDelete();
 
         if (!$isDone) return $this->error('The warehouse is not in the trash', 404);
+
+        ProductWarehouse::where('warehouse_id', $req->id)->delete();
 
         return $this->success($req->id, 'The warehouse has been deleted successfully');
     }
