@@ -12,6 +12,7 @@ class SaleReturnDetail extends Model
     protected $fillable = [
         'product_id',
         'sale_return_id',
+        'variant_id',
         'price',
         'tax',
         'tax_method',

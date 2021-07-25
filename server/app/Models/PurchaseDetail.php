@@ -12,6 +12,7 @@ class PurchaseDetail extends Model
     protected $fillable = [
         'product_id',
         'purchase_id',
+        'variant_id',
         'cost',
         'tax',
         'tax_method',
