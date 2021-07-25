@@ -36,7 +36,7 @@ class ProductController extends Controller
 
     $withFields = array_merge([], $category, $brand, $unit, $images);
 
-    $products = Product::with($withFields)->get(['id', 'name', 'code', 'price', 'instock', 'main_unit_id', 'brand_id', 'category_id']);
+    $products = Product::with($withFields)->get(['id', 'name', 'code', 'price', 'main_unit_id', 'brand_id', 'category_id']);
 
     $products = $products->map(function ($product) {
       return [
