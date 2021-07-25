@@ -21,7 +21,7 @@ class SettingController extends Controller
             $query->select(['id', 'name']);
         }];
 
-        $with_fields = array_merge([], $customer, $warehouse, $currency);
+        $with_fields = array_merge($customer, $warehouse, $currency);
         
         $settings = Setting::with($with_fields)->get()->first();
 
