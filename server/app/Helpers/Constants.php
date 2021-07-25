@@ -41,6 +41,12 @@ class Constants
   const ADJUSTMENT_STATUS       = [Constants::ADJUSTMENT_APPROVED, Constants::ADJUSTMENT_NOT_APPROVED];
 
 
+  const TRANSFER_COMPLETED  = 0;
+  const TRANSFER_PENDING    = 1;
+  const TRANSFER_SENT       = 2;
+  const TRANSFER_STATUS     = [Constants::TRANSFER_COMPLETED, Constants::TRANSFER_PENDING, Constants::TRANSFER_SENT];
+
+
   const TAX_EXCLUSIVE = 0;
   const TAX_INCLUSIVE = 1;
   const TAX_METHODS   = [Constants::TAX_EXCLUSIVE, Constants::TAX_INCLUSIVE];
