@@ -10,10 +10,13 @@ use App\Models\ProductWarehouse;
 use App\Models\ProductVariantImage;
 use Illuminate\Support\Facades\File;
 use App\Requests\ProductVariantRequest;
+use App\Traits\ProductWarehouseOperations;
 use Illuminate\Support\Facades\Storage;
 
 class ProductVariantController extends Controller
 {
+  use ProductWarehouseOperations;
+  
   public function index(Request $req)
   {
     ProductVariantRequest::validationProductId($req);
@@ -50,6 +53,8 @@ class ProductVariantController extends Controller
       $product->has_variants = true;
       $product->save();
     }
+
+    $this->addVariantToWarehouses($variant);
 
     $this->success('The variant has been created successfully', 200);
   }
@@ -124,7 +129,7 @@ class ProductVariantController extends Controller
 
       Storage::disk('images_products')->put($imageName, base64_decode($file));
 
-      $images[] = ['product_variant_id' => $variant->id, 'name' => $imageName];
+      $images[] = ['variant_id' => $variant->id, 'name' => $imageName];
     }
 
     ProductVariantImage::insert($images);
