@@ -48,7 +48,9 @@ class AdjustmentController extends Controller
                 $attr = AdjustmentRequest::validationCreate($req);
 
                 $details = &$attr['products'];
-
+                
+                $attr['items_count'] = count($details);
+                
                 $this->check_distinct($details);
 
                 if ($req->status == Constants::ADJUSTMENT_APPROVED) {
@@ -150,6 +152,8 @@ class AdjustmentController extends Controller
                 AdjustmentDetail::where('adjustment_id', $adjustment->id)->delete();
 
                 $adjustment->fill($attr);
+                
+                $adjustment->items_count = count($new_details);
 
                 $adjustment->save();
 
