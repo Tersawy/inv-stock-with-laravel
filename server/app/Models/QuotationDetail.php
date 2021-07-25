@@ -12,6 +12,7 @@ class QuotationDetail extends Model
     protected $fillable = [
         'product_id',
         'sale_id',
+        'variant_id',
         'price',
         'tax',
         'tax_method',
