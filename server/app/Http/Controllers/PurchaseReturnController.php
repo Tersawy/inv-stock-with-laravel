@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Helpers\Constants;
+use App\Helpers\CustomException;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use App\Requests\PurchaseReturnRequest;
-use App\Traits\InvoiceOperations;
-use App\Models\Product;
 use App\Models\PurchaseReturn;
+use App\Traits\InvoiceOperations;
+use Illuminate\Support\Facades\DB;
 use App\Models\PurchaseReturnDetail;
+use App\Requests\PurchaseReturnRequest;
 
 class PurchaseReturnController extends Controller
 {
     use InvoiceOperations;
 
+    public $unitName = 'purchase_unit';
 
     public function index()
     {
@@ -50,187 +53,128 @@ class PurchaseReturnController extends Controller
 
     public function create(Request $req)
     {
-        $attr = PurchaseReturnRequest::validationCreate($req);
+        try {
+            DB::transaction(function () use ($req) {
 
-        $details = &$attr['products'];
+                $attr = PurchaseReturnRequest::validationCreate($req);
 
-        list($isValid, $errMsg) = $this->checkDistinct($details);
+                $details = &$attr['products'];
 
-        if (!$isValid) return $this->error($errMsg, 422);
+                $this->check_distinct($details);
 
-        $ids = Arr::pluck($details, 'product_id');
+                $products_warehouse = $this->get_products_warehouse_by_details($req->warehouse_id, $details);
 
-        $products = Product::find($ids);
+                $ids = Arr::pluck($details, 'product_id');
 
-        list($isValid, $errMsg) = $this->checkProductsWithVariants($details, $products);
+                $products = Product::select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
 
-        if (!$isValid) return $this->error($errMsg, 422);
+                $this->check_products_with_variants($details, $products);
 
-        $detailsHasVariants = $this->filterDetailsVariants($details, true);
+                $this->checking_relations($details, $products_warehouse, $products);
 
-        $variants = [];
+                $this->checking_quantity($details, $products_warehouse, $products);
 
-        if (count($detailsHasVariants)) {
+                $purchase = PurchaseReturn::create($attr);
 
-            $variants = $this->getVariants($detailsHasVariants);
+                foreach ($details as &$detail) {
+                    $detail['purchase_return_id'] = $purchase->id;
+                    $detail['variant_id'] = Arr::get($detail, 'variant_id');
+                }
 
-            list($isValid, $errMsg) = $this->checkingRelations($detailsHasVariants, $variants, $products);
+                PurchaseReturnDetail::insert($details);
 
-            if (!$isValid) return $this->error($errMsg, 422);
+                if ($req->status === Constants::PURCHASE_RETURN_COMPLETED) {
+
+                    $this->subtract_instock($details, $products_warehouse, $products);
+
+                    $this->update_instock($products_warehouse);
+                }
+            }, 10);
+
+            return $this->success([], "The Purchase return invoice has been created successfully");
+        } catch (CustomException $e) {
+            return $this->error($e->first_error(), $e->status_code());
         }
-
-        list($isValid, $errMsg) = $this->checkingQuantity($details, $products, $variants);
-
-        if (!$isValid) return $this->error($errMsg, 422);
-
-        $purchase = PurchaseReturn::create($attr);
-
-        foreach ($details as &$detail) {
-            $detail['purchase_return_id'] = $purchase->id;
-            $detail['variant_id'] = Arr::get($detail, 'variant_id');
-        }
-
-        PurchaseReturnDetail::insert($details);
-
-        if ($req->status === Constants::PURCHASE_RETURN_COMPLETED) {
-
-            $this->subtractQuantity($variants, $details, $products);
-
-            $this->updateInstock($products, $variants);
-
-            $this->subtractWarehouseQuantity($req->warehouse_id, $details, $products, 'purchase_unit');
-        }
-
-        return $this->success([], "The Purchase return invoice has been created successfully");
     }
 
 
-    /**
-        # 1 - Make validation for request update rule
-        # 2 - Make Distinct validation for new details
-        # 3 - Get Purchase Return with details
-        # 4 - Get old details
-        # 5 - Set purchase return id into every new detail
-        # 6 - Get all Products ny ids
-        # 7 - Merge all details to check variants with products
-        # 8 - Check Variants with Products => eg. if product has a variant and detail doesn't has a variant,
-            the purchase return was created a long time ago with products doesn't have variants then
-            we updated product by added variant to it then we want to update this purchase return with this product out variant !
-            whats happen without this check ?!!
-            it will be add quantity into product.instock but product has variant supposed to added quantity into variant.instock
-        # 9  - Filter details to get whose has variant
-        # 10 - check if new or old status is completed and count of detailsHasVariants > 1 to get variants and details to check relations between products with them variants
-        # 11 - Sum old details quantity to instock to restore old instock if old status is completed
-        # 12 - check quantity if the new status is completed before taking any action on the quantity to prevent it from begin set instock with a negative number
-        # 13 - Subtract new details quantity from instock if new status is completed
-        # 14 - delete old details from `purchase_return_details` by $purchase_return->id
-        # 15 - if old or new status is completed update multiple products and variants
-        # 16 - update purchase return with new data
-        # 17 - insert new details
-     */
     public function update(Request $req, $id)
     {
-        # [1]
-        $attr = PurchaseReturnRequest::validationUpdate($req);
+        try {
+            DB::transaction(function () use ($req, $id) {
 
-        $newDetails = &$attr['products'];
+                $attr = PurchaseReturnRequest::validationUpdate($req);
 
-        # [2]
-        list($isValid, $errMsg) = $this->checkDistinct($newDetails);
+                $new_details = &$attr['products'];
 
-        if (!$isValid) return $this->error($errMsg, 422);
+                $this->check_distinct($new_details);
 
-        # [3]
-        $purchase = PurchaseReturn::find($id);
+                $purchase = PurchaseReturn::find($id);
 
-        if (!$purchase) return $this->error('The purchase return invoice was not found', 404);
+                if (!$purchase) throw CustomException::withMessage('id', 'The purchase return invoice was not found', 404);
 
-        # [4]
-        $oldDetails = &$purchase->details;
+                $old_details = &$purchase->details;
 
-        # [5]
-        foreach ($newDetails as &$detail) {
-            $detail['purchase_return_id'] = $purchase->id;
-            $detail['variant_id'] = Arr::get($detail, 'variant_id');
+                foreach ($new_details as &$detail) {
+                    $detail['purchase_return_id'] = $purchase->id;
+                    $detail['variant_id'] = Arr::get($detail, 'variant_id');
+                }
+
+                $oldProductsIds = Arr::pluck($old_details, 'product_id');
+
+                $newProductsIds = Arr::pluck($new_details, 'product_id');
+
+                $ids = [...$oldProductsIds, ...$newProductsIds];
+
+                $products = Product::select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
+
+                $all_details = [...$new_details, ...$old_details];
+
+                $this->check_products_with_variants($all_details, $products);
+
+                $old_is_completed = $purchase->status == Constants::PURCHASE_RETURN_COMPLETED;
+
+                $new_is_completed = $req->status == Constants::PURCHASE_RETURN_COMPLETED;
+
+                # Sum Old Quantity
+                if ($old_is_completed) {
+
+                    $old_products_warehouse = $this->get_products_warehouse_by_details($purchase->warehouse_id, $old_details);
+
+                    $this->checking_relations($old_details, $old_products_warehouse, $products);
+
+                    $this->sum_instock($old_details, $old_products_warehouse, $products);
+
+                    $this->update_instock($old_products_warehouse);
+                }
+
+                # Subtract New Quantity
+                if ($new_is_completed) {
+
+                    $new_products_warehouse = $this->get_products_warehouse_by_details($req->warehouse_id, $new_details);
+
+                    $this->checking_relations($new_details, $new_products_warehouse, $products);
+
+                    $this->checking_quantity($new_details, $new_products_warehouse, $products);
+
+                    $this->subtract_instock($new_details, $new_products_warehouse, $products);
+
+                    $this->update_instock($new_products_warehouse);
+                }
+
+                PurchaseReturnDetail::where('purchase_return_id', $purchase->id)->delete();
+
+                $purchase->fill($attr);
+
+                $purchase->save();
+
+                PurchaseReturnDetail::insert($new_details);
+            }, 10);
+
+            return $this->success([], "The Purchase return invoice has been updated successfully");
+        } catch (CustomException $e) {
+            return $this->error($e->first_error(), $e->status_code());
         }
-
-        $oldProductsIds = Arr::pluck($oldDetails, 'product_id');
-
-        $newProductsIds = Arr::pluck($newDetails, 'product_id');
-
-        $ids = [...$oldProductsIds, ...$newProductsIds];
-
-        # [6]
-        $products = Product::find($ids);
-
-        # [7]
-        $allDetails = [...$newDetails, ...$oldDetails];
-
-        # [8]
-        list($isValid, $errMsg) = $this->checkProductsWithVariants($allDetails, $products);
-
-        if (!$isValid) return $this->error($errMsg, 422);
-
-        $oldIsCompleted = $purchase->status == Constants::PURCHASE_RETURN_COMPLETED;
-
-        $newIsCompleted = $req->status == Constants::PURCHASE_RETURN_COMPLETED;
-
-        # [9]
-        $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
-
-        $variants = [];
-
-        # [10]
-        if (($oldIsCompleted || $newIsCompleted) && count($detailsHasVariants)) {
-
-            $variants = $this->getVariants($detailsHasVariants);
-
-            list($isValid, $errMsg) = $this->checkingRelations($detailsHasVariants, $variants, $products);
-
-            if (!$isValid) return $this->error($errMsg, 422);
-        }
-
-        # [11] Sum Old Quantity
-        if ($oldIsCompleted) {
-            $this->sumQuantity($variants, $oldDetails, $products);
-        }
-
-        if ($newIsCompleted) {
-
-            # [12] Check Quantity before subtract
-            list($isValid, $errMsg) = $this->checkingQuantity($newDetails, $products, $variants);
-
-            if (!$isValid) return $this->error($errMsg, 422);
-
-            # [13] Subtract New Quantity
-            $this->subtractQuantity($variants, $newDetails, $products);
-        }
-
-        if ($oldIsCompleted) {
-            $this->sumWarehouseQuantity($req->warehouse_id, $oldDetails, $products, 'purchase_unit');
-        }
-        
-        if ($newIsCompleted) {
-            $this->subtractWarehouseQuantity($req->warehouse_id, $newDetails, $products, 'purchase_unit');
-        }
-
-        # [14]
-        PurchaseReturnDetail::where('purchase_return_id', $purchase->id)->delete();
-
-        # [15]
-        if ($oldIsCompleted || $newIsCompleted) {
-            $this->updateInstock($products, $variants);
-        }
-
-        $purchase->fill($attr);
-
-        # [16]
-        $purchase->save();
-
-        # [17]
-        PurchaseReturnDetail::insert($newDetails);
-
-        return $this->success([], "The Purchase return invoice has been updated successfully");
     }
 
 
@@ -279,6 +223,8 @@ class PurchaseReturnController extends Controller
         $isDone = PurchaseReturn::onlyTrashed()->where('id', $id)->forceDelete();
 
         if (!$isDone) return $this->error('The purchase return invoice is not in the trash', 404);
+
+        PurchaseReturnDetail::where('purchase_return_id', $id)->delete();
 
         return $this->success($id, 'The purchase return invoice has been deleted successfully');
     }

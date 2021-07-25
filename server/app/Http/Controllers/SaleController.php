@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sale;
+use App\Models\Product;
+use App\Helpers\Constants;
+use App\Models\SaleDetail;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use App\Helpers\Constants;
-use App\Models\Sale;
-use App\Models\SaleDetail;
-use App\Models\Product;
 use App\Requests\SaleRequest;
+use App\Helpers\CustomException;
 use App\Traits\InvoiceOperations;
+use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
     use InvoiceOperations;
 
+    public $unitName = 'sale_unit';
 
     public function index()
     {
@@ -50,188 +53,128 @@ class SaleController extends Controller
 
     public function create(Request $req)
     {
-        $attr = SaleRequest::validationCreate($req);
+        try {
+            DB::transaction(function () use ($req) {
 
-        $details = &$attr['products'];
+                $attr = SaleRequest::validationCreate($req);
 
-        list($isValid, $errMsg) = $this->checkDistinct($details);
+                $details = &$attr['products'];
 
-        if (!$isValid) return $this->error($errMsg, 422);
+                $this->check_distinct($details);
 
-        $ids = Arr::pluck($details, 'product_id');
+                $products_warehouse = $this->get_products_warehouse_by_details($req->warehouse_id, $details);
 
-        $products = Product::find($ids);
+                $ids = Arr::pluck($details, 'product_id');
 
-        list($isValid, $errMsg) = $this->checkProductsWithVariants($details, $products);
+                $products = Product::select(['id', 'name', 'has_variants', 'sale_unit_id'])->find($ids);
 
-        if (!$isValid) return $this->error($errMsg, 422);
+                $this->check_products_with_variants($details, $products);
 
-        $detailsHasVariants = $this->filterDetailsVariants($details, true);
+                $this->checking_relations($details, $products_warehouse, $products);
 
-        if (count($detailsHasVariants)) {
+                $sale = Sale::create($attr);
 
-            $variants = $this->getVariants($detailsHasVariants);
+                foreach ($details as &$detail) {
+                    $detail['sale_id'] = $sale->id;
+                    $detail['variant_id'] = Arr::get($detail, 'variant_id');
+                }
 
-            list($isValid, $errMsg) = $this->checkingRelations($detailsHasVariants, $variants, $products);
+                SaleDetail::insert($details);
 
-            if (!$isValid) return $this->error($errMsg, 422);
+                if ($req->status === Constants::SALE_COMPLETED) {
+
+                    $this->checking_quantity($details, $products_warehouse, $products);
+
+                    $this->subtract_instock($details, $products_warehouse, $products);
+
+                    $this->update_instock($products_warehouse);
+                }
+            }, 10);
+
+            return $this->success([], "The sale invoice has been created successfully");
+        } catch (CustomException $e) {
+            return $this->error($e->first_error(), $e->status_code());
         }
-
-        $sale = Sale::create($attr);
-
-        foreach ($details as &$detail) {
-            $detail['sale_id'] = $sale->id;
-            $detail['variant_id'] = Arr::get($detail, 'variant_id');
-        }
-
-        SaleDetail::insert($details);
-
-        if ($req->status === Constants::SALE_COMPLETED) {
-
-            list($isValid, $errMsg) = $this->checkingQuantity($details, $products, $variants);
-
-            if (!$isValid) return $this->error($errMsg, 422);
-
-            $this->subtractQuantity($variants, $details, $products);
-
-            $this->updateInstock($products, $variants);
-
-            $this->subtractWarehouseQuantity($req->warehouse_id, $details, $products, 'sale_unit');
-
-        }
-
-        return $this->success([], "The sale invoice has been created successfully");
     }
 
-    /**
-        # 1 - Make validation for request update rule
-        # 2 - Make Distinct validation for new details
-        # 3 - Get Sale with details
-        # 4 - Get old details
-        # 5 - Set sale id into every new detail
-        # 6 - Get all Products by ids
-        # 7 - Merge all details to check variants with products
-        # 8 - Check Variants with Products => eg. if product has a variant and detail doesn't has a variant,
-            the sale was created a long time ago with products doesn't have variants then
-            we updated product by added variant to it then we want to update this sale with this product out variant !
-            whats happen without this check ?!!
-            it will be add quantity into product.instock but product has variant supposed to added quantity into variant.instock
-        # 9  - Filter details to get whose has variant
-        # 10 - check if new or old status is received and count of detailsHasVariants > 1 to get variants and details to check relations between products with them variants
-        # 11 - Sum quantity to old products has not variants and variants by old details
-        # 12 - check quantity if the new status is received before taking any action on the quantity to prevent it from begin set instock with a negative number,
-            to show what is the broplem happen create sale with any product with quantity 5 and status is received then go to create sale return with the same product
-            with quantity 5 and status completed if you check instock of this products will be 0 because be saled and returned it, so if you update sale with any status
-            exept received whats happen ?! the product instock now is -5 !!!
-        # 13 - Subtract quantity from old products has not variants and variants by old details
-        # 14 - delete old details from `sale_details` by $sale->id
-        # 15 - if old or new status is received update instock
-        # 16 - update sale with new data
-        # 17 - insert new details
-     */
+
     public function update(Request $req, $id)
     {
-        # [1]
-        $attr = SaleRequest::validationUpdate($req);
+        try {
+            DB::transaction(function () use ($req, $id) {
 
-        $newDetails = &$attr['products'];
+                $attr = SaleRequest::validationUpdate($req);
 
-        # [2]
-        list($isValid, $errMsg) = $this->checkDistinct($newDetails);
+                $new_details = &$attr['products'];
 
-        if (!$isValid) return $this->error($errMsg, 422);
+                $this->check_distinct($new_details);
 
-        # [3]
-        $sale = Sale::find($id);
+                $sale = Sale::find($id);
 
-        if (!$sale) return $this->error('The sale invoice was not found', 404);
+                if (!$sale) throw CustomException::withMessage('id', 'The sale invoice was not found', 404);
 
-        # [4]
-        $oldDetails = &$sale->details;
+                $old_details = &$sale->details;
 
-        # [5]
-        foreach ($newDetails as &$detail) {
-            $detail['sale_id'] = $sale->id;
-            $detail['variant_id'] = Arr::get($detail, 'variant_id');
+                foreach ($new_details as &$detail) {
+                    $detail['sale_id'] = $sale->id;
+                    $detail['variant_id'] = Arr::get($detail, 'variant_id');
+                }
+
+                $oldProductsIds = Arr::pluck($old_details, 'product_id');
+
+                $newProductsIds = Arr::pluck($new_details, 'product_id');
+
+                $ids = [...$oldProductsIds, ...$newProductsIds];
+
+                $products = Product::select(['id', 'name', 'has_variants', 'sale_unit_id'])->find($ids);
+
+                $all_details = [...$new_details, ...$old_details];
+
+                $this->check_products_with_variants($all_details, $products);
+
+                $old_is_completed = $sale->status == Constants::SALE_COMPLETED;
+
+                $new_is_completed = $req->status == Constants::SALE_COMPLETED;
+
+                # Sum Old Quantity
+                if ($old_is_completed) {
+
+                    $old_products_warehouse = $this->get_products_warehouse_by_details($sale->warehouse_id, $old_details);
+
+                    $this->checking_relations($old_details, $old_products_warehouse, $products);
+
+                    $this->sum_instock($old_details, $old_products_warehouse, $products);
+
+                    $this->update_instock($old_products_warehouse);
+                }
+
+                # Subtract New Quantity
+                if ($new_is_completed) {
+
+                    $new_products_warehouse = $this->get_products_warehouse_by_details($req->warehouse_id, $new_details);
+
+                    $this->checking_relations($new_details, $new_products_warehouse, $products);
+
+                    $this->checking_quantity($new_details, $new_products_warehouse, $products);
+
+                    $this->subtract_instock($new_details, $new_products_warehouse, $products);
+
+                    $this->update_instock($new_products_warehouse);
+                }
+
+                SaleDetail::where('sale_id', $sale->id)->delete();
+
+                $sale->fill($attr);
+
+                $sale->save();
+
+                SaleDetail::insert($new_details);
+            }, 10);
+
+            return $this->success([], "The sale invoice has been updated successfully");
+        } catch (CustomException $e) {
+            return $this->error($e->first_error(), $e->status_code());
         }
-
-        $oldProductsIds = Arr::pluck($oldDetails, 'product_id');
-
-        $newProductsIds = Arr::pluck($newDetails, 'product_id');
-
-        $ids = [...$oldProductsIds, ...$newProductsIds];
-
-        # [6]
-        $products = Product::find($ids);
-
-        # [7]
-        $allDetails = [...$newDetails, ...$oldDetails];
-
-        # [8]
-        list($isValid, $errMsg) = $this->checkProductsWithVariants($allDetails, $products);
-
-        if (!$isValid) return $this->error($errMsg, 422);
-
-        $oldIsReceived = $sale->status == Constants::SALE_COMPLETED;
-
-        $newIsReceived = $req->status == Constants::SALE_COMPLETED;
-
-        # [9]
-        $detailsHasVariants = $this->filterDetailsVariants($allDetails, true);
-
-        $variants = [];
-
-        # [10]
-        if (($newIsReceived || $oldIsReceived) && count($detailsHasVariants)) {
-
-            $variants = $this->getVariants($detailsHasVariants);
-
-            list($isValid, $errMsg) = $this->checkingRelations($detailsHasVariants, $variants, $products);
-
-            if (!$isValid) return $this->error($errMsg, 422);
-        }
-
-        # [11] Sum Old Quantity
-        if ($oldIsReceived) {
-            $this->sumQuantity($variants, $oldDetails, $products);
-        }
-
-        if ($newIsReceived) {
-
-            # [12] Check Quantity before subtract
-            list($isValid, $errMsg) = $this->checkingQuantity($newDetails, $products, $variants);
-
-            if (!$isValid) return $this->error($errMsg, 422);
-
-            # [13] Subtract New Quantity
-            $this->subtractQuantity($variants, $newDetails, $products);
-        }
-
-        if ($oldIsReceived) {
-            $this->sumWarehouseQuantity($req->warehouse_id, $oldDetails, $products, 'sale_unit');
-        }
-        
-        if ($newIsReceived) {
-            $this->subtractWarehouseQuantity($req->warehouse_id, $newDetails, $products, 'sale_unit');
-        }
-
-        # [14]
-        SaleDetail::where('sale_id', $sale->id)->delete();
-
-        # [15]
-        if ($oldIsReceived || $newIsReceived) {
-            $this->updateInstock($products, $variants);
-        }
-
-        $sale->fill($attr);
-
-        # [16]
-        $sale->save();
-
-        # [17]
-        SaleDetail::insert($newDetails);
-
-        return $this->success([], "The sale invoice has been updated successfully");
     }
 
 
@@ -280,6 +223,8 @@ class SaleController extends Controller
         $isDone = Sale::onlyTrashed()->where('id', $id)->forceDelete();
 
         if (!$isDone) return $this->error('The sale invoice is not in the trash', 404);
+
+        SaleDetail::where('sale_id', $id)->delete();
 
         return $this->success($id, 'The sale invoice has been deleted successfully');
     }
