@@ -18,7 +18,7 @@ class CreateAdjustmentDetailsTable extends Migration
             $table->id();
 
             $table->float('quantity');
-            $table->tinyInteger('type')->default(Constants::ADJUSTMENT_ADDITION);
+            $table->tinyInteger('type')->default(Constants::ADJUSTMENT_DETAILS_ADDITION);
             
             $table->bigInteger('variant_id')->nullable();
 
