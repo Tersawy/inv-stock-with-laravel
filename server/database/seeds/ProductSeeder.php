@@ -35,7 +35,7 @@ class ProductSeeder extends Seeder
                 'category_id'       => 1,
                 'main_unit_id'      => 1,
                 'purchase_unit_id'  => 1,
-                'sale_unit_id'      => 1,
+                'sale_unit_id'      => 2,
             ],
             [
                 'name'              => 'Banana',
@@ -46,8 +46,8 @@ class ProductSeeder extends Seeder
                 'has_variants'      => 0,
                 'category_id'       => 1,
                 'main_unit_id'      => 2,
-                'purchase_unit_id'  => 2,
-                'sale_unit_id'      => 3,
+                'purchase_unit_id'  => 3,
+                'sale_unit_id'      => 4,
             ],
         ]);
     }
