@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 class ExpenseRequest extends ValidateRequest
 {
 
-  public static function rules()
+  public static function rules(Request $req)
   {
+    $unique_field = $req->get('id') ? 'unique:expenses,'.$req->id : 'unique:expenses';
+
     $rules = [
+      'name'                => ['required', 'string', 'max:255', $unique_field],
       'warehouse_id'        => ['required', 'numeric', 'min:1', 'exists:warehouses,id'],
       'expense_category_id' => ['required', 'numeric', 'min:1', 'exists:expense_categories,id'],
       'amount'              => ['required', 'numeric', 'min:1'],
@@ -23,7 +26,7 @@ class ExpenseRequest extends ValidateRequest
 
   public static function validationCreate(Request $req)
   {
-    $rules = ExpenseRequest::rules();
+    $rules = ExpenseRequest::rules($req);
 
     return $req->validate($rules);
   }
@@ -33,7 +36,7 @@ class ExpenseRequest extends ValidateRequest
   {
     $req->merge(['id' => $req->route('id')]);
 
-    $rules = ExpenseRequest::rules();
+    $rules = ExpenseRequest::rules($req);
 
     $rules['id'] = ['required', 'numeric', 'min:1'];
 
