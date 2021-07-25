@@ -11,7 +11,7 @@ trait ProductWarehouseOperations
 {
   function addProductToWarehouses(Product $product)
   {
-    $warehouses = Warehouse::all('id');
+    $warehouses = Warehouse::all(['id']);
 
     if (!count($warehouses)) return;
 
@@ -36,7 +36,11 @@ trait ProductWarehouseOperations
 
   function addAllProductsToWarehouse(Warehouse $warehouse)
   {
-    $products = Product::all(['id', 'has_variants']);
+    $variants = ['variants' => function ($query) {
+      $query->select(['id', 'product_id']);
+    }];
+    
+    $products = Product::with($variants)->get(['id', 'has_variants']);
 
     if (!count($products)) return;
 
@@ -57,10 +61,9 @@ trait ProductWarehouseOperations
   }
 
 
-
   function addVariantToWarehouses(ProductVariant $variant)
   {
-    $warehouses = Warehouse::all('id');
+    $warehouses = Warehouse::all(['id']);
 
     if (!count($warehouses)) return;
 
