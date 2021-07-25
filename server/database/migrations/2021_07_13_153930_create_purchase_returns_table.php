@@ -45,6 +45,6 @@ class CreatePurchaseReturnsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('purchase_Returns');
+        Schema::dropIfExists('purchase_returns');
     }
 }
