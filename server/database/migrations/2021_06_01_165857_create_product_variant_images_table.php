@@ -16,8 +16,8 @@ class CreateProductVariantImagesTable extends Migration
         Schema::create('product_variant_images', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('product_variant_id');
-            $table->foreign('product_variant_id')->references('id')->on('product_variants')->onDelete('cascade');
+            $table->unsignedBigInteger('variant_id');
+            $table->foreign('variant_id')->references('id')->on('product_variants')->onDelete('cascade');
             $table->timestamps();
         });
     }
