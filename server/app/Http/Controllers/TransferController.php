@@ -216,9 +216,65 @@ class TransferController extends Controller
                 TransferDetail::insert($new_details);
             }, 10);
 
-            return $this->success([], "The Purchase has been updated successfully");
+            return $this->success([], "The transfer has been updated successfully");
         } catch (CustomException $e) {
             return $this->error($e->first_error(), $e->status_code());
         }
+    }
+
+
+    public function moveToTrash(Request $req, $id)
+    {
+        TransferRequest::validationId($req);
+
+        $transfer = Transfer::find($id);
+
+        if (!$transfer) return $this->error('This transfer is not found', 404);
+
+        if ($transfer->status == Constants::TRANSFER_COMPLETED) {
+            return $this->error('Sorry, you can\'t remove this transfer because it completed', 422);
+        }
+
+        if ($transfer->status == Constants::TRANSFER_SENT) {
+            return $this->error('Sorry, you can\'t remove this transfer because it sent', 422);
+        }
+
+        $transfer->delete();
+
+        return $this->success('The transfer has been moved to trash successfully');
+    }
+
+
+    public function trashed()
+    {
+        $transfers = Transfer::onlyTrashed()->get();
+
+        return $this->success($transfers);
+    }
+
+
+    public function restore(Request $req, $id)
+    {
+        TransferRequest::validationId($req);
+
+        $isDone = Transfer::onlyTrashed()->where('id', $id)->restore();
+
+        if (!$isDone) return $this->error('The transfer is not in the trash', 404);
+
+        return $this->success($id, 'The transfer has been restored successfully');
+    }
+
+
+    public function remove(Request $req, $id)
+    {
+        TransferRequest::validationId($req);
+
+        $isDone = Transfer::onlyTrashed()->where('id', $id)->forceDelete();
+
+        if (!$isDone) return $this->error('The transfer is not in the trash', 404);
+
+        TransferDetail::where('transfer_id', $id)->delete();
+
+        return $this->success($id, 'The transfer has been deleted successfully');
     }
 }
