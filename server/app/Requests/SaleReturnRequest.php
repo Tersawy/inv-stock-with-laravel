@@ -13,7 +13,7 @@ class SaleReturnRequest extends ValidateRequest
   {
     $rules = [
       'warehouse_id'                => ['required', 'numeric', 'min:1', 'exists:warehouses,id'],
-      'customer_id'                 => ['required', 'numeric', 'min:1', 'exists:customers,id'],
+      'customer_id'                 => ['required', 'numeric', 'min:0', 'exists:customers,id'],
       'tax'                         => ['required', 'numeric', 'min:0'],
       'discount'                    => ['required', 'numeric', 'min:0'],
       'discount_method'             => ['required', 'numeric', Rule::in(Constants::DISCOUNT_METHODS)],
