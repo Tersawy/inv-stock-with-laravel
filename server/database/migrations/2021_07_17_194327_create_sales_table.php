@@ -22,6 +22,7 @@ class CreateSalesTable extends Migration
             $table->tinyInteger("discount_method")->default(Constants::DISCOUNT_FIXED); // 0 Fixed, 1 Percent
             $table->tinyInteger('status')->default(Constants::SALE_COMPLETED);
             $table->tinyInteger('payment_status')->default(Constants::PAYMENT_STATUS_PAID);
+			$table->boolean('is_pos')->nullable()->default(0);
             $table->integer('shipping')->default(0);
 
             $table->text('note')->nullable();

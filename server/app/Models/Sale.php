@@ -20,8 +20,11 @@ class Sale extends Model
         'shipping',
         'note',
         'payment_status',
-        'date'
+        'date',
+        'is_pos'
     ];
+
+    protected $casts = [ 'is_pos' => 'boolean' ];
 
     protected $append = ['reference'];
 
