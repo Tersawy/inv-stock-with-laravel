@@ -449,7 +449,6 @@
 					};
 
 					this.productDetails.subtotal = this.subtotal(productWithDetails);
-					console.log(productWithDetails);
 					this.selectedProducts = [...this.selectedProducts, productWithDetails];
 					this.productField = {};
 					this.productsFields = [];
