@@ -14,7 +14,6 @@ const state = {
 	errorMsg: "",
 	errorDismissSecs: 0,
 	errors: {},
-	drawer: false,
 	taxMethods: [
 		{ text: "Exclusive", value: TAX_EXCLUSIVE },
 		{ text: "Inclusive", value: TAX_INCLUSIVE }

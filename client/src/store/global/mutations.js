@@ -10,8 +10,3 @@ export const setErrors = (state, { message, errors }) => {
 export const removeErrors = (state) => (state.errors = {});
 
 export const removeError = (state, field) => (state.errors[field] = null);
-
-export const setDrawer = (state, value) => {
-	let hasValue = typeof value !== "undefined";
-	state.drawer = hasValue ? value : !state.drawer;
-};

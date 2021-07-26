@@ -1,11 +1,9 @@
 <template>
-	<v-app>
+	<div id="app">
 		<Navbar v-if="isAuth" />
 		<Sidebar v-if="isAuth" />
-		<v-main>
-			<router-view />
-		</v-main>
-	</v-app>
+		<router-view />
+	</div>
 </template>
 
 <script>
