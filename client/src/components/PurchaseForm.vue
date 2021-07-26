@@ -1,115 +1,115 @@
 <template>
 	<div class="purchase-form mt-5">
 		<b-container fluid>
-		<b-form @submit.prevent="handleSave">
-			<b-row cols="3">
-				<b-col>
-					<b-form-group label="Date" label-for="date">
-						<b-form-datepicker id="date" locale="en" v-model="purchase.date" />
-						<InputError field="date" />
-					</b-form-group>
-				</b-col>
-				<b-col>
-					<b-form-group label="Warehouse" label-for="warehouse_id">
-						<b-select id="warehouse_id" v-model.number="purchase.warehouse_id" :options="warehousesOpt" />
-						<InputError field="warehouse_id" />
-					</b-form-group>
-				</b-col>
-				<b-col>
-					<b-form-group label="Supplier" label-for="supplier_id">
-						<b-select id="supplier_id" v-model.number="purchase.supplier_id" :options="suppliersOpt" />
-						<InputError field="supplier_id" />
-					</b-form-group>
-				</b-col>
-				<b-col>
-					<b-form-group label="Shipping cost" label-for="shipping">
-						<b-input-group append="$">
-							<b-form-input type="number" min="0" id="shipping" placeholder="shipping" v-model.number="purchase.shipping" />
-						</b-input-group>
-					</b-form-group>
-				</b-col>
-				<b-col>
-					<b-form-group label="Order Tax" label-for="tax">
-						<b-input-group append="%">
-							<b-form-input type="number" min="0" id="tax" placeholder="tax" v-model.number="purchase.tax" />
-						</b-input-group>
-					</b-form-group>
-				</b-col>
-				<b-col>
-					<b-form-group label="Discount" label-for="discount">
-						<b-input-group>
-							<b-form-input type="number" min="0" id="discount" placeholder="discount" v-model.number="purchase.discount" />
-							<b-input-group-append>
-								<b-button variant="outline-primary" @click="changeDiscountMethod">
-									<span class="h6 mb-0" v-if="purchase.discount_method === DISCOUNT_FIXED">$</span>
-									<span class="h6 mb-0" v-else>%</span>
-								</b-button>
-							</b-input-group-append>
-						</b-input-group>
-					</b-form-group>
-				</b-col>
-				<b-col>
-					<b-form-group label="Status" label-for="status">
-						<b-select id="status" v-model.number="purchase.status" :options="purchaseStatus" />
-						<InputError field="status" />
-					</b-form-group>
-				</b-col>
-				<b-col>
-					<b-form-group label="Note" label-for="note">
-						<b-form-textarea id="note" v-model="purchase.note" placeholder="Enter something..." size="sm" />
-						<InputError field="note" />
-					</b-form-group>
-				</b-col>
-				<b-col>
-					<v-autocomplete
-						v-model="productField"
-						:items="productsFields"
-						:search-input.sync="search"
-						:filter="filterProducts"
-						@change="ProductChange"
-						item-text="name"
-						item-value="index"
-						return-object
-						hide-no-data
-						hide-selected
-						color="blue-grey lighten-2"
-						placeholder="Search by Code or Name"
-						class="p-0"
-						outlined
-						append-icon=""
-					>
-						<template #item="data">
-							<template v-if="!data.item.variant">
-								<v-list-item-avatar>
-									<img :src="APP_PRODUCTS_URL + data.item.image" />
-								</v-list-item-avatar>
-								<v-list-item-content>
-									<div class="flex">
-										<span>{{ data.item.code }}&nbsp;&nbsp;</span>
-										<v-badge :content="data.item.name"></v-badge>
-									</div>
-								</v-list-item-content>
-							</template>
-							<template v-else>
-								<v-list-item-avatar>
-									<img :src="APP_PRODUCTS_URL + data.item.image" />
-								</v-list-item-avatar>
-								<v-list-item-content>
+			<b-form @submit.prevent="handleSave">
+				<b-row cols="3">
+					<b-col>
+						<b-form-group label="Date" label-for="date">
+							<b-form-datepicker id="date" locale="en" v-model="purchase.date" />
+							<InputError field="date" />
+						</b-form-group>
+					</b-col>
+					<b-col>
+						<b-form-group label="Warehouse" label-for="warehouse_id">
+							<b-select id="warehouse_id" v-model.number="purchase.warehouse_id" :options="warehousesOpt" />
+							<InputError field="warehouse_id" />
+						</b-form-group>
+					</b-col>
+					<b-col>
+						<b-form-group label="Supplier" label-for="supplier_id">
+							<b-select id="supplier_id" v-model.number="purchase.supplier_id" :options="suppliersOpt" />
+							<InputError field="supplier_id" />
+						</b-form-group>
+					</b-col>
+					<b-col>
+						<b-form-group label="Shipping cost" label-for="shipping">
+							<b-input-group append="$">
+								<b-form-input type="number" min="0" id="shipping" placeholder="shipping" v-model.number="purchase.shipping" />
+							</b-input-group>
+						</b-form-group>
+					</b-col>
+					<b-col>
+						<b-form-group label="Order Tax" label-for="tax">
+							<b-input-group append="%">
+								<b-form-input type="number" min="0" id="tax" placeholder="tax" v-model.number="purchase.tax" />
+							</b-input-group>
+						</b-form-group>
+					</b-col>
+					<b-col>
+						<b-form-group label="Discount" label-for="discount">
+							<b-input-group>
+								<b-form-input type="number" min="0" id="discount" placeholder="discount" v-model.number="purchase.discount" />
+								<b-input-group-append>
+									<b-button variant="outline-primary" @click="changeDiscountMethod">
+										<span class="h6 mb-0" v-if="purchase.discount_method === DISCOUNT_FIXED">$</span>
+										<span class="h6 mb-0" v-else>%</span>
+									</b-button>
+								</b-input-group-append>
+							</b-input-group>
+						</b-form-group>
+					</b-col>
+					<b-col>
+						<b-form-group label="Status" label-for="status">
+							<b-select id="status" v-model.number="purchase.status" :options="purchaseStatus" />
+							<InputError field="status" />
+						</b-form-group>
+					</b-col>
+					<b-col>
+						<b-form-group label="Note" label-for="note">
+							<b-form-textarea id="note" v-model="purchase.note" placeholder="Enter something..." size="sm" />
+							<InputError field="note" />
+						</b-form-group>
+					</b-col>
+					<b-col>
+						<v-autocomplete
+							v-model="productField"
+							:items="productsFields"
+							:search-input.sync="search"
+							:filter="filterProducts"
+							@change="ProductChange"
+							item-text="name"
+							item-value="index"
+							return-object
+							hide-no-data
+							hide-selected
+							color="blue-grey lighten-2"
+							placeholder="Search by Code or Name"
+							class="p-0"
+							outlined
+							append-icon=""
+						>
+							<template #item="data">
+								<template v-if="!data.item.variant">
+									<v-list-item-avatar>
+										<img :src="APP_PRODUCTS_URL + data.item.image" />
+									</v-list-item-avatar>
 									<v-list-item-content>
 										<div class="flex">
 											<span>{{ data.item.code }}&nbsp;&nbsp;</span>
 											<v-badge :content="data.item.name"></v-badge>
 										</div>
 									</v-list-item-content>
-									<v-list-item-subtitle v-text="data.item.variant"></v-list-item-subtitle>
-								</v-list-item-content>
+								</template>
+								<template v-else>
+									<v-list-item-avatar>
+										<img :src="APP_PRODUCTS_URL + data.item.image" />
+									</v-list-item-avatar>
+									<v-list-item-content>
+										<v-list-item-content>
+											<div class="flex">
+												<span>{{ data.item.code }}&nbsp;&nbsp;</span>
+												<v-badge :content="data.item.name"></v-badge>
+											</div>
+										</v-list-item-content>
+										<v-list-item-subtitle v-text="data.item.variant"></v-list-item-subtitle>
+									</v-list-item-content>
+								</template>
 							</template>
-						</template>
-					</v-autocomplete>
-				</b-col>
-			</b-row>
-			<b-btn :variant="`${isUpdate ? 'success' : 'primary'}`" type="submit">save</b-btn>
-		</b-form>
+						</v-autocomplete>
+					</b-col>
+				</b-row>
+				<b-btn :variant="`${isUpdate ? 'success' : 'primary'}`" type="submit">save</b-btn>
+			</b-form>
 		</b-container>
 		<v-data-table :headers="headers" :items="selectedProducts" class="elevation-1" disable-sort hide-default-footer>
 			<template #[`item.name`]="data">
