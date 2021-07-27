@@ -184,7 +184,7 @@
 <script>
 	import { mapActions, mapState } from "vuex";
 	import { formMixin } from "@/mixins";
-	import { DISCOUNT_FIXED, PURCHASE_STATUS_RECEIVED, DISCOUNT_PERCENT, TAX_INCLUSIVE } from "@/helpers/constants";
+	import { DISCOUNT_FIXED, PURCHASE_RECEIVED, DISCOUNT_PERCENT, TAX_INCLUSIVE } from "@/helpers/constants";
 	import InputError from "@/components/ui/InputError.vue";
 	import DefaultInput from "@/components/ui/DefaultInput.vue";
 	import ProductDetailsForm from "@/components/ProductDetailsForm.vue";
@@ -207,7 +207,7 @@
 					tax: 0,
 					discount: 0,
 					discount_method: DISCOUNT_FIXED,
-					status: PURCHASE_STATUS_RECEIVED,
+					status: PURCHASE_RECEIVED,
 					shipping: 0,
 					note: null,
 					date: today,
