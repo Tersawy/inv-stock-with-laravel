@@ -12,5 +12,12 @@ module.exports = {
 	// make sure to do this only in production.
 	indexPath: process.env.NODE_ENV === "production" ? "../server/resources/views/index.blade.php" : "index.html",
 
-	transpileDependencies: ["vuetify"]
+	pluginOptions: {
+		i18n: {
+			locale: "en",
+			fallbackLocale: "en",
+			localeDir: "locales",
+			enableInSFC: true
+		}
+	}
 };

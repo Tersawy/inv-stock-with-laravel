@@ -9,6 +9,8 @@ import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 
+import i18n from "./i18n";
+
 import "@/assets/scss/main.scss";
 
 import store from "@/store";
@@ -54,5 +56,6 @@ router.beforeEach(async (to, from, next) => {
 new Vue({
 	store,
 	router,
+	i18n,
 	render: (h) => h(App)
 }).$mount("#app");
