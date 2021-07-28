@@ -28,14 +28,14 @@ class ProductRequest extends ValidateRequest
       'has_variants'      => ['required', 'boolean'],
       'has_images'        => ['required', 'boolean'],
     ];
-    
+
     $images_rules = [
       'images'            => ['required', 'array', 'max:54', 'min:1'],
       'images.*'          => ['required', 'array', 'max:54', 'min:1'],
       'images.*.path'     => ['required', 'base64_image:jpeg,png,jpg']
     ];
 
-    if (count(Arr::get('images', []))) {
+    if (count($req->get('images', []))) {
       $rules = array_merge($rules, $images_rules);
       $req->has_images = true;
     } else {
