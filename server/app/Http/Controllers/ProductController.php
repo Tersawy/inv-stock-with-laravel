@@ -6,11 +6,12 @@ use App\Models\Product;
 use Illuminate\Support\Arr;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Requests\ProductRequest;
-use App\Traits\ProductWarehouseOperations;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\ProductWarehouseOperations;
 
 class ProductController extends Controller
 {
@@ -270,7 +271,7 @@ class ProductController extends Controller
   }
 
 
-  private function deleteImages(ProductImage ...$images)
+  private function deleteImages($images)
   {
     $imagesNames = Arr::pluck($images, 'name');
 
@@ -283,5 +284,17 @@ class ProductController extends Controller
     File::delete($images);
 
     ProductImage::destroy($imagesIds);
+  }
+
+
+  private function createVariants(Request $req, Product $product)
+  {
+    $variants = [];
+
+    foreach ($req->variants as $variant) {
+      $variants[] = ['product_id' => $product->id, 'name' => $variant['name']];
+    }
+
+    ProductVariant::insert($variants);
   }
 }
