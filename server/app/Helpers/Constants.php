@@ -4,6 +4,12 @@ namespace App\Helpers;
 
 class Constants
 {
+  const PER_PAGE  = 10;
+  const PAGE      = 1;
+  const SORT_BY   = "id";
+  const SORT_DIR  = "desc";
+  const SEARCH    = "";
+
   const PURCHASE_RECEIVED = 0;
   const PURCHASE_PENDING  = 1;
   const PURCHASE_ORDERED  = 2;
