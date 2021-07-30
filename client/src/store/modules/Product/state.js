@@ -1,9 +1,7 @@
 const state = {
 	all: {
 		docs: [],
-		total: 0,
-		page: 1,
-		perPage: 15
+		total: 0
 	},
 	one: {},
 	details: {},
