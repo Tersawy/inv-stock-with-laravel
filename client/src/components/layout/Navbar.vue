@@ -1,5 +1,5 @@
 <template>
-	<div class="topbar">
+	<div class="topbar px-2">
 		<div class="toggle" @click="toggleMenu">
 			<b-icon icon="menu-button-wide" scale="1.6"></b-icon>
 		</div>
