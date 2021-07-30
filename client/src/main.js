@@ -30,6 +30,28 @@ runGlobalMixins();
 
 Vue.config.productionTip = false;
 
+function breads() {
+	let path = router.history.current.path;
+
+	path = "dashboard" + path;
+
+	let paths = path.split("/");
+
+	paths = paths.filter((p) => !!p);
+
+	let results = paths.map((p, i) => {
+		let name = p.charAt(0).toUpperCase() + p.slice(1),
+			isLast = i + 1 == paths.length;
+		return { name, to: { name }, active: isLast, isFirst: i == 0 };
+	});
+
+	return results;
+}
+
+router.afterEach(() => {
+	store.commit("setBreads", breads());
+});
+
 router.beforeEach(async (to, from, next) => {
 	let user = store.state.user;
 
@@ -52,6 +74,8 @@ router.beforeEach(async (to, from, next) => {
 	// if isUser will complete his route
 	next();
 });
+
+import "./directives";
 
 new Vue({
 	store,
