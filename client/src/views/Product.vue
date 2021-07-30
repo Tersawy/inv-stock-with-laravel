@@ -44,7 +44,7 @@
 				:busy="tableIsBusy"
 				:items="items"
 				:fields="fields"
-				:current-page="page"
+				:current-page="1"
 				:per-page="perPage"
 				:sort-by.sync="sortBy"
 				:sort-desc.sync="sortDesc"
@@ -149,10 +149,6 @@
 			],
 			filterationFields: { name: "", code: "", category: "", brand: "" }
 		}),
-
-		mounted() {
-			this.getItems(this.queries);
-		},
 
 		computed: {
 			...mapState({
