@@ -3,15 +3,15 @@
 		<VuePerfectScrollbar class="scroll-area" v-once :settings="{ suppressScrollX: true, wheelPropagation: false }">
 			<ul>
 				<li>
-					<router-link to="/">
+					<router-link to="/" class="bg-transparent">
 						<span class="icon logo">
 							<img src="../../assets/logo.png" />
 						</span>
 						<h2 class="title">Brand Name</h2>
 					</router-link>
 				</li>
-				<li v-for="item in items" :key="item.title">
-					<router-link :to="item.to">
+				<li v-for="(item, i) in items" :key="i">
+					<router-link :to="item.to" :exact="i == 0">
 						<span class="icon"><b-icon :icon="item.icon" scale="1.5"></b-icon></span>
 						<span class="title">{{ item.title }}</span>
 					</router-link>
@@ -24,9 +24,8 @@
 <script>
 	import VuePerfectScrollbar from "vue-perfect-scrollbar";
 	export default {
-		components: {
-			VuePerfectScrollbar
-		},
+		components: { VuePerfectScrollbar },
+
 		data() {
 			return {
 				items: [
@@ -57,7 +56,7 @@
 		position: fixed;
 		width: 60px;
 		height: 100%;
-		background: #003147;
+		background: var(--secondary);
 		transition: 0.2s;
 		overflow: auto;
 		overflow-x: hidden;
@@ -81,9 +80,6 @@
 				position: relative;
 				width: 100%;
 				list-style: none;
-				&:hover {
-					background: var(--secondary);
-				}
 				&:nth-child(1) {
 					margin-bottom: 20px;
 				}
@@ -96,6 +92,10 @@
 					width: 100%;
 					text-decoration: none;
 					color: #fff;
+					&.router-link-active,
+					&:hover {
+						background: var(--primary);
+					}
 					.icon {
 						position: relative;
 						display: block;
