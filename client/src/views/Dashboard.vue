@@ -1,71 +1,87 @@
 <template>
 	<div class="dashboard">
 		<b-container fluid>
-			<div class="dashboard-card-box py-4">
-				<report-card name="Today Sales" icon="cart-plus" number="1780.00 $" />
-				<report-card name="Income" icon="fas fa-hand-holding-usd" awesome number="2300.00 $" />
-				<report-card name="Expenses" icon="far fa-money-bill-alt" awesome number="1888.00 $" />
-				<report-card name="Profits" icon="fas fa-coins" awesome number="412.00 $" />
+			<div class="dashboard-card-box py-3">
+				<b-row>
+					<b-col>
+						<report-card name="Today Sales" icon="cart-plus" number="1780.00 $" />
+					</b-col>
+					<b-col>
+						<report-card name="Income" icon="fas fa-hand-holding-usd" awesome number="2300.00 $" />
+					</b-col>
+					<b-col>
+						<report-card name="Expenses" icon="far fa-money-bill-alt" awesome number="1888.00 $" />
+					</b-col>
+					<b-col>
+						<report-card name="Profits" icon="fas fa-coins" awesome number="412.00 $" />
+					</b-col>
+				</b-row>
 			</div>
-			<div class="details">
-				<div class="recent-sales shadow-sm bg-white px-3 pb-3 rounded">
-					<div class="recent-header py-3 d-flex justify-content-between align-items-center">
-						<h3 class="mb-0">Recent Sales</h3>
-						<div><b-btn to="/sale">View All</b-btn></div>
-					</div>
-					<table class="table table-hover mb-0">
-						<thead>
-							<tr>
-								<th>Reference</th>
-								<th>Customer</th>
-								<th>Status</th>
-								<th>Total Price</th>
-								<th>Paid</th>
-								<th>Due</th>
-								<th>Payment Status</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>SL_1111</td>
-								<td>Star Refigerator</td>
-								<td>
-									<b-badge variant="outline-success">Completed</b-badge>
-								</td>
-								<td>1736.00</td>
-								<td>1736.00</td>
-								<td>0.00</td>
-								<td>
-									<b-badge variant="outline-success">Paid</b-badge>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="recent-customers shadow-sm bg-white px-3 pb-3 rounded">
-					<div class="recent-header py-3 d-flex justify-content-between align-items-center">
-						<h3 class="mb-0">Recent Customers</h3>
-						<div><b-btn to="/sale">View All</b-btn></div>
-					</div>
-					<table class="table table-hover mb-0">
-						<tbody>
-							<tr v-for="(customer, i) in customers" :key="i">
-								<td width="60px">
-									<div class="customer-img">
-										<img :src="require(`@/assets/${customer.img}`)" alt="" />
-									</div>
-								</td>
-								<td>
-									<h4>
-										{{ customer.name }}
-										<br />
-										<span>{{ customer.country }}</span>
-									</h4>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+			<div class="details py-3">
+				<b-row>
+					<b-col cols="8">
+						<div class="recent-sales shadow-sm bg-white px-3 pb-3 rounded">
+							<div class="recent-header py-3 d-flex justify-content-between align-items-center">
+								<h3 class="mb-0">Recent Sales</h3>
+								<router-link to="/sale">
+									<b-btn variant="primary">View All</b-btn>
+								</router-link>
+							</div>
+							<table class="table table-hover mb-0">
+								<thead>
+									<tr>
+										<th>Reference</th>
+										<th>Customer</th>
+										<th>Status</th>
+										<th>Total Price</th>
+										<th>Paid</th>
+										<th>Due</th>
+										<th>Payment Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="(sale, i) in sales" :key="i">
+										<td>{{ sale.reference }}</td>
+										<td v-relation="sale.customer"></td>
+										<td v-sale-status="sale.status"></td>
+										<td v-floating.2="sale.grand_total"></td>
+										<td v-floating.2="sale.paid"></td>
+										<td v-floating.2="sale.due"></td>
+										<td v-payment-status="sale.payment_status"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</b-col>
+					<b-col cols="4">
+						<div class="recent-customers shadow-sm bg-white px-3 pb-3 rounded">
+							<div class="recent-header py-3 d-flex justify-content-between align-items-center">
+								<h3 class="mb-0">Recent Customers</h3>
+								<router-link to="/customer">
+									<b-btn variant="primary">View All</b-btn>
+								</router-link>
+							</div>
+							<table class="table table-hover mb-0">
+								<tbody>
+									<tr v-for="(customer, i) in customers" :key="i">
+										<td width="60px">
+											<div class="customer-img">
+												<img :src="require(`@/assets/${customer.img}`)" alt="" />
+											</div>
+										</td>
+										<td>
+											<h4 class="mb-0">
+												{{ customer.name }}
+												<br />
+												<span>{{ customer.country }}</span>
+											</h4>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</b-col>
+				</b-row>
 			</div>
 		</b-container>
 	</div>
@@ -82,10 +98,10 @@
 					{ name: "Muhammad", country: "Egypt", img: "user2.jpg" },
 					{ name: "Amelia", country: "France", img: "user3.jpg" },
 					{ name: "Olivia", country: "USA", img: "user4.jpg" },
-					{ name: "Amit", country: "Jaban", img: "user5.jpg" },
-					{ name: "Ashraf", country: "India", img: "user6.jpg" },
-					{ name: "Diana", country: "Malaysia", img: "user7.jpg" },
-					{ name: "Yasser", country: "Egypt", img: "user8.jpg" }
+					{ name: "Amit", country: "Jaban", img: "user5.jpg" }
+					// { name: "Ashraf", country: "India", img: "user6.jpg" },
+					// { name: "Diana", country: "Malaysia", img: "user7.jpg" },
+					// { name: "Yasser", country: "Egypt", img: "user8.jpg" }
 				],
 				sales: [
 					{
@@ -99,12 +115,48 @@
 					},
 					{
 						reference: "SL_1112",
+						customer: { id: 2, name: "Kamal Salem" },
+						status: 2,
+						grand_total: 1890,
+						paid: 890,
+						due: 1000,
+						payment_status: 2
+					},
+					{
+						reference: "SL_1113",
 						customer: { id: 2, name: "Mohamed Ashraf" },
 						status: 1,
 						grand_total: 1595,
-						paid: 1595,
-						due: 0,
+						paid: 0,
+						due: 1595,
 						payment_status: 1
+					},
+					{
+						reference: "SL_1115",
+						customer: { id: 2, name: "Walk-in-customer" },
+						status: 0,
+						grand_total: 2600,
+						paid: 2600,
+						due: 0,
+						payment_status: 0
+					},
+					{
+						reference: "SL_1114",
+						customer: { id: 2, name: "Said Ali" },
+						status: 2,
+						grand_total: 3265,
+						paid: 2000,
+						due: 1265,
+						payment_status: 2
+					},
+					{
+						reference: "SL_1115",
+						customer: { id: 2, name: "Asmaa Foaad" },
+						status: 0,
+						grand_total: 4580,
+						paid: 4580,
+						due: 0,
+						payment_status: 0
 					}
 				]
 			};
@@ -117,9 +169,6 @@
 		.dashboard-card-box {
 			position: relative;
 			width: 100%;
-			display: grid;
-			grid-template-columns: repeat(4, 1fr);
-			grid-gap: 20px;
 			.dashboard-card {
 				position: relative;
 				background: #fff;
@@ -139,17 +188,14 @@
 				}
 				.dashboard-card-icon {
 					font-size: 2.5em;
-					color: var(--secondary);
+					color: var(--primary);
 				}
 			}
 		}
 		.details {
-			display: grid;
-			grid-template-columns: 2fr 1fr;
-			grid-gap: 20px;
 			.recent-customers {
 				position: relative;
-				min-height: 530px;
+				min-height: 395px;
 				background-color: #fff;
 				.customer-img {
 					position: relative;
@@ -167,11 +213,11 @@
 					tr {
 						&:hover,
 						&:hover td h4 span {
-							background: var(--secondary);
+							background: var(--primary);
 							color: #fff;
 						}
 						td {
-							padding: 12px 10px;
+							padding: 10px 10px;
 							h4 {
 								font-size: 16px;
 								font-weight: 500;
