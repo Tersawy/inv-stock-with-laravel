@@ -15,6 +15,10 @@ export default {
 		search: ""
 	}),
 
+	mounted() {
+		this.getItems(this.queries);
+	},
+
 	computed: {
 		dirSort() {
 			return this.sortDesc ? "desc" : "asc";
@@ -23,7 +27,7 @@ export default {
 			return this.sortBy == "image" ? "id" : this.sortBy;
 		},
 		queries() {
-			let queries = `?page=${this.page}&perPage=${this.perPage}&search=${this.search}&sort_by=${this.fieldSort}&sort_dir=${this.dirSort}`;
+			let queries = `?page=${this.page}&per_page=${this.perPage}&search=${this.search}&sort_by=${this.fieldSort}&sort_dir=${this.dirSort}`;
 
 			for (let field in this.filterationFields) {
 				queries += `&${field}=${this.filterationFields[field]}`;
@@ -38,6 +42,9 @@ export default {
 			this.page = 1;
 			this.sortBy = "id";
 			this.sortDesc = false;
+		},
+		page() {
+			this.finallData();
 		}
 	},
 
