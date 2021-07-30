@@ -8,7 +8,7 @@ class ProductImage extends Model
 {
     protected $fillable = ['name', 'product_id'];
 
-    protected $appends = ['path'];
+    // protected $appends = ['path'];
 
     public function getPathAttribute()
     {
