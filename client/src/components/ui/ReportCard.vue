@@ -45,7 +45,7 @@
 		}
 		.t-card-icon {
 			font-size: 2.5em;
-			color: var(--secondary);
+			color: var(--primary);
 		}
 	}
 </style>
