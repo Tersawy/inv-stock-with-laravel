@@ -1,3 +1,23 @@
 {
-  "message": "hello i18n !!"
+  "Received": "Received",
+  "Pending": "Pending",
+  "Ordered": "Ordered",
+  "Completed": "Completed",
+  "Sent": "Sent",
+  "Addition": "Addition",
+  "Subtraction": "Subtraction",
+  "Approved": "Approved",
+  "Not Approved": "Not Approved",
+  "Exclusive": "Exclusive",
+  "Inclusive": "Inclusive",
+  "Fixed": "Fixed",
+  "Percent": "Percent %",
+  "Cash": "Cash",
+  "Cheque": "Cheque",
+  "Credit Card": "Credit Card",
+  "Westrn Union": "Westrn Union",
+  "Bank Transfer": "Bank Transfer",
+  "Paid": "Paid",
+  "Unpaid": "Unpaid",
+  "Partial": "Partial"
 }
