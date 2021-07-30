@@ -3,15 +3,14 @@
 		<Sidebar v-if="isAuth" />
 		<div class="main">
 			<Navbar v-if="isAuth" />
-			<div class="main-content">
-				<b-breadcrumb class="mb-0">
-					<b-breadcrumb-item href="#home">
-						<b-icon icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true"></b-icon>
-						Home
-					</b-breadcrumb-item>
-					<b-breadcrumb-item href="#foo">Foo</b-breadcrumb-item>
-					<b-breadcrumb-item href="#bar">Bar</b-breadcrumb-item>
-					<b-breadcrumb-item active>Baz</b-breadcrumb-item>
+			<div class="main-content px-3 pt-3">
+				<b-breadcrumb class="mb-0" v-if="isAuth">
+					<template v-for="(bread, i) in breads">
+						<b-breadcrumb-item :to="bread.to" :active="bread.active" :key="i">
+							<b-icon v-if="bread.isFirst" icon="house-fill" scale="1.25" shift-v="1.25" aria-hidden="true" class="mr-1"></b-icon>
+							{{ bread.name }}
+						</b-breadcrumb-item>
+					</template>
 				</b-breadcrumb>
 				<router-view />
 			</div>
@@ -22,9 +21,27 @@
 <script>
 	import Navbar from "@/components/layout/Navbar.vue";
 	import Sidebar from "@/components/layout/Sidebar.vue";
+	import { mapState } from "vuex";
 	export default {
 		name: "App",
-		components: { Navbar, Sidebar }
+		components: { Navbar, Sidebar },
+
+		computed: {
+			...mapState({
+				breads: (state) => state.breads
+			})
+		}
+		// mounted() {
+		// 	let main = document.querySelector("#app > .main");
+
+		// 	if (this.isAuth) {
+		// 		main.style.left = "60px";
+		// 		main.style.width = "calc(100% - 60px)";
+		// 	} else {
+		// 		main.style.left = "0";
+		// 		main.style.width = "100%";
+		// 	}
+		// }
 	};
 </script>
 
@@ -40,8 +57,11 @@
 			width: calc(100% - 300px);
 			left: 300px;
 		}
-		.main-content .breadcrumb-item a {
-			color: var(--secondary);
+		.main-content {
+			min-height: calc(100vh - 60px);
+			.breadcrumb-item {
+				font-size: 18px;
+			}
 		}
 	}
 </style>
