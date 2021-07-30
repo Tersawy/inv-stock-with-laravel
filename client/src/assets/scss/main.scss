@@ -1,6 +1,6 @@
 // @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
 // @import url("https://fonts.googleapis.com/css?family=Poppins:200,300;400;500;600;700;800;900&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap");
 
 $font-size-base: 0.8125rem; // Assumes the browser default, typically `16px`
 $font-size-lg: $font-size-base * 1.25;
@@ -13,8 +13,8 @@ $btn-focus-box-shadow: none !important;
 $btn-box-shadow: none;
 $btn-active-box-shadow: none;
 
-$primary:       #003147 !default;
-$secondary:     #03a9f4 !default;
+$secondary: #003147 !default;
+$primary: #03a9f4 !default;
 
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~bootstrap-vue/src/index.scss";
@@ -57,6 +57,11 @@ body {
 	color: var(--primary);
 }
 
+.badge-outline-secondary {
+	border-color: var(--secondary);
+	color: var(--secondary);
+}
+
 .badge-outline-success {
 	border-color: var(--success);
 	color: var(--success);
@@ -70,4 +75,36 @@ body {
 .badge-outline-warning {
 	border-color: var(--warning);
 	color: var(--warning);
+}
+
+.badge-outline-info {
+	border-color: var(--info);
+	color: var(--info);
+}
+
+.table {
+	th {
+		font-weight: 500;
+	}
+	td {
+		font-weight: 300;
+	}
+	&.b-table[aria-busy="true"] {
+		opacity: 0.4;
+		user-select: none;
+		// position: relative;
+		// z-index: 1;
+		// &::before {
+		// 	width: 100%;
+		// 	height: 100%;
+		// 	left: 0;
+		// 	top: 0;
+		// 	content: "\f110";
+		// 	font-family: "fontAwesome";
+		// 	color: var(--primary);
+		// 	position: absolute;
+		// 	z-index: 5;
+		// 	font-weight: 900;
+		// }
+	}
 }
