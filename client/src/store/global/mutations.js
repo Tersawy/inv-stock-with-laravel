@@ -10,3 +10,5 @@ export const setErrors = (state, { message, errors }) => {
 export const removeErrors = (state) => (state.errors = {});
 
 export const removeError = (state, field) => (state.errors[field] = null);
+
+export const setBreads = (state, breads) => (state.breads = breads);
