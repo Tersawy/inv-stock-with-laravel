@@ -35,11 +35,8 @@ trait PaginationAndSearchOperation
 
     if (!empty($search)) {
 
-      foreach ($this->searchFields as $field) {
-
-        $field_str = Str::limit($req->get($field, ''), 20);
-
-        $query->orWhere($field, 'LIKE', '%' . $field_str . '%');
+      foreach ($this->searchFields as $field) {;
+        $query->orWhere($field, 'LIKE', '%' . $search . '%');
       }
     }
 
