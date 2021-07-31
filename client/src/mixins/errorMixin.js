@@ -1,6 +1,6 @@
 import { mapMutations, mapState } from "vuex";
 
-const errorMixin = {
+export default {
 	computed: {
 		...mapState({
 			errors: (state) => state.errors
@@ -8,8 +8,6 @@ const errorMixin = {
 	},
 
 	methods: {
-		...mapMutations(["removeErrors", "removeError"])
+		...mapMutations(["setError", "removeError", "removeErrors"])
 	}
 };
-
-export default errorMixin;
