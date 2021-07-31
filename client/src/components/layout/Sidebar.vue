@@ -1,76 +1,128 @@
 <template>
-	<v-navigation-drawer app permanent :mini-variant.sync="drawer">
-		<v-list-item class="px-2">
-			<v-list-item-avatar>
-				<v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
-			</v-list-item-avatar>
-
-			<v-list-item-title>{{ me.username }}</v-list-item-title>
-
-			<v-btn icon @click.stop="setDrawer(!drawer)">
-				<v-icon>mdi-chevron-left</v-icon>
-			</v-btn>
-		</v-list-item>
-		<v-list dense nav>
-			<v-list-item v-for="item in items" :key="item.title" link :to="item.to">
-				<v-list-item-icon>
-					<v-icon>{{ item.icon }}</v-icon>
-				</v-list-item-icon>
-
-				<v-list-item-content>
-					<v-list-item-title>{{ item.title }}</v-list-item-title>
-				</v-list-item-content>
-			</v-list-item>
-		</v-list>
-	</v-navigation-drawer>
-	<!-- <router-link to="/">Home</router-link> | <router-link to="/login">Login</router-link> |
-		<router-link to="/warehouse">warehouse</router-link> | <router-link to="/warehouse/create">create a warehouse</router-link> |
-		<router-link to="/warehouse/trashed">warehouse trashed</router-link> | <router-link to="/category">category</router-link> |
-		<router-link to="/category/trashed">category trashed</router-link> | <router-link to="/brand">brand</router-link> |
-		<router-link to="/brand/trashed">brand trashed</router-link> | <router-link to="/main-unit">main-unit</router-link> |
-		<router-link to="/product">products</router-link> | <router-link to="/product/create">create a product</router-link> |
-		<router-link to="/supplier">supplier</router-link> | <router-link to="/supplier/create">create a supplier</router-link> |
-		<router-link to="/supplier/trashed">supplier trashed</router-link>
-		| <router-link to="/purchase/create">create a purchase</router-link> |
-		<b-btn @click="logout" variant="danger">logout</b-btn> -->
+	<div class="navigation">
+		<VuePerfectScrollbar class="scroll-area" v-once :settings="{ suppressScrollX: true, wheelPropagation: false }">
+			<ul>
+				<li>
+					<router-link to="/" class="bg-transparent">
+						<span class="icon logo">
+							<img src="../../assets/logo.png" />
+						</span>
+						<h2 class="title">Brand Name</h2>
+					</router-link>
+				</li>
+				<li v-for="(item, i) in items" :key="i">
+					<router-link :to="item.to" :exact="i == 0">
+						<span class="icon"><b-icon :icon="item.icon" scale="1.5"></b-icon></span>
+						<span class="title">{{ item.title }}</span>
+					</router-link>
+				</li>
+			</ul>
+		</VuePerfectScrollbar>
+	</div>
 </template>
 
 <script>
-	import { mapMutations, mapState } from "vuex";
+	import VuePerfectScrollbar from "vue-perfect-scrollbar";
 	export default {
+		components: { VuePerfectScrollbar },
+
 		data() {
 			return {
 				items: [
-					{ title: "Dashboard", icon: "mdi-view-dashboard", to: "/" },
-					{ title: "Warehouses", icon: "mdi-image", to: "/warehouse" },
-					{ title: "Categories", icon: "mdi-archive", to: "/category" },
-					{ title: "Brands", icon: "mdi-help-box", to: "/brand" },
-					{ title: "Products", icon: "mdi-help-box", to: "/product" },
-					{ title: "Suppliers", icon: "mdi-help-box", to: "/supplier" },
-					{ title: "Units", icon: "mdi-help-box", to: "/main-unit" },
-					{ title: "Purchases", icon: "mdi-help-box", to: "/purchase/create" }
+					{ title: "Dashboard", icon: "grid1x2", to: "/" },
+					{ title: "Warehouses", icon: "archive", to: "/warehouse" },
+					{ title: "Categories", icon: "layout-three-columns", to: "/category" },
+					{ title: "Products", icon: "box-seam", to: "/product" },
+					{ title: "Sales", icon: "cart3", to: "/purchase/create" },
+					{ title: "Sales Return", icon: "arrow-return-left", to: "/purchase/create" },
+					{ title: "Purchases", icon: "gift", to: "/purchase/create" },
+					{ title: "Purchases Return", icon: "arrow-return-left", to: "/purchase/create" },
+					{ title: "Expenses", icon: "wallet2", to: "/brand" },
+					{ title: "Adjustment", icon: "pen", to: "/brand" },
+					{ title: "Quotations", icon: "minecart-loaded", to: "/brand" },
+					{ title: "Transfer", icon: "arrow-repeat", to: "/brand" },
+					{ title: "Customers", icon: "person-plus", to: "/customer" },
+					{ title: "Suppliers", icon: "people", to: "/supplier" },
+					{ title: "Brands", icon: "tags", to: "/brand" },
+					{ title: "Units", icon: "mdi-help-box", to: "/main-unit" }
 				]
 			};
-		},
-
-		computed: {
-			...mapState({
-				getDrawer: (state) => state.drawer
-			}),
-			drawer: {
-				get: function () {
-					return this.getDrawer;
-				},
-				set: function (v) {
-					this.setDrawer(v);
-				}
-			}
-		},
-
-		methods: {
-			...mapMutations(["setDrawer"])
 		}
 	};
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+	.navigation {
+		position: fixed;
+		width: 60px;
+		height: 100%;
+		background: var(--secondary);
+		transition: 0.2s;
+		overflow: auto;
+		overflow-x: hidden;
+		z-index: 90;
+		&.active {
+			width: 300px;
+		}
+		.scroll-area {
+			position: relative;
+			margin: auto;
+			width: 300px;
+			height: 100%;
+		}
+		ul {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			padding: 0;
+			li {
+				position: relative;
+				width: 100%;
+				list-style: none;
+				&:nth-child(1) {
+					margin-bottom: 20px;
+				}
+				&:nth-child(1):hover {
+					background: transparent;
+				}
+				a {
+					position: relative;
+					display: flex;
+					width: 100%;
+					text-decoration: none;
+					color: #fff;
+					&.router-link-active,
+					&:hover {
+						background: var(--primary);
+					}
+					.icon {
+						position: relative;
+						display: block;
+						min-width: 60px;
+						line-height: 60px;
+						text-align: center;
+						&.logo {
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							border-radius: 50%;
+							img {
+								width: 40px;
+								height: 40px;
+							}
+						}
+					}
+					.title {
+						position: relative;
+						display: block;
+						padding: 0 10px;
+						height: 60px;
+						line-height: 60px;
+						white-space: nowrap;
+					}
+				}
+			}
+		}
+	}
+</style>
