@@ -6,17 +6,27 @@ use App\Models\Product;
 use Illuminate\Support\Arr;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
 use App\Requests\ProductRequest;
-use App\Traits\ProductWarehouseOperations;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use App\Traits\ProductWarehouseOperations;
 
 class ProductController extends Controller
 {
   use ProductWarehouseOperations;
 
-  public function index()
+  protected $filterationFields = [
+    'name'      => 'name',
+    'category'  => 'category_id',
+    'brand'     => 'brand_id',
+    'code'      => 'code'
+  ];
+
+  protected $searchFields = ['name', 'code'];
+
+  public function index(Request $req)
   {
     $category = ['category' => function ($query) {
       $query->select(['id', 'name']);
@@ -34,11 +44,15 @@ class ProductController extends Controller
       $query->select(['name', 'product_id']);
     }];
 
-    $withFields = array_merge([], $category, $brand, $unit, $images);
+    $with_fields = array_merge($category, $brand, $unit, $images);
 
-    $products = Product::with($withFields)->get(['id', 'name', 'code', 'price', 'main_unit_id', 'brand_id', 'category_id']);
+    $query = Product::query();
 
-    $products = $products->map(function ($product) {
+    $this->handleQuery($req, $query);
+
+    $products = $query->with($with_fields)->select(['id', 'name', 'code', 'price', 'main_unit_id', 'brand_id', 'category_id'])->paginate($req->per_page);
+
+    $products->getCollection()->transform(function ($product) {
       return [
         'id'        => $product->id,
         'name'      => $product->name,
@@ -66,9 +80,9 @@ class ProductController extends Controller
       $query->select(['name', 'product_id']);
     }];
 
-    $withFields = array_merge([], $variants, $images);
+    $with_fields = array_merge($variants, $images);
 
-    $products = Product::with($withFields)->get(['id', 'name', 'code', 'has_variants']);
+    $products = Product::with($with_fields)->get(['id', 'name', 'code', 'has_variants']);
 
     $newProducts = [];
 
@@ -91,7 +105,6 @@ class ProductController extends Controller
       }
     }
 
-    // return $this->success($products);
     return $this->success($newProducts);
   }
 
@@ -110,11 +123,11 @@ class ProductController extends Controller
       $query->select(['id', 'short_name', 'value', 'operator']);
     }];
 
-    $withFields = array_merge([], $saleUnit, $purchaseUnit);
+    $with_fields = array_merge($saleUnit, $purchaseUnit);
 
     $columns = ['id', 'purchase_unit_id', 'sale_unit_id', 'cost', 'price', 'tax', 'tax_method', 'instock'];
 
-    $product = Product::with($withFields)->find($req->id, $columns);
+    $product = Product::with($with_fields)->find($req->id, $columns);
 
     return $this->success($product->details());
   }
@@ -134,9 +147,11 @@ class ProductController extends Controller
       $query->select(['name', 'product_id']);
     }];
 
-    $withFields = array_merge([], $images, $variants);
+    $with_fields = array_merge($images, $variants);
 
-    $product = Product::where('id', $req->id)->with($withFields)->get()->first();
+    $product = Product::where('id', $req->id)->with($with_fields)->get()->first();
+
+    $product->path = $product->path;
 
     return $this->success($product);
   }
@@ -270,7 +285,7 @@ class ProductController extends Controller
   }
 
 
-  private function deleteImages(ProductImage ...$images)
+  private function deleteImages($images)
   {
     $imagesNames = Arr::pluck($images, 'name');
 
@@ -283,5 +298,17 @@ class ProductController extends Controller
     File::delete($images);
 
     ProductImage::destroy($imagesIds);
+  }
+
+
+  private function createVariants(Request $req, Product $product)
+  {
+    $variants = [];
+
+    foreach ($req->variants as $variant) {
+      $variants[] = ['product_id' => $product->id, 'name' => $variant['name']];
+    }
+
+    ProductVariant::insert($variants);
   }
 }
