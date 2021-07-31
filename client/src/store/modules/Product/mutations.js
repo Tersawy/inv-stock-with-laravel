@@ -1,5 +1,6 @@
 export const all = (state, res) => {
-	state.all.docs = res.data;
+	state.all.docs = res.data.data;
+	state.all.total = res.data.total;
 };
 
 export const options = (state, res) => {

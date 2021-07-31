@@ -2,8 +2,8 @@ import api from "@/plugins/api";
 
 const prefix = "/purchase";
 
-export const all = ({ commit }) => {
-	api("get", `${prefix}`, (err, res) => {
+export const all = ({ commit }, queries) => {
+	api("get", prefix + queries, (err, res) => {
 		if (err) return;
 		commit("all", res);
 	});

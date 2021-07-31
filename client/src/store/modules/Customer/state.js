@@ -1,18 +1,12 @@
 const state = {
 	all: {
-		docs: {},
+		docs: [],
 		total: 0,
 		page: 1,
 		perPage: 15
 	},
-	one: {
-		sales: {
-			docs: {},
-			total: 0,
-			page: 1,
-			perPage: 15
-		}
-	}
+	one: {},
+	options: []
 };
 
 export default state;

@@ -1,4 +1,4 @@
-export const all = ({ commit }) => {
+export const all = ({ commit }, queries) => {
 	let response = "This where is api action go";
 	commit("all", response);
 };
