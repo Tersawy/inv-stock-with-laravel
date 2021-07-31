@@ -3,9 +3,9 @@ import {
 	TAX_INCLUSIVE,
 	DISCOUNT_FIXED,
 	DISCOUNT_PERCENT,
-	PURCHASE_STATUS_RECEIVED,
-	PURCHASE_STATUS_PENDING,
-	PURCHASE_STATUS_ORDERED
+	PURCHASE_RECEIVED,
+	PURCHASE_PENDING,
+	PURCHASE_ORDERED
 } from "@/helpers/constants";
 
 const state = {
@@ -14,7 +14,7 @@ const state = {
 	errorMsg: "",
 	errorDismissSecs: 0,
 	errors: {},
-	drawer: false,
+	breads: [],
 	taxMethods: [
 		{ text: "Exclusive", value: TAX_EXCLUSIVE },
 		{ text: "Inclusive", value: TAX_INCLUSIVE }
@@ -24,9 +24,9 @@ const state = {
 		{ text: "Percent %", value: DISCOUNT_PERCENT }
 	],
 	purchaseStatus: [
-		{ text: "Received", value: PURCHASE_STATUS_RECEIVED },
-		{ text: "Pending", value: PURCHASE_STATUS_PENDING },
-		{ text: "Ordered", value: PURCHASE_STATUS_ORDERED }
+		{ text: "Received", value: PURCHASE_RECEIVED },
+		{ text: "Pending", value: PURCHASE_PENDING },
+		{ text: "Ordered", value: PURCHASE_ORDERED }
 	]
 };
 
