@@ -139,6 +139,8 @@
 
 		mixins: [dataTableMixin],
 
+		mixins: [dataTableMixin],
+
 		data: () => ({
 			namespace: "Product",
 			fields: [
