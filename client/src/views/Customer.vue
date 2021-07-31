@@ -1,11 +1,11 @@
 <template>
-	<div class="suppliers-list py-3">
+	<div class="customers-list py-3">
 		<b-container fluid>
 			<b-row>
 				<b-col cols="4">
 					<b-form-group class="mb-0">
 						<b-input-group>
-							<b-form-input placeholder="Search in suppliers by name, phone or email" v-model="search" />
+							<b-form-input placeholder="Search in customers by name" v-model="search" />
 							<b-input-group-append>
 								<b-btn variant="primary">
 									<i class="fas fa-filter"></i>
@@ -95,14 +95,13 @@
 <script>
 	import dataTableMixin from "@/mixins/dataTableMixin";
 	export default {
-		name: "Supplier",
+		name: "Customer",
 
 		mixins: [dataTableMixin],
 
 		data: () => ({
-			namespace: "Supplier",
+			namespace: "Customer",
 			fields: [
-				{ key: "code", label: "Code", sortable: true },
 				{ key: "name", label: "Name", sortable: true },
 				{ key: "city", label: "City", sortable: true },
 				{ key: "country", label: "Country", sortable: true },
@@ -111,7 +110,7 @@
 				{ key: "address", label: "Address", sortable: true },
 				{ key: "actions", label: "Actions" }
 			],
-			filterationFields: { name: "", code: "", country: "", city: "" }
+			filterationFields: { name: "", city: "", country: "", email: "", phone: "", address: "" }
 		})
 	};
 </script>
