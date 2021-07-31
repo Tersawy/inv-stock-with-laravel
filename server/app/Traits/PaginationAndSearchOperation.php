@@ -33,19 +33,23 @@ trait PaginationAndSearchOperation
     $search         = Str::limit($search, 20);
     $req->search    = $search;
 
-    if (!empty($search)) {
-
-      foreach ($this->searchFields as $field) {;
+    if (!empty($search) && property_exists($this, 'searchFields')) {
+      foreach ($this->searchFields as $field) {
         $query->orWhere($field, 'LIKE', '%' . $search . '%');
       }
     }
 
-    foreach ($this->filterationFields as $key => $field) {
+    if (property_exists($this, 'filterationFields')) {
 
-      $field_str = Str::limit($req->get($key), 20);
+      foreach ($this->filterationFields as $key => $field) {
 
-      if (!empty($field_str)) {
-        $query->where($field, $field_str);
+        $isAssoc = Arr::isAssoc($this->filterationFields);
+
+        $field_str = Str::limit($req->get($isAssoc ? $key : $field), 20);
+
+        if (!empty($field_str)) {
+          $query->where($field, $field_str);
+        }
       }
     }
 
