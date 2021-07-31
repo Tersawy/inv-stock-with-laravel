@@ -18,6 +18,7 @@ import SupplierForm from "@/components/SupplierForm.vue";
 import SupplierTrashed from "@/views/Trashed/Supplier.vue";
 import PurchaseForm from "@/components/PurchaseForm.vue";
 import CustomerDashboard from "@/views/Customer/Dashboard.vue";
+import Customer from "@/views/Customer.vue";
 
 Vue.use(VueRouter);
 
@@ -47,7 +48,7 @@ const routes = [
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/warehouse/:warehouseId/update",
+		path: "/warehouse/:warehouseId(\\d+)/update",
 		name: "WarehouseUpdate",
 		component: WarehouseForm,
 		meta: { auth: true, userType: [0, 1, 2] }
@@ -101,7 +102,7 @@ const routes = [
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/product/:productId/update",
+		path: "/product/:productId(\\d+)/update",
 		name: "ProductUpdate",
 		component: ProductForm,
 		meta: { auth: true, userType: [0, 1, 2] }
@@ -119,7 +120,7 @@ const routes = [
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/supplier/:supplierId/update",
+		path: "/supplier/:supplierId(\\d+)/update",
 		name: "SupplierUpdate",
 		component: SupplierForm,
 		meta: { auth: true, userType: [0, 1, 2] }
@@ -131,13 +132,25 @@ const routes = [
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
+		path: "/customer",
+		name: "Customer",
+		component: Customer,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	// {
+	// 	path: "/supplier/trashed",
+	// 	name: "SupplierTrashed",
+	// 	component: SupplierTrashed,
+	// 	meta: { auth: true, userType: [0, 1, 2] }
+	// },
+	{
 		path: "/purchase/create",
 		name: "PurchaseCreate",
 		component: PurchaseForm,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/purchase/:purchaseId/update",
+		path: "/purchase/:purchaseId(\\d+)/update",
 		name: "PurchaseUpdate",
 		component: PurchaseForm,
 		meta: { auth: true, userType: [0, 1, 2] }
