@@ -5,23 +5,13 @@
 			<Navbar v-if="isAuth" />
 			<div class="main-content px-3 pt-3">
 				<b-breadcrumb class="mb-0" v-if="isAuth">
-					<template v-for="(bread, i) in breads">
-						<b-breadcrumb-item :key="i" :active="true">
-							<router-link :to="bread.to" custom v-slot="{ navigate }">
-								<span @click="navigate" @keypress.enter="navigate" role="link" :class="bread.active ? '' : 'active'">
-									<b-icon
-										v-if="bread.isFirst"
-										icon="house-fill"
-										scale="1.25"
-										shift-v="1.25"
-										aria-hidden="true"
-										class="mr-1"
-									></b-icon>
-									{{ bread.name }}
-								</span>
-							</router-link>
-						</b-breadcrumb-item>
-					</template>
+					<b-breadcrumb-item v-for="(bread, i) in breads" :key="i" :active="true">
+						<span v-if="bread.active">{{ bread.name }}</span>
+						<router-link v-else :to="bread.to">
+							<b-icon v-if="bread.isFirst" icon="house-fill" scale="1.25" shift-v="1.25" class="mr-1"></b-icon>
+							{{ bread.name }}
+						</router-link>
+					</b-breadcrumb-item>
 				</b-breadcrumb>
 				<router-view />
 			</div>
