@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    protected $searchFields = ['name', 'code'];
+
+    public function index(Request $req)
     {
-        $categories = Category::all();
+        $categories = Category::query();
+
+        $this->handleQuery($req, $categories);
+
+        $categories = $categories->select(['id', 'name', 'code'])->paginate($req->per_page);
 
         return $this->success($categories);
     }
