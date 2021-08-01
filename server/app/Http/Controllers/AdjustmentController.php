@@ -87,6 +87,10 @@ class AdjustmentController extends Controller
                     $detail['variant_id'] = Arr::get($detail, 'variant_id');
                 }
 
+                $adjustment->reference = 'AD_' . (1110 + $adjustment->id);
+
+                $adjustment->save();
+
                 AdjustmentDetail::insert($details);
             }, 10);
 

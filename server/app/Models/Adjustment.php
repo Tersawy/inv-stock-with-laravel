@@ -9,7 +9,7 @@ class Adjustment extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['items_count', 'note', 'date', 'warehouse_id', 'status'];
+    protected $fillable = ['items_count', 'note', 'date', 'warehouse_id', 'status', 'reference'];
 
     protected $append = ['reference'];
 
@@ -20,11 +20,6 @@ class Adjustment extends Model
 
     public function warehouse()
     {
-      return $this->belongsTo(Warehouse::class);
-    }
-
-    public function getReferenceAttribute()
-    {
-        return 'AD_' . (1110 + $this->id);
+        return $this->belongsTo(Warehouse::class);
     }
 }

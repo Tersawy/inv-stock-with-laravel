@@ -18,6 +18,7 @@ class CreateAdjustmentsTable extends Migration
             $table->id();
 
             $table->float('items_count');
+            $table->string('reference')->default("AD_1110");
 
             $table->text('note')->nullable();
             $table->date('date')->default(date('Y-m-d'));
