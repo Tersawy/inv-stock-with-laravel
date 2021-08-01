@@ -42,6 +42,10 @@ class PurchaseController extends Controller
 
         $with_fields = array_merge($supplier, $warehouse);
 
+        $purchases = Purchase::query();
+
+        $this->handleQuery($req, $purchases);
+
         $purchases = Purchase::select(['id', 'status', 'payment_status', 'supplier_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
 
         $purchases->getCollection()->transform(function ($purchase) {

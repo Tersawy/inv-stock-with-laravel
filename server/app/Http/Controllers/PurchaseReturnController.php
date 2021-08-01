@@ -41,6 +41,10 @@ class PurchaseReturnController extends Controller
 
         $with_fields = array_merge($supplier, $warehouse);
 
+        $purchases = PurchaseReturn::query();
+
+        $this->handleQuery($req, $purchases);
+
         $purchases = PurchaseReturn::select(['id', 'status', 'payment_status', 'supplier_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
 
         $purchases->getCollection()->transform(function ($purchase) {
