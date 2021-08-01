@@ -20,7 +20,17 @@ class PurchaseController extends Controller
 
     public $unitName = 'purchase_unit';
 
-    public function index()
+    protected $filterationFields = [
+        'date'           => 'date',
+        'supplier'       => 'supplier_id',
+        'warehouse'      => 'warehouse_id',
+        'status'         => 'status',
+        'payment_status' => 'payment_status'
+    ];
+
+    protected $searchFields = ['date'];
+
+    public function index(Request $req)
     {
         $supplier = ['supplier' => function ($query) {
             $query->select(['id', 'name']);
@@ -30,11 +40,11 @@ class PurchaseController extends Controller
             $query->select(['id', 'name']);
         }];
 
-        $withFields = array_merge([], $supplier, $warehouse);
+        $with_fields = array_merge($supplier, $warehouse);
 
-        $purchases = Purchase::with($withFields)->get();
+        $purchases = Purchase::select(['id', 'status', 'payment_status', 'supplier_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
 
-        $purchases = $purchases->map(function ($purchase) {
+        $purchases->getCollection()->transform(function ($purchase) {
             return [
                 'id'                => $purchase->id,
                 'reference'         => $purchase->reference,
