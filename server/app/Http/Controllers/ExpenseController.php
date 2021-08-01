@@ -8,9 +8,42 @@ use App\Requests\ExpenseRequest;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    protected $searchFields = ['amount', 'date', 'details'];
+
+    protected $filterationFields = [
+        'category'  => 'expense_category_id',
+        'warehouse' => 'warehouse_id',
+        'date'      => 'date'
+    ];
+
+    public function index(Request $req)
     {
-        $expenses = Expense::all();
+        $category = ['category' => function ($query) {
+            $query->select(['id', 'name']);
+        }];
+
+        $warehouse = ['warehouse' => function ($query) {
+            $query->select(['id', 'name']);
+        }];
+
+        $with_fields = array_merge($category, $warehouse);
+
+        $expenses = Expense::query();
+
+        $this->handleQuery($req, $expenses);
+
+        $expenses = $expenses->select(['id', 'date', 'amount', 'details', 'expense_category_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
+
+        $expenses->getCollection()->transform(function ($expense) {
+            return [
+                'id'        => $expense->id,
+                'date'      => $expense->date,
+                'amount'    => $expense->amount,
+                'details'   => $expense->details,
+                'warehouse' => $expense->warehouse->name,
+                'category'  => $expense->category->name
+            ];
+        });
 
         return $this->success($expenses);
     }
