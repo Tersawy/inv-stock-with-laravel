@@ -21,13 +21,14 @@ class TransferController extends Controller
     public $unitName = 'purchase_unit';
 
     protected $filterationFields = [
-        'date'           => 'date',
-        'from_warehouse' => 'from_warehouse_id',
-        'to_warehouse'   => 'to_warehouse_id',
-        'status'         => 'status'
+        'reference'         => 'reference',
+        'date'              => 'date',
+        'from_warehouse'    => 'from_warehouse_id',
+        'to_warehouse'      => 'to_warehouse_id',
+        'status'            => 'status'
     ];
 
-    protected $searchFields = ['date'];
+    protected $searchFields = ['date', 'reference'];
 
     public function index(Request $req)
     {
@@ -45,7 +46,7 @@ class TransferController extends Controller
 
         $this->handleQuery($req, $transfers);
 
-        $transfers = Transfer::select(['id', 'status', 'from_warehouse_id', 'to_warehouse_id', 'items_count'])->with($with_fields)->paginate($req->per_page);
+        $transfers = Transfer::select(['id', 'reference', 'status', 'from_warehouse_id', 'to_warehouse_id', 'items_count'])->with($with_fields)->paginate($req->per_page);
 
         $transfers->getCollection()->transform(function ($transfer) {
             return [
@@ -91,6 +92,10 @@ class TransferController extends Controller
                 $this->checking_quantity($details, $from_products_warehouse, $products);
 
                 $transfer = Transfer::create($attr);
+
+                $transfer->reference = 'TR_' . (1110 + $transfer->id);
+
+                $transfer->save();
 
                 foreach ($details as &$detail) {
                     $detail['transfer_id'] = $transfer->id;

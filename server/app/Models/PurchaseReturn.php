@@ -12,6 +12,7 @@ class PurchaseReturn extends Model
     use SoftDeletes, InvoiceAttributes;
 
     protected $fillable = [
+        'reference',
         'warehouse_id',
         'supplier_id',
         'tax',
@@ -24,8 +25,6 @@ class PurchaseReturn extends Model
         'date'
     ];
 
-    protected $append = ['reference'];
-
     protected $fieldActionName = 'cost';
 
     public function details()
@@ -36,10 +35,5 @@ class PurchaseReturn extends Model
     public function payments()
     {
         return $this->hasMany(PurchaseReturnPayment::class);
-    }
-
-    public function getReferenceAttribute()
-    {
-        return 'RT_' . (1110 + $this->id);
     }
 }

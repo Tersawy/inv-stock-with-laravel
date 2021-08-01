@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class PurchaseReturnPayment extends Model
 {
-    protected $fillable = ['amount', 'payment_method', 'note', 'purchase_return_id'];
+    protected $fillable = ['reference', 'amount', 'payment_method', 'note', 'purchase_return_id'];
 }

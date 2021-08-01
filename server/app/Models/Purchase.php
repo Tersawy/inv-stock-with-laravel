@@ -12,6 +12,7 @@ class Purchase extends Model
     use SoftDeletes, InvoiceAttributes;
 
     protected $fillable = [
+        'reference',
         'warehouse_id',
         'supplier_id',
         'tax',
@@ -24,8 +25,6 @@ class Purchase extends Model
         'date'
     ];
 
-    protected $append = ['reference'];
-
     protected $fieldActionName = 'cost';
 
     public function details()
@@ -36,10 +35,5 @@ class Purchase extends Model
     public function payments()
     {
         return $this->hasMany(PurchasePayment::class);
-    }
-
-    public function getReferenceAttribute()
-    {
-        return 'PR_' . (1110 + $this->id);
     }
 }

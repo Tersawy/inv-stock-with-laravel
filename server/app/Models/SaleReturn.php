@@ -12,6 +12,7 @@ class SaleReturn extends Model
     use SoftDeletes, InvoiceAttributes;
 
     protected $fillable = [
+        'reference',
         'warehouse_id',
         'customer_id',
         'tax',

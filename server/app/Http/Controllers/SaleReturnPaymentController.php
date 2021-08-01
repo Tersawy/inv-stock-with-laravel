@@ -19,13 +19,17 @@ class SaleReturnPaymentController extends Controller
         if (!$sale) return $this->error('The sale return invoice is not found to add payment', 404);
 
         if ($sale->payment_status == Constants::PAYMENT_STATUS_PAID) {
-          return $this->error('This sale invoice has been paid !', 422);
+            return $this->error('This sale invoice has been paid !', 422);
         }
 
-        SaleReturnPayment::create($attr);
+        $payment = SaleReturnPayment::create($attr);
+
+        $payment->reference = "INV/RT_" . (1110 + $payment->id);
+
+        $payment->save();
 
         $sale->payment_status = $sale->new_payment_status;
-    
+
         $sale->save();
 
         return $this->success([], 'The Payment has been added successfully');
@@ -51,7 +55,7 @@ class SaleReturnPaymentController extends Controller
         $payment->save();
 
         $sale->payment_status = $sale->new_payment_status;
-    
+
         $sale->save();
 
         return $this->success([], 'The Payment has been updated successfully');
@@ -73,7 +77,7 @@ class SaleReturnPaymentController extends Controller
         $payment->delete();
 
         $sale->payment_status = $sale->new_payment_status;
-    
+
         $sale->save();
 
         return $this->success([], 'The Payment has been deleted successfully');

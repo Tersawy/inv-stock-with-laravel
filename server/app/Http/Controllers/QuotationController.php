@@ -17,12 +17,13 @@ class QuotationController extends Controller
 
     protected $filterationFields = [
         'date'      => 'date',
+        'reference' => 'reference',
         'customer'  => 'customer_id',
         'warehouse' => 'warehouse_id',
         'status'    => 'status'
     ];
 
-    protected $searchFields = ['date'];
+    protected $searchFields = ['reference', 'date'];
 
     public function index(Request $req)
     {
@@ -40,7 +41,7 @@ class QuotationController extends Controller
 
         $this->handleQuery($req, $quotations);
 
-        $quotations = Quotation::select(['id', 'status', 'payment_status', 'customer_id', 'warehouse_id', 'date'])->with($with_fields)->paginate($req->per_page);
+        $quotations = Quotation::select(['id', 'reference', 'status', 'payment_status', 'customer_id', 'warehouse_id', 'date'])->with($with_fields)->paginate($req->per_page);
 
         $quotations->getCollection()->transform(function ($quotation) {
             return [
@@ -69,6 +70,10 @@ class QuotationController extends Controller
                 $this->check_distinct($details);
 
                 $quotation = Quotation::create($attr);
+
+                $quotation->reference = 'QT_' . (1110 + $quotation->id);
+
+                $quotation->save();
 
                 foreach ($details as &$detail) {
                     $detail['quotation_id'] = $quotation->id;

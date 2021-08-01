@@ -21,13 +21,14 @@ class SaleController extends Controller
 
     protected $filterationFields = [
         'date'           => 'date',
+        'reference'      => 'reference',
         'customer'       => 'customer_id',
         'warehouse'      => 'warehouse_id',
         'status'         => 'status',
         'payment_status' => 'payment_status'
     ];
 
-    protected $searchFields = ['date'];
+    protected $searchFields = ['reference', 'date'];
 
     public function index(Request $req)
     {
@@ -45,7 +46,7 @@ class SaleController extends Controller
 
         $this->handleQuery($req, $sales);
 
-        $sales = Sale::select(['id', 'status', 'payment_status', 'customer_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
+        $sales = Sale::select(['id', 'reference', 'status', 'payment_status', 'customer_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
 
         $sales->getCollection()->transform(function ($sale) {
             return [
@@ -87,6 +88,10 @@ class SaleController extends Controller
                 $this->checking_relations($details, $products_warehouse, $products);
 
                 $sale = Sale::create($attr);
+
+                $sale->reference = 'SL_' . (1110 + $sale->id);
+
+                $sale->save();
 
                 foreach ($details as &$detail) {
                     $detail['sale_id'] = $sale->id;

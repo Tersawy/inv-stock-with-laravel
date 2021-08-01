@@ -22,7 +22,11 @@ class SalePaymentController extends Controller
       return $this->error('This sale invoice has been paid !', 422);
     }
 
-    SalePayment::create($attr);
+    $payment = SalePayment::create($attr);
+
+    $payment->reference = "INV/SL_" . (1110 + $payment->id);
+
+    $payment->save();
 
     $sale->payment_status = $sale->new_payment_status;
 

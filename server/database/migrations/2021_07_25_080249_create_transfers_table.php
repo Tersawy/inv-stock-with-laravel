@@ -16,6 +16,7 @@ class CreateTransfersTable extends Migration
     {
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
+            $table->string('reference')->default("TR_1110");
 
             $table->integer('tax')->default(0);
             $table->integer('discount')->default(0);

@@ -22,7 +22,11 @@ class PurchasePaymentController extends Controller
       return $this->error('This purchase invoice has been paid !', 422);
     }
 
-    PurchasePayment::create($attr);
+    $payment = PurchasePayment::create($attr);
+
+    $payment->reference = "INV/PR_" . (1110 + $payment->id);
+
+    $payment->save();
 
     $purchase->payment_status = $purchase->new_payment_status;
 

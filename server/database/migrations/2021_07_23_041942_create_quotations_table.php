@@ -16,6 +16,7 @@ class CreateQuotationsTable extends Migration
     {
         Schema::create('quotations', function (Blueprint $table) {
             $table->id();
+            $table->string('reference')->default("QT_1110");
 
             $table->integer('tax')->default(0);
             $table->integer('discount')->default(0);

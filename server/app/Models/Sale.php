@@ -11,6 +11,7 @@ class Sale extends Model
     use SoftDeletes, InvoiceAttributes;
 
     protected $fillable = [
+        'reference',
         'warehouse_id',
         'customer_id',
         'tax',
@@ -24,9 +25,7 @@ class Sale extends Model
         'is_pos'
     ];
 
-    protected $casts = [ 'is_pos' => 'boolean' ];
-
-    protected $append = ['reference'];
+    protected $casts = ['is_pos' => 'boolean'];
 
     protected $fieldActionName = 'price';
 
@@ -38,10 +37,5 @@ class Sale extends Model
     public function payments()
     {
         return $this->hasMany(SalePayment::class);
-    }
-
-    public function getReferenceAttribute()
-    {
-        return 'SL_' . (1110 + $this->id);
     }
 }

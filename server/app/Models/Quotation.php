@@ -11,6 +11,7 @@ class Quotation extends Model
     use SoftDeletes, InvoiceAttributes;
 
     protected $fillable = [
+        'reference',
         'warehouse_id',
         'customer_id',
         'tax',
@@ -22,17 +23,10 @@ class Quotation extends Model
         'date'
     ];
 
-    protected $append = ['reference'];
-
     protected $fieldActionName = 'price';
 
     public function details()
     {
         return $this->hasMany(QuotationDetail::class);
-    }
-
-    public function getReferenceAttribute()
-    {
-        return 'QT_' . (1110 + $this->id);
     }
 }

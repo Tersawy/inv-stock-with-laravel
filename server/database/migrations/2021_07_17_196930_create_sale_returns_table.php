@@ -16,6 +16,7 @@ class CreateSaleReturnsTable extends Migration
     {
         Schema::create('sale_returns', function (Blueprint $table) {
             $table->id();
+            $table->string('reference')->default("RT_1110");
 
             $table->integer('tax')->default(0);
             $table->integer('discount')->default(0);

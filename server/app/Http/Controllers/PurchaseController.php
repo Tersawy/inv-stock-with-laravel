@@ -22,13 +22,14 @@ class PurchaseController extends Controller
 
     protected $filterationFields = [
         'date'           => 'date',
+        'reference'      => 'reference',
         'supplier'       => 'supplier_id',
         'warehouse'      => 'warehouse_id',
         'status'         => 'status',
         'payment_status' => 'payment_status'
     ];
 
-    protected $searchFields = ['date'];
+    protected $searchFields = ['reference', 'date'];
 
     public function index(Request $req)
     {
@@ -46,7 +47,7 @@ class PurchaseController extends Controller
 
         $this->handleQuery($req, $purchases);
 
-        $purchases = Purchase::select(['id', 'status', 'payment_status', 'supplier_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
+        $purchases = Purchase::select(['id', 'reference', 'status', 'payment_status', 'supplier_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
 
         $purchases->getCollection()->transform(function ($purchase) {
             return [
@@ -88,6 +89,10 @@ class PurchaseController extends Controller
                 $this->checking_relations($details, $products_warehouse, $products);
 
                 $purchase = Purchase::create($attr);
+
+                $purchase->reference = 'PR_' . (1110 + $purchase->id);
+
+                $purchase->save();
 
                 foreach ($details as &$detail) {
                     $detail['purchase_id'] = $purchase->id;

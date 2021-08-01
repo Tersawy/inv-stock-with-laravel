@@ -19,13 +19,17 @@ class PurchaseReturnPaymentController extends Controller
         if (!$purchase) return $this->error('The purchase return invoice is not found to add payment', 404);
 
         if ($purchase->payment_status == Constants::PAYMENT_STATUS_PAID) {
-          return $this->error('This purchase invoice has been paid !', 422);
+            return $this->error('This purchase invoice has been paid !', 422);
         }
 
-        PurchaseReturnPayment::create($attr);
+        $payment = PurchaseReturnPayment::create($attr);
+
+        $payment->reference = "INV/RT_" . (1110 + $payment->id);
+
+        $payment->save();
 
         $purchase->payment_status = $purchase->new_payment_status;
-    
+
         $purchase->save();
 
         return $this->success([], 'The Payment has been added successfully');
@@ -37,7 +41,7 @@ class PurchaseReturnPaymentController extends Controller
         $attr = PurchaseReturnPaymentRequest::validationUpdate($req);
 
         $purchase = PurchaseReturn::find($purchaseId);
-    
+
         if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
 
         $payment = PurchaseReturnPayment::find($id);
@@ -51,7 +55,7 @@ class PurchaseReturnPaymentController extends Controller
         $payment->save();
 
         $purchase->payment_status = $purchase->new_payment_status;
-    
+
         $purchase->save();
 
         return $this->success([], 'The Payment has been updated successfully');
@@ -63,7 +67,7 @@ class PurchaseReturnPaymentController extends Controller
         PurchaseReturnPaymentRequest::validationRemove($req);
 
         $purchase = PurchaseReturn::find($purchaseId);
-    
+
         if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
 
         $payment = PurchaseReturnPayment::find($id);
@@ -73,7 +77,7 @@ class PurchaseReturnPaymentController extends Controller
         $payment->delete();
 
         $purchase->payment_status = $purchase->new_payment_status;
-    
+
         $purchase->save();
 
         return $this->success([], 'The Payment has been deleted successfully');

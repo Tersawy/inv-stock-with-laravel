@@ -16,6 +16,8 @@ class CreateSaleReturnPaymentsTable extends Migration
     {
         Schema::create('sale_return_payments', function (Blueprint $table) {
             $table->id();
+            $table->string('reference')->default("INV/RT_1110");
+
             $table->bigInteger('amount');
             $table->bigInteger('payment_method')->default(Constants::PAYMENT_CASH);
             $table->text('note')->nullable();

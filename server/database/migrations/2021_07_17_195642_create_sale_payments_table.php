@@ -16,6 +16,8 @@ class CreateSalePaymentsTable extends Migration
     {
         Schema::create('sale_payments', function (Blueprint $table) {
             $table->id();
+            $table->string('reference')->default("INV/SL_1110");
+
             $table->bigInteger('amount');
             $table->bigInteger('payment_method')->default(Constants::PAYMENT_CASH);
             $table->text('note')->nullable();
