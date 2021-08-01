@@ -125,7 +125,7 @@ class ProductController extends Controller
 
     $with_fields = array_merge($saleUnit, $purchaseUnit);
 
-    $columns = ['id', 'purchase_unit_id', 'sale_unit_id', 'cost', 'price', 'tax', 'tax_method', 'instock'];
+    $columns = ['id', 'purchase_unit_id', 'sale_unit_id', 'cost', 'price', 'tax', 'tax_method'];
 
     $product = Product::with($with_fields)->find($req->id, $columns);
 
