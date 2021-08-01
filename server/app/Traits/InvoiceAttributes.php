@@ -27,33 +27,15 @@ trait InvoiceAttributes
   }
 
 
-  public function getGrandTotalAttribute()
-  {
-    return $this->getTotalExcludingDiscount() + $this->getTaxValue() + $this->shipping;
-  }
-
-
-  public function getPaidAttribute()
-  {
-    $total = 0;
-
-    $this->payments->each(function ($p) use (&$total) {
-      $total += $p->amount;
-    });
-
-    return $total;
-  }
-
-
   public function getDueAttribute()
   {
-    return $this->getGrandTotalAttribute() - $this->getPaidAttribute();
+    return $this->total_price - $this->paid;
   }
 
 
   public function getNewPaymentStatusAttribute()
   {
-    $total = $this->getGrandTotalAttribute();
+    $total = $this->total_price;
 
     $due = $this->getDueAttribute();
 
@@ -64,21 +46,6 @@ trait InvoiceAttributes
     // if ($due > 0 && $due < $total) return "Partial";
     return Constants::PAYMENT_STATUS_PARTIAL;
   }
-
-
-  // public function getPaymentStatusAttribute()
-  // {
-  //   $total = $this->getGrandTotalAttribute();
-
-  //   $due = $this->getDueAttribute();
-
-  //   if ($due === $total) return "Unpaid";
-
-  //   if ($due <= 0) return "Paid";
-
-  //   // if ($due > 0 && $due < $total) return "Partial";
-  //   return "Partial";
-  // }
 
 
   private function getTotalPriceOfDetails()

@@ -26,6 +26,7 @@ class CreateSalesTable extends Migration
             $table->boolean('is_pos')->nullable()->default(0);
             $table->integer('shipping')->default(0);
             $table->float('total_price')->default(0);
+            $table->float('paid')->default(0);
 
             $table->text('note')->nullable();
             $table->date('date')->default(date('Y-m-d'));

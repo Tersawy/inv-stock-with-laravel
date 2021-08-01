@@ -23,6 +23,7 @@ class Sale extends Model
         'payment_status',
         'date',
         'total_price',
+        'paid',
         'is_pos'
     ];
 

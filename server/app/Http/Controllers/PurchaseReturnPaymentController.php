@@ -28,6 +28,8 @@ class PurchaseReturnPaymentController extends Controller
 
         $payment->save();
 
+        $purchase->paid += $payment->amount;
+
         $purchase->payment_status = $purchase->new_payment_status;
 
         $purchase->save();
@@ -54,6 +56,8 @@ class PurchaseReturnPaymentController extends Controller
 
         $payment->save();
 
+        $purchase->paid = $purchase->paid - $payment->amount + $attr['amount'];
+
         $purchase->payment_status = $purchase->new_payment_status;
 
         $purchase->save();
@@ -74,9 +78,11 @@ class PurchaseReturnPaymentController extends Controller
 
         if (!$payment) return $this->error('This payment is not found', 404);
 
-        $payment->delete();
+        $purchase->paid -= $payment->amount;
 
         $purchase->payment_status = $purchase->new_payment_status;
+
+        $payment->delete();
 
         $purchase->save();
 

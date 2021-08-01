@@ -28,6 +28,8 @@ class SalePaymentController extends Controller
 
     $payment->save();
 
+    $sale->paid += $payment->amount;
+
     $sale->payment_status = $sale->new_payment_status;
 
     $sale->save();
@@ -54,6 +56,8 @@ class SalePaymentController extends Controller
 
     $payment->save();
 
+    $sale->paid = $sale->paid - $payment->amount + $attr['amount'];
+
     $sale->payment_status = $sale->new_payment_status;
 
     $sale->save();
@@ -75,6 +79,8 @@ class SalePaymentController extends Controller
     if (!$payment) return $this->error('This payment is not found', 404);
 
     $payment->delete();
+
+    $sale->paid -= $payment->amount;
 
     $sale->payment_status = $sale->new_payment_status;
 
