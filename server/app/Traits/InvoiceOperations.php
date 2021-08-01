@@ -149,7 +149,7 @@ trait InvoiceOperations
 
       if (is_null($product_warehouse)) {
         $product = $this->getProductById($products, $detail['product_id']);
-        $num = $i+1;
+        $num = $i + 1;
         throw CustomException::withMessage("detail.{$num}", "{$product->name} has variants and you try to use it without variant!");
       }
     }
