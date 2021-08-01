@@ -8,7 +8,7 @@ use App\Requests\CustomerRequest;
 
 class CustomerController extends Controller
 {
-    protected $searchFields = ['name', 'email', 'phone', 'country', 'city', 'address'];
+    protected $searchFields = ['code', 'name', 'email', 'phone', 'country', 'city', 'address'];
 
     public function index(Request $req)
     {
@@ -16,7 +16,7 @@ class CustomerController extends Controller
 
         $this->handleQuery($req, $customers);
 
-        $customers = $customers->select(['id', 'name', 'email', 'phone', 'country', 'city', 'address'])->paginate($req->per_page);
+        $customers = $customers->select(['code', 'id', 'name', 'email', 'phone', 'country', 'city', 'address'])->paginate($req->per_page);
 
         return $this->success($customers);
     }
