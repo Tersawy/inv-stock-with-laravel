@@ -9,7 +9,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Helpers\CustomException;
 use App\Models\AdjustmentDetail;
-use App\Models\ProductWarehouse;
 use App\Traits\InvoiceOperations;
 use Illuminate\Support\Facades\DB;
 use App\Requests\AdjustmentRequest;
@@ -18,15 +17,26 @@ class AdjustmentController extends Controller
 {
     use InvoiceOperations;
 
-    public function index()
+    protected $filterationFields = [
+        'date'      => 'date',
+        'warehouse' => 'warehouse_id'
+    ];
+
+    protected $searchFields = ['date'];
+
+    public function index(Request $req)
     {
         $warehouse = ['warehouse' => function ($query) {
             $query->select(['id', 'name']);
         }];
 
-        $adjustments = Adjustment::with($warehouse)->get();
+        $adjustments = Adjustment::query();
 
-        $adjustments = $adjustments->map(function ($adjustment) {
+        $this->handleQuery($req, $adjustments);
+
+        $adjustments = Adjustment::select(['id', 'warehouse_id', 'items_count', 'date'])->with($warehouse)->paginate($req->per_page);
+
+        $adjustments->getCollection()->transform(function ($adjustment) {
             return [
                 'id'            => $adjustment->id,
                 'reference'     => $adjustment->reference,
@@ -48,25 +58,25 @@ class AdjustmentController extends Controller
                 $attr = AdjustmentRequest::validationCreate($req);
 
                 $details = &$attr['products'];
-                
+
                 $attr['items_count'] = count($details);
-                
+
                 $this->check_distinct($details);
 
                 if ($req->status == Constants::ADJUSTMENT_APPROVED) {
-                    
+
                     $products_warehouse = $this->get_products_warehouse_by_details($req->warehouse_id, $details);
-    
+
                     $ids = Arr::pluck($details, 'product_id');
-    
+
                     $products = Product::select(['id', 'name', 'has_variants'])->find($ids);
-    
+
                     $this->check_products_with_variants($details, $products);
-    
+
                     $this->checking_relations($details, $products_warehouse, $products);
-    
+
                     $this->set_instock_by_operation($products_warehouse, $details);
-    
+
                     $this->update_instock($products_warehouse);
                 }
 
@@ -129,11 +139,11 @@ class AdjustmentController extends Controller
                 if ($old_is_approved) {
 
                     $old_products_warehouse = $this->get_products_warehouse_by_details($adjustment->warehouse_id, $old_details);
-    
+
                     $this->checking_relations($old_details, $old_products_warehouse, $products);
-    
+
                     $this->set_instock_by_operation($old_products_warehouse, $old_details, true);
-    
+
                     $this->update_instock($old_products_warehouse);
                 }
 
@@ -141,18 +151,18 @@ class AdjustmentController extends Controller
                 if ($new_is_approved) {
 
                     $new_products_warehouse = $this->get_products_warehouse_by_details($adjustment->warehouse_id, $new_details);
-    
+
                     $this->checking_relations($new_details, $new_products_warehouse, $products);
-    
+
                     $this->set_instock_by_operation($new_products_warehouse, $new_details);
-    
+
                     $this->update_instock($new_products_warehouse);
                 }
 
                 AdjustmentDetail::where('adjustment_id', $adjustment->id)->delete();
 
                 $adjustment->fill($attr);
-                
+
                 $adjustment->items_count = count($new_details);
 
                 $adjustment->save();
