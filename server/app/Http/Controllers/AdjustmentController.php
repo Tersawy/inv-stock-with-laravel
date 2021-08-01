@@ -19,10 +19,11 @@ class AdjustmentController extends Controller
 
     protected $filterationFields = [
         'date'      => 'date',
-        'warehouse' => 'warehouse_id'
+        'warehouse' => 'warehouse_id',
+        'reference' => 'reference'
     ];
 
-    protected $searchFields = ['date'];
+    protected $searchFields = ['date', 'reference'];
 
     public function index(Request $req)
     {
@@ -34,7 +35,7 @@ class AdjustmentController extends Controller
 
         $this->handleQuery($req, $adjustments);
 
-        $adjustments = Adjustment::select(['id', 'warehouse_id', 'items_count', 'date'])->with($warehouse)->paginate($req->per_page);
+        $adjustments = Adjustment::select(['id', 'reference', 'warehouse_id', 'items_count', 'date'])->with($warehouse)->paginate($req->per_page);
 
         $adjustments->getCollection()->transform(function ($adjustment) {
             return [
