@@ -19,7 +19,17 @@ class SaleReturnController extends Controller
 
     public $unitName = 'sale_unit';
 
-    public function index()
+    protected $filterationFields = [
+        'date'           => 'date',
+        'customer'       => 'customer_id',
+        'warehouse'      => 'warehouse_id',
+        'status'         => 'status',
+        'payment_status' => 'payment_status'
+    ];
+
+    protected $searchFields = ['date'];
+
+    public function index(Request $req)
     {
         $customer = ['customer' => function ($query) {
             $query->select(['id', 'name']);
@@ -29,11 +39,15 @@ class SaleReturnController extends Controller
             $query->select(['id', 'name']);
         }];
 
-        $withFields = array_merge([], $customer, $warehouse);
+        $with_fields = array_merge($customer, $warehouse);
 
-        $sales = SaleReturn::with($withFields)->get();
+        $sales = SaleReturn::query();
 
-        $sales = $sales->map(function ($sale) {
+        $this->handleQuery($req, $sales);
+
+        $sales = SaleReturn::select(['id', 'status', 'payment_status', 'customer_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
+
+        $sales->getCollection()->transform(function ($sale) {
             return [
                 'id'                => $sale->id,
                 'reference'         => $sale->reference,
@@ -43,7 +57,7 @@ class SaleReturnController extends Controller
                 'grand_total'       => $sale->grand_total,
                 'paid'              => $sale->paid,
                 'due'               => $sale->due,
-                'payment_status'    => $sale->payment_status,
+                'payment_status'    => $sale->payment_status
             ];
         });
 
