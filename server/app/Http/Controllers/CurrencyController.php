@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 
 class CurrencyController extends Controller
 {
-    public function index()
+    protected $searchFields = ['name', 'code', 'symbol'];
+
+    public function index(Request $req)
     {
-        $currencies = Currency::all();
+        $currencies = Currency::query();
+
+        $this->handleQuery($req, $currencies);
+
+        $currencies = $currencies->select(['id', 'name', 'code', 'symbol'])->paginate($req->per_page);
 
         return $this->success($currencies);
     }
