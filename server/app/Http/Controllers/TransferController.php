@@ -20,7 +20,16 @@ class TransferController extends Controller
 
     public $unitName = 'purchase_unit';
 
-    public function index()
+    protected $filterationFields = [
+        'date'           => 'date',
+        'from_warehouse' => 'from_warehouse_id',
+        'to_warehouse'   => 'to_warehouse_id',
+        'status'         => 'status'
+    ];
+
+    protected $searchFields = ['date'];
+
+    public function index(Request $req)
     {
         $from_warehouse = ['from_warehouse' => function ($query) {
             $query->select(['id', 'name']);
@@ -30,18 +39,23 @@ class TransferController extends Controller
             $query->select(['id', 'name']);
         }];
 
-        $with_fields = array_merge([], $from_warehouse, $to_warehouse);
+        $with_fields = array_merge($from_warehouse, $to_warehouse);
 
-        $transfers = Transfer::with($with_fields)->get();
+        $transfers = Transfer::query();
 
-        $transfers = $transfers->map(function ($transfer) {
+        $this->handleQuery($req, $transfers);
+
+        $transfers = Transfer::select(['id', 'status', 'from_warehouse_id', 'to_warehouse_id', 'items_count'])->with($with_fields)->paginate($req->per_page);
+
+        $transfers->getCollection()->transform(function ($transfer) {
             return [
                 'id'                => $transfer->id,
                 'reference'         => $transfer->reference,
-                'supplier'          => $transfer->supplier,
-                'warehouse'         => $transfer->warehouse,
+                'from_warehouse'    => $transfer->from_warehouse,
+                'to_warehouse'      => $transfer->to_warehouse,
                 'status'            => $transfer->status,
                 'grand_total'       => $transfer->grand_total,
+                'items_count'       => $transfer->items_count,
                 'paid'              => $transfer->paid,
                 'due'               => $transfer->due
             ];
@@ -89,7 +103,7 @@ class TransferController extends Controller
                 if ($req->status == Constants::TRANSFER_COMPLETED || $req->status == Constants::TRANSFER_SENT) {
 
                     $this->subtract_instock($details, $from_products_warehouse, $products);
-                    
+
                     $this->update_instock($from_products_warehouse);
                 }
 
@@ -161,7 +175,7 @@ class TransferController extends Controller
                     $this->checking_relations($old_details, $old_from_products_warehouse, $products);
 
                     $this->sum_instock($old_details, $old_from_products_warehouse, $products);
-                    
+
                     $this->update_instock($old_from_products_warehouse);
                 }
 
@@ -189,7 +203,7 @@ class TransferController extends Controller
                     $this->checking_quantity($new_details, $new_from_products_warehouse, $products);
 
                     $this->subtract_instock($new_details, $new_from_products_warehouse, $products);
-                    
+
                     $this->update_instock($new_from_products_warehouse);
                 }
 
@@ -201,7 +215,7 @@ class TransferController extends Controller
                     $this->checking_relations($new_details, $new_to_products_warehouse, $products);
 
                     $this->sum_instock($new_details, $new_to_products_warehouse, $products);
-                    
+
                     $this->update_instock($new_to_products_warehouse);
                 }
 
