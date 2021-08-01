@@ -67,6 +67,10 @@ class ExpenseController extends Controller
 
         $expense = Expense::create($attr);
 
+        $expense->reference = 'EXP_' . (1110 + $expense->id);
+
+        $expense->save();
+
         return $this->success($expense, 'The expense has been created successfully');
     }
 
