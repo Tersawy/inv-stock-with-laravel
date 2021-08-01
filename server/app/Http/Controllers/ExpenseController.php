@@ -8,12 +8,13 @@ use App\Requests\ExpenseRequest;
 
 class ExpenseController extends Controller
 {
-    protected $searchFields = ['amount', 'date', 'details'];
+    protected $searchFields = ['reference', 'amount', 'date', 'details'];
 
     protected $filterationFields = [
         'category'  => 'expense_category_id',
         'warehouse' => 'warehouse_id',
-        'date'      => 'date'
+        'date'      => 'date',
+        'reference' => 'reference'
     ];
 
     public function index(Request $req)
@@ -32,11 +33,12 @@ class ExpenseController extends Controller
 
         $this->handleQuery($req, $expenses);
 
-        $expenses = $expenses->select(['id', 'date', 'amount', 'details', 'expense_category_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
+        $expenses = $expenses->select(['id', 'reference', 'date', 'amount', 'details', 'expense_category_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
 
         $expenses->getCollection()->transform(function ($expense) {
             return [
                 'id'        => $expense->id,
+                'reference' => $expense->reference,
                 'date'      => $expense->date,
                 'amount'    => $expense->amount,
                 'details'   => $expense->details,
