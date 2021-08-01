@@ -12,9 +12,15 @@ class WarehouseController extends Controller
 {
     use ProductWarehouseOperations;
 
-    public function index()
+    protected $searchFields = ['name', 'phone', 'country', 'city', 'email', 'zip_code'];
+
+    public function index(Request $req)
     {
-        $warehouses = Warehouse::all();
+        $warehouses = Warehouse::query();
+
+        $this->handleQuery($req, $warehouses);
+
+        $warehouses = $warehouses->select(['id', 'name', 'phone', 'country', 'city', 'email', 'zip_code'])->paginate($req->per_page);
 
         return $this->success($warehouses);
     }
@@ -98,7 +104,7 @@ class WarehouseController extends Controller
         $warehouse = Warehouse::find($req->id);
 
         if (!$warehouse) return $this->error('The warehouse was not found', 404);
-        
+
         $products = DB::table('product_warehouses')->where('warehouse_id', $req->id)->select(DB::raw('SUM(instock) as total'))->get();
 
         if (!$products->total > 0) return $this->error('The warehouse cannot be remove because it has products with quantity', 422);
