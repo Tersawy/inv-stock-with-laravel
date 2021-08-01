@@ -1,12 +1,4 @@
-const state = {
-	all: {
-		docs: [],
-		total: 0,
-		page: 1,
-		perPage: 15
-	},
-	one: {},
-	options: []
+export default {
+	prefix: "customer",
+	options: [{ text: "Choose Customer", value: null, disabled: true }]
 };
-
-export default state;
