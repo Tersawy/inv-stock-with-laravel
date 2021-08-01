@@ -22,6 +22,7 @@ class SaleReturn extends Model
         'shipping',
         'note',
         'payment_status',
+        'total_price',
         'date'
     ];
 
@@ -37,10 +38,5 @@ class SaleReturn extends Model
     public function payments()
     {
         return $this->hasMany(SaleReturnPayment::class);
-    }
-
-    public function getReferenceAttribute()
-    {
-        return 'RT_' . (1110 + $this->id);
     }
 }

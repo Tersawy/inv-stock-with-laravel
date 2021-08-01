@@ -22,6 +22,7 @@ class PurchaseReturn extends Model
         'shipping',
         'note',
         'payment_status',
+        'total_price',
         'date'
     ];
 

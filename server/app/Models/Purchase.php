@@ -22,6 +22,7 @@ class Purchase extends Model
         'shipping',
         'note',
         'payment_status',
+        'total_price',
         'date'
     ];
 

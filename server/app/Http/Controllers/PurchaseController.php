@@ -47,7 +47,7 @@ class PurchaseController extends Controller
 
         $this->handleQuery($req, $purchases);
 
-        $purchases = Purchase::select(['id', 'reference', 'status', 'payment_status', 'supplier_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
+        $purchases = Purchase::select(['id', 'reference', 'status', 'payment_status', 'supplier_id', 'warehouse_id', 'total_price'])->with($with_fields)->paginate($req->per_page);
 
         $purchases->getCollection()->transform(function ($purchase) {
             return [
@@ -56,7 +56,7 @@ class PurchaseController extends Controller
                 'supplier'          => $purchase->supplier,
                 'warehouse'         => $purchase->warehouse,
                 'status'            => $purchase->status,
-                'grand_total'       => $purchase->grand_total,
+                'total_price'       => $purchase->total_price,
                 'paid'              => $purchase->paid,
                 'due'               => $purchase->due,
                 'payment_status'    => $purchase->payment_status,

@@ -46,7 +46,7 @@ class SaleReturnController extends Controller
 
         $this->handleQuery($req, $sales);
 
-        $sales = SaleReturn::select(['id', 'reference', 'status', 'payment_status', 'customer_id', 'warehouse_id'])->with($with_fields)->paginate($req->per_page);
+        $sales = SaleReturn::select(['id', 'reference', 'status', 'payment_status', 'customer_id', 'warehouse_id', 'total_price'])->with($with_fields)->paginate($req->per_page);
 
         $sales->getCollection()->transform(function ($sale) {
             return [
@@ -55,7 +55,7 @@ class SaleReturnController extends Controller
                 'customer'          => $sale->customer,
                 'warehouse'         => $sale->warehouse,
                 'status'            => $sale->status,
-                'grand_total'       => $sale->grand_total,
+                'total_price'       => $sale->total_price,
                 'paid'              => $sale->paid,
                 'due'               => $sale->due,
                 'payment_status'    => $sale->payment_status

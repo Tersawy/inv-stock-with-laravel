@@ -22,6 +22,7 @@ class CreateTransfersTable extends Migration
             $table->integer('discount')->default(0);
             $table->integer('shipping')->default(0);
             $table->tinyInteger("discount_method")->default(Constants::DISCOUNT_FIXED); // 0 Fixed, 1 Percent
+            $table->float('total_price')->default(0);
 
             $table->float('items_count');
 

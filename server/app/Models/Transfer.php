@@ -21,6 +21,7 @@ class Transfer extends Model
     'shipping',
     'note',
     'date',
+    'total_price',
     'items_count'
   ];
 

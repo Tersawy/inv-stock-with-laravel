@@ -24,6 +24,7 @@ class CreateSaleReturnsTable extends Migration
             $table->tinyInteger('status')->default(Constants::SALE_RETURN_RECEIVED);
             $table->tinyInteger('payment_status')->default(Constants::PAYMENT_STATUS_PAID);
             $table->integer('shipping')->default(0);
+            $table->float('total_price')->default(0);
 
             $table->text('note')->nullable();
             $table->date('date')->default(date('Y-m-d'));

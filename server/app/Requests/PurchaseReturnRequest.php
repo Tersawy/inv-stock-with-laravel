@@ -19,6 +19,7 @@ class PurchaseReturnRequest extends ValidateRequest
       'discount_method'             => ['required', 'numeric', Rule::in(Constants::DISCOUNT_METHODS)],
       'status'                      => ['required', 'numeric', Rule::in(Constants::PURCHASE_RETURN_STATUS)],
       'shipping'                    => ['required', 'numeric', 'min:0'],
+      'total_price'                 => ['required', 'numeric', 'min:1'],
       'note'                        => ['string', 'max:255', 'nullable'],
       'date'                        => ['required', 'string', 'max:10', 'date_format:Y-m-d'],
       // Products Validations

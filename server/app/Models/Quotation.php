@@ -20,6 +20,7 @@ class Quotation extends Model
         'status',
         'shipping',
         'note',
+        'total_price',
         'date'
     ];
 

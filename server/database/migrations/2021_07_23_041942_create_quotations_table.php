@@ -23,6 +23,7 @@ class CreateQuotationsTable extends Migration
             $table->tinyInteger("discount_method")->default(Constants::DISCOUNT_FIXED); // 0 Fixed, 1 Percent
             $table->tinyInteger('status')->default(Constants::QUOTATION_SENT);
             $table->integer('shipping')->default(0);
+            $table->float('total_price')->default(0);
 
             $table->text('note')->nullable();
             $table->date('date')->default(date('Y-m-d'));

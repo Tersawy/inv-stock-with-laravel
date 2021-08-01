@@ -46,7 +46,7 @@ class TransferController extends Controller
 
         $this->handleQuery($req, $transfers);
 
-        $transfers = Transfer::select(['id', 'reference', 'status', 'from_warehouse_id', 'to_warehouse_id', 'items_count'])->with($with_fields)->paginate($req->per_page);
+        $transfers = Transfer::select(['id', 'reference', 'status', 'from_warehouse_id', 'to_warehouse_id', 'items_count', 'total_price'])->with($with_fields)->paginate($req->per_page);
 
         $transfers->getCollection()->transform(function ($transfer) {
             return [
@@ -55,7 +55,7 @@ class TransferController extends Controller
                 'from_warehouse'    => $transfer->from_warehouse,
                 'to_warehouse'      => $transfer->to_warehouse,
                 'status'            => $transfer->status,
-                'grand_total'       => $transfer->grand_total,
+                'total_price'       => $transfer->total_price,
                 'items_count'       => $transfer->items_count,
                 'paid'              => $transfer->paid,
                 'due'               => $transfer->due

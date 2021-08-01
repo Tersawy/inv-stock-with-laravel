@@ -41,7 +41,7 @@ class QuotationController extends Controller
 
         $this->handleQuery($req, $quotations);
 
-        $quotations = Quotation::select(['id', 'reference', 'status', 'payment_status', 'customer_id', 'warehouse_id', 'date'])->with($with_fields)->paginate($req->per_page);
+        $quotations = Quotation::select(['id', 'reference', 'status', 'payment_status', 'customer_id', 'warehouse_id', 'date', 'total_price'])->with($with_fields)->paginate($req->per_page);
 
         $quotations->getCollection()->transform(function ($quotation) {
             return [
@@ -50,7 +50,7 @@ class QuotationController extends Controller
                 'customer'    => $quotation->customer,
                 'warehouse'   => $quotation->warehouse,
                 'status'      => $quotation->status,
-                'grand_total' => $quotation->grand_total,
+                'total_price' => $quotation->total_price,
                 'date'        => $quotation->date
             ];
         });

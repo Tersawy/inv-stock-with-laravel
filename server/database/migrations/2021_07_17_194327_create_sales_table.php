@@ -25,6 +25,7 @@ class CreateSalesTable extends Migration
             $table->tinyInteger('payment_status')->default(Constants::PAYMENT_STATUS_PAID);
             $table->boolean('is_pos')->nullable()->default(0);
             $table->integer('shipping')->default(0);
+            $table->float('total_price')->default(0);
 
             $table->text('note')->nullable();
             $table->date('date')->default(date('Y-m-d'));
