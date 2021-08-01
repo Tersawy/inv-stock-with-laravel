@@ -15,7 +15,16 @@ class QuotationController extends Controller
 {
     use InvoiceOperations;
 
-    public function index()
+    protected $filterationFields = [
+        'date'      => 'date',
+        'customer'  => 'customer_id',
+        'warehouse' => 'warehouse_id',
+        'status'    => 'status'
+    ];
+
+    protected $searchFields = ['date'];
+
+    public function index(Request $req)
     {
         $customer = ['customer' => function ($query) {
             $query->select(['id', 'name']);
@@ -25,19 +34,23 @@ class QuotationController extends Controller
             $query->select(['id', 'name']);
         }];
 
-        $with_fields = array_merge([], $customer, $warehouse);
+        $with_fields = array_merge($customer, $warehouse);
 
-        $quotations = Quotation::with($with_fields)->get();
+        $quotations = Quotation::query();
 
-        $quotations = $quotations->map(function ($quotation) {
+        $this->handleQuery($req, $quotations);
+
+        $quotations = Quotation::select(['id', 'status', 'payment_status', 'customer_id', 'warehouse_id', 'date'])->with($with_fields)->paginate($req->per_page);
+
+        $quotations->getCollection()->transform(function ($quotation) {
             return [
-                'id'            => $quotation->id,
-                'reference'     => $quotation->reference,
-                'customer'      => $quotation->customer,
-                'warehouse'     => $quotation->warehouse,
-                'status'        => $quotation->status,
-                'grand_total'   => $quotation->grand_total,
-                'date'          => $quotation->date
+                'id'          => $quotation->id,
+                'reference'   => $quotation->reference,
+                'customer'    => $quotation->customer,
+                'warehouse'   => $quotation->warehouse,
+                'status'      => $quotation->status,
+                'grand_total' => $quotation->grand_total,
+                'date'        => $quotation->date
             ];
         });
 
