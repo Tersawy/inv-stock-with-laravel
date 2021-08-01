@@ -18,7 +18,7 @@ class CreateExpensesTable extends Migration
             $table->integer('amount');
             $table->string('details');
             $table->date('date')->default(date('Y-m-d'));
-            $table->string('reference')->default("AD_1110");
+            $table->string('reference')->default("EXP_1110");
 
             $table->unsignedBigInteger('expense_category_id')->nullable();
             $table->foreign('expense_category_id')->references('id')->on('expenses')->onDelete('restrict');
