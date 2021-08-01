@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-  public function index()
+  protected $searchFields = ['name', 'email', 'phone', 'country', 'city', 'address'];
+
+  public function index(Request $req)
   {
-    $suppliers = Supplier::all();
+    $suppliers = Supplier::query();
+
+    $this->handleQuery($req, $suppliers);
+
+    $suppliers = $suppliers->select(['id', 'name', 'email', 'phone', 'country', 'city', 'address'])->paginate($req->per_page);
 
     return $this->success($suppliers);
   }
