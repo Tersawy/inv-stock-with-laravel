@@ -48,6 +48,10 @@ class CustomerController extends Controller
 
         $customer = Customer::create($attr);
 
+        $customer->code = $customer->id + 100;
+
+        $customer->save();
+
         return $this->success($customer, 'The customer has been created successfully');
     }
 

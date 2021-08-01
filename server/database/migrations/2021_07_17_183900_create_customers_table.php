@@ -18,6 +18,7 @@ class CreateCustomersTable extends Migration
             $table->string('name')->unique();
             $table->string('email')->unique();
             $table->string('phone')->unique();
+            $table->string('code')->default("101");
             $table->string('country');
             $table->string('city');
             $table->string('address');
