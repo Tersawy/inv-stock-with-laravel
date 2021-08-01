@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
-    public function index()
+    protected $searchFields = ['name', 'description'];
+
+    public function index(Request $req)
     {
-        $brands = Brand::all();
+        $brands = Brand::query();
+
+        $this->handleQuery($req, $brands);
+
+        $brands = $brands->select(['id', 'name', 'description', 'image'])->paginate($req->per_page);
 
         return $this->success($brands);
     }
