@@ -8,9 +8,15 @@ use App\Requests\CustomerRequest;
 
 class CustomerController extends Controller
 {
-    public function index()
+    protected $searchFields = ['name', 'email', 'phone', 'country', 'city', 'address'];
+
+    public function index(Request $req)
     {
-        $customers = Customer::all();
+        $customers = Customer::query();
+
+        $this->handleQuery($req, $customers);
+
+        $customers = $customers->select(['id', 'name', 'email', 'phone', 'country', 'city', 'address'])->paginate($req->per_page);
 
         return $this->success($customers);
     }
