@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
-  protected $searchFields = ['name', 'email', 'phone', 'country', 'city', 'address'];
+  protected $searchFields = ['code', 'name', 'email', 'phone', 'country', 'city', 'address'];
 
   public function index(Request $req)
   {
@@ -15,7 +15,7 @@ class SupplierController extends Controller
 
     $this->handleQuery($req, $suppliers);
 
-    $suppliers = $suppliers->select(['id', 'name', 'email', 'phone', 'country', 'city', 'address'])->paginate($req->per_page);
+    $suppliers = $suppliers->select(['id', 'code', 'name', 'email', 'phone', 'country', 'city', 'address'])->paginate($req->per_page);
 
     return $this->success($suppliers);
   }
@@ -55,6 +55,10 @@ class SupplierController extends Controller
     ]);
 
     $supplier = Supplier::create($attr);
+
+    $supplier->code = $supplier->id + 100;
+
+    $supplier->save();
 
     return $this->success($supplier, 'The supplier has been created successfully');
   }
