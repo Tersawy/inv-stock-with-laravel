@@ -21,7 +21,7 @@ class SaleController extends Controller
 
     protected $filterationFields = [
         'date'           => 'date',
-        'supplier'       => 'supplier_id',
+        'customer'       => 'customer_id',
         'warehouse'      => 'warehouse_id',
         'status'         => 'status',
         'payment_status' => 'payment_status'
