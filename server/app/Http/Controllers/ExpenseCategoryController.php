@@ -8,9 +8,15 @@ use App\Requests\ExpenseCategoryRequest;
 
 class ExpenseCategoryController extends Controller
 {
-    public function index()
+    protected $searchFields = ['name', 'description'];
+
+    public function index(Request $req)
     {
-        $categories = ExpenseCategory::all();
+        $categories = ExpenseCategory::query();
+
+        $this->handleQuery($req, $categories);
+
+        $categories = $categories->select(['id', 'name', 'description'])->paginate($req->per_page);
 
         return $this->success($categories);
     }
