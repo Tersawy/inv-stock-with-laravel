@@ -21,9 +21,9 @@ class ProductSeeder extends Seeder
                 'cost'              => 2400,
                 'has_variants'      => 1,
                 'category_id'       => 1,
-                'unit_id'           => 1,
-                'purchase_unit_id'  => 1,
-                'sale_unit_id'      => 1,
+                'unit_id'           => 3,
+                'purchase_unit_id'  => 3,
+                'sale_unit_id'      => 3,
             ],
             [
                 'name'              => 'Samsung A10',
@@ -33,9 +33,9 @@ class ProductSeeder extends Seeder
                 'cost'              => 7000,
                 'has_variants'      => 1,
                 'category_id'       => 1,
-                'unit_id'           => 1,
-                'purchase_unit_id'  => 1,
-                'sale_unit_id'      => 2,
+                'unit_id'           => 3,
+                'purchase_unit_id'  => 4,
+                'sale_unit_id'      => 3,
             ],
             [
                 'name'              => 'Banana',
@@ -45,9 +45,9 @@ class ProductSeeder extends Seeder
                 'cost'              => 7000,
                 'has_variants'      => 0,
                 'category_id'       => 1,
-                'unit_id'           => 2,
-                'purchase_unit_id'  => 3,
-                'sale_unit_id'      => 4,
+                'unit_id'           => 1,
+                'purchase_unit_id'  => 1,
+                'sale_unit_id'      => 2,
             ],
         ]);
     }
