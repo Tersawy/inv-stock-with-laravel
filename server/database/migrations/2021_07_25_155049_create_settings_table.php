@@ -15,11 +15,11 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-			$table->string('email');
-			$table->string('company_name');
-			$table->string('company_phone');
-			$table->string('company_address');
-			$table->string('company_logo')->nullable();
+            $table->string('email');
+            $table->string('company_name');
+            $table->string('company_phone');
+            $table->string('company_address');
+            $table->string('company_logo')->nullable();
             $table->string('footer')->default('Stocky - Ultimate Inventory With POS');
             $table->string('developed_by')->default('Stocky');
 
@@ -32,7 +32,7 @@ class CreateSettingsTable extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
 
-			$table->softDeletes();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
