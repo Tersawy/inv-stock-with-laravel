@@ -10,6 +10,11 @@ class Unit extends Model
 
     public function main_unit()
     {
-        return $this->belongsTo(Unit::class, 'main_unit_id');
+        return $this->belongsTo(Unit::class, 'id', 'main_unit_id');
+    }
+
+    public function sub_units()
+    {
+        return $this->hasMany(Unit::class, 'main_unit_id');
     }
 }

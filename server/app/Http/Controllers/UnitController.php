@@ -19,6 +19,18 @@ class UnitController extends Controller
     }
 
 
+    public function options()
+    {
+        $sub_units = ["sub_units" => function ($query) {
+            $query->select(['id AS value', 'name AS text', 'main_unit_id']);
+        }];
+
+        $units = Unit::where('main_unit_id', null)->with($sub_units)->get(['id', 'id AS value', 'name AS text']);
+
+        return $this->success($units);
+    }
+
+
     public function update(Request $req)
     {
         $attr = UnitRequest::validationUpdate($req);
