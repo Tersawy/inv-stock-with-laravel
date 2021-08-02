@@ -22,9 +22,9 @@ class ProductRequest extends ValidateRequest
       'note'              => ['string', 'max:255', 'nullable'],
       'category_id'       => ['required', 'numeric', 'min:1', 'exists:categories,id'],
       'brand_id'          => ['exclude_if:brand_id,0', 'required', 'numeric', 'min:1', 'exists:brands,id'],
-      'main_unit_id'      => ['required', 'numeric', 'min:1', 'exists:main_units,id'],
-      'purchase_unit_id'  => ['required', 'numeric', 'min:1', 'exists:sub_units,id'],
-      'sale_unit_id'      => ['required', 'numeric', 'min:1', 'exists:sub_units,id'],
+      'unit_id'           => ['required', 'numeric', 'min:1', Rule::exists('units', 'id')->where('main_unit_id', null)],
+      'purchase_unit_id'  => ['required', 'numeric', 'min:1', Rule::exists('units', 'id')->where('main_unit_id', $req->get('unit_id'))],
+      'sale_unit_id'      => ['required', 'numeric', 'min:1', Rule::exists('units', 'id')->where('main_unit_id', $req->get('unit_id'))],
       'has_variants'      => ['required', 'boolean'],
       'has_images'        => ['required', 'boolean'],
     ];

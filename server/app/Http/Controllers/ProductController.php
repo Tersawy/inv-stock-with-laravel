@@ -50,7 +50,7 @@ class ProductController extends Controller
 
     $this->handleQuery($req, $query);
 
-    $products = $query->with($with_fields)->select(['id', 'name', 'code', 'price', 'main_unit_id', 'brand_id', 'category_id'])->paginate($req->per_page);
+    $products = $query->with($with_fields)->select(['id', 'name', 'code', 'price', 'unit_id', 'brand_id', 'category_id'])->paginate($req->per_page);
 
     $products->getCollection()->transform(function ($product) {
       return [

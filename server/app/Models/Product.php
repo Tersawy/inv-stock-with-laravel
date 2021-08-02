@@ -22,7 +22,7 @@ class Product extends Model
         'note',
         'category_id',
         'brand_id',
-        'main_unit_id',
+        'unit_id',
         'purchase_unit_id',
         'sale_unit_id',
         'has_variants',
@@ -55,17 +55,17 @@ class Product extends Model
 
     public function unit()
     {
-        return $this->belongsTo(MainUnit::class, 'main_unit_id');
+        return $this->belongsTo(Unit::class, 'unit_id');
     }
 
     public function purchase_unit()
     {
-        return $this->belongsTo(SubUnit::class);
+        return $this->belongsTo(Unit::class, 'purchase_unit_id');
     }
 
     public function sale_unit()
     {
-        return $this->belongsTo(SubUnit::class);
+        return $this->belongsTo(Unit::class, 'sale_unit_id');
     }
 
     public function images()

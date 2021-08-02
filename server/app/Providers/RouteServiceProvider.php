@@ -92,10 +92,8 @@ class RouteServiceProvider extends ServiceProvider
         // $route->group(base_path('routes/api/category.php'));
         // // Brand routes
         // $route->group(base_path('routes/api/brand.php'));
-        // // MainUnit routes
-        // $route->group(base_path('routes/api/mainUnit.php'));
-        // // SubUnit routes
-        // $route->group(base_path('routes/api/subUnit.php'));
+        // // Unit routes
+        // $route->group(base_path('routes/api/unit.php'));
         // // Product routes
         // $route->group(base_path('routes/api/product.php'));
         // // Supplier routes

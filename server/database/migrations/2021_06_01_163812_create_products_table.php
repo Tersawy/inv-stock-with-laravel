@@ -38,14 +38,14 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('restrict');
 
-            $table->unsignedBigInteger('main_unit_id');
-            $table->foreign('main_unit_id')->references('id')->on('main_units')->onDelete('restrict');
+            $table->unsignedBigInteger('unit_id');
+            $table->foreign('unit_id')->references('id')->on('units')->onDelete('restrict');
 
             $table->unsignedBigInteger('purchase_unit_id');
-            $table->foreign('purchase_unit_id')->references('id')->on('sub_units')->onDelete('restrict');
+            $table->foreign('purchase_unit_id')->references('id')->on('units')->onDelete('restrict');
 
             $table->unsignedBigInteger('sale_unit_id');
-            $table->foreign('sale_unit_id')->references('id')->on('sub_units')->onDelete('restrict');
+            $table->foreign('sale_unit_id')->references('id')->on('units')->onDelete('restrict');
 
             $table->softDeletes();
             $table->timestamps();
