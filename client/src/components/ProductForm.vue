@@ -80,9 +80,9 @@
 									</b-form-group>
 								</b-col>
 								<b-col>
-									<b-form-group label="Product Unit" label-for="main_unit_id">
-										<b-select id="main_unit_id" v-model.number="product.main_unit_id" :options="unitsOpt" @change="setSubUnits" />
-										<InputError field="main_unit_id" />
+									<b-form-group label="Product Unit" label-for="unit_id">
+										<b-select id="unit_id" v-model.number="product.unit_id" :options="unitsOpt" @change="setSubUnits" />
+										<InputError field="unit_id" />
 									</b-form-group>
 								</b-col>
 								<b-col>
@@ -188,7 +188,7 @@
 				note: null,
 				category_id: null,
 				brand_id: null,
-				main_unit_id: null,
+				unit_id: null,
 				purchase_unit_id: null,
 				sale_unit_id: null,
 				has_variants: false,
@@ -223,7 +223,7 @@
 				await this.getProduct(this.$route.params.productId);
 				this.product = { ...this.oldProduct };
 				this.$nextTick(() => {
-					this.setSubUnits(this.product.main_unit_id);
+					this.setSubUnits(this.product.unit_id);
 
 					this.images = this.product.images.map((img) => ({
 						default: 0,
@@ -244,7 +244,7 @@
 			...mapState({
 				categoriesOpt: (state) => state.Category.options,
 				brandsOpt: (state) => state.Brand.options,
-				unitsOpt: (state) => state.MainUnit.options,
+				unitsOpt: (state) => state.Unit.options,
 				oldProduct: (state) => state.Product.one
 			}),
 
@@ -259,7 +259,7 @@
 				update: "Product/update",
 				getCategoriesOpt: "Category/options",
 				getBrandsOpt: "Brand/options",
-				getUnitsOpt: "MainUnit/options",
+				getUnitsOpt: "Unit/options",
 				getProduct: "Product/one"
 			}),
 

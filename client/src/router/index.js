@@ -9,7 +9,7 @@ import Category from "@/views/Category.vue";
 import CategoryTrashed from "@/views/Trashed/Category.vue";
 import Brand from "@/views/Brand.vue";
 import BrandTrashed from "@/views/Trashed/Brand.vue";
-import MainUnit from "@/views/MainUnit.vue";
+import Unit from "@/views/Unit.vue";
 import Product from "@/views/Product.vue";
 import ProductForm from "@/components/ProductForm.vue";
 // import ProductTrashed from "@/views/Trashed/Product.vue";
@@ -85,8 +85,8 @@ const routes = [
 	},
 	{
 		path: "/main-unit",
-		name: "MainUnit",
-		component: MainUnit,
+		name: "Unit",
+		component: Unit,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
