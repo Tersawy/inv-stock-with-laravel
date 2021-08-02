@@ -11,12 +11,12 @@ const options = (state, res) => {
 	if (state.options.length) {
 		let first_opt = state.options.slice(0, 1)[0];
 
-		if (nullableOpt.value === null || nullableOpt.value == "") {
+		if (first_opt.value === null || first_opt.value == "") {
 			firstOpt = first_opt;
 		}
 	}
 
-	state.options = firstOpt ? [...firstOpt, ...opts] : opt;
+	state.options = firstOpt ? [...firstOpt, ...opts] : opts;
 };
 
 const one = (state, res) => {
