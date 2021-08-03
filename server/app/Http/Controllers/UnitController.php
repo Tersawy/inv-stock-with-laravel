@@ -22,12 +22,30 @@ class UnitController extends Controller
     public function options()
     {
         $sub_units = ["sub_units" => function ($query) {
-            $query->select(['id AS value', 'name AS text', 'main_unit_id']);
+            $query->select(['id', 'name', 'main_unit_id']);
         }];
 
-        $units = Unit::where('main_unit_id', null)->with($sub_units)->get(['id', 'id AS value', 'name AS text']);
+        $units = Unit::where('main_unit_id', null)->with($sub_units)->get(['id', 'name']);
 
-        return $this->success($units);
+        $results = [];
+
+        foreach ($units as $unit) {
+            $_unit = [
+                'value' => $unit->id,
+                'text' => $unit->name,
+                'sub_units' => [['value' => $unit->id, 'text' => $unit->name]]
+            ];
+
+            if (count($unit->sub_units)) {
+                foreach ($unit->sub_units as $sub_unit) {
+                    $_unit['sub_units'][] = ['value' => $sub_unit->id, 'text' => $sub_unit->name];
+                }
+            }
+
+            $results[] = $_unit;
+        }
+
+        return $this->success($results);
     }
 
 
