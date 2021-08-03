@@ -9,6 +9,34 @@ use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
+    protected $searchFields = ['name', 'short_name'];
+
+    public function index(Request $req)
+    {
+        $main_unit = ["main_unit" => function ($query) {
+            $query->select(['id', 'name']);
+        }];
+
+        $units = Unit::query();
+
+        $units = Unit::with($main_unit)->select(['id', 'name', 'short_name', 'value', 'main_unit_id', 'operator'])->paginate($req->per_page);
+
+        $units = $units->getCollection()->transform(function ($unit) {
+            return [
+                'id'            => $unit->id,
+                'name'          => $unit->name,
+                'short_name'    => $unit->short_name,
+                'value'         => $unit->value,
+                'main_unit_id'  => $unit->main_unit_id,
+                'operator'      => $unit->operator,
+                'main_unit'     => is_null($unit->main_unit) ? $unit->main_unit : $unit->main_unit->name
+            ];
+        });
+
+        return $this->success($units);
+    }
+
+
     public function create(Request $req)
     {
         $attr = UnitRequest::validationCreate($req);
