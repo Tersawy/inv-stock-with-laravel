@@ -21,7 +21,7 @@ class UnitController extends Controller
 
         $units = Unit::with($main_unit)->select(['id', 'name', 'short_name', 'value', 'main_unit_id', 'operator'])->paginate($req->per_page);
 
-        $units = $units->getCollection()->transform(function ($unit) {
+        $units->getCollection()->transform(function ($unit) {
             return [
                 'id'            => $unit->id,
                 'name'          => $unit->name,
