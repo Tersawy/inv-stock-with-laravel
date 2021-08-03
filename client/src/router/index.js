@@ -10,6 +10,7 @@ import CategoryTrashed from "@/views/Trashed/Category.vue";
 import Brand from "@/views/Brand.vue";
 import BrandTrashed from "@/views/Trashed/Brand.vue";
 import Unit from "@/views/Unit.vue";
+import Currency from "@/views/Currency.vue";
 import Product from "@/views/Product.vue";
 import ProductForm from "@/components/ProductForm.vue";
 // import ProductTrashed from "@/views/Trashed/Product.vue";
@@ -160,6 +161,12 @@ const routes = [
 		name: "CustomerDashboard",
 		component: CustomerDashboard,
 		meta: { auth: true, userType: [3] }
+	},
+	{
+		path: "/currency",
+		name: "Currency",
+		component: Currency,
+		meta: { auth: true, userType: [0, 1, 2] }
 	}
 ];
 
