@@ -106,7 +106,7 @@
 				{ key: "short_name", label: "Short name", sortable: true },
 				{ key: "value", label: "Value", sortable: true },
 				{ key: "operator", label: "Operator", sortable: true },
-				{ key: "main_unit_id", label: "Main unit", sortable: true },
+				{ key: "main_unit", label: "Main unit", sortable: true },
 				{ key: "actions", label: "Actions" }
 			],
 			filterationFields: { name: "", short_name: "", value: "", operator: "", main_unit_id: "" }
