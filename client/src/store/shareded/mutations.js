@@ -16,7 +16,7 @@ const options = (state, res) => {
 		}
 	}
 
-	state.options = firstOpt ? [...firstOpt, ...opts] : opts;
+	state.options = firstOpt ? [firstOpt, ...opts] : opts;
 };
 
 const one = (state, res) => {
