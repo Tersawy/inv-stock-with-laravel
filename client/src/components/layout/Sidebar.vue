@@ -12,7 +12,10 @@
 				</li>
 				<li v-for="(item, i) in items" :key="i">
 					<router-link :to="item.to" :exact="i == 0">
-						<span class="icon"><b-icon :icon="item.icon" scale="1.5"></b-icon></span>
+						<span class="icon">
+							<i v-if="item.awesome" :class="item.icon"></i>
+							<b-icon :icon="item.icon" scale="1.5" v-else></b-icon>
+						</span>
 						<span class="title">{{ item.title }}</span>
 					</router-link>
 				</li>
@@ -44,7 +47,8 @@
 					{ title: "Customers", icon: "person-plus", to: "/customer" },
 					{ title: "Suppliers", icon: "people", to: "/supplier" },
 					{ title: "Brands", icon: "tags", to: "/brand" },
-					{ title: "Units", icon: "diagram3", to: "/unit" }
+					{ title: "Units", icon: "diagram3", to: "/unit" },
+					{ title: "Currency", icon: "fas fa-dollar-sign fa-lg fa-fw", to: "/currency", awesome: true }
 				]
 			};
 		}
