@@ -44,7 +44,7 @@
 					{ title: "Customers", icon: "person-plus", to: "/customer" },
 					{ title: "Suppliers", icon: "people", to: "/supplier" },
 					{ title: "Brands", icon: "tags", to: "/brand" },
-					{ title: "Units", icon: "diagram3", to: "/main-unit" }
+					{ title: "Units", icon: "diagram3", to: "/unit" }
 				]
 			};
 		}

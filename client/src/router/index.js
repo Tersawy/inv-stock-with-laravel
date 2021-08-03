@@ -84,7 +84,7 @@ const routes = [
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/main-unit",
+		path: "/unit",
 		name: "Unit",
 		component: Unit,
 		meta: { auth: true, userType: [0, 1, 2] }
