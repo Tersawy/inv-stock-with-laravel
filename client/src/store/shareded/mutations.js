@@ -23,12 +23,8 @@ const one = (state, res) => {
 	state.one = res.data;
 };
 
-const details = (state, res) => {
-	state.details = res.data;
-};
-
 const remove = (state, res) => {
 	state.all.docs = state.all.docs.filter((doc) => doc.id != +res.data);
 };
 
-export default { all, options, one, details, remove };
+export default { all, options, one, remove };

@@ -1,9 +1,5 @@
 export default {
-	all: {
-		docs: [],
-		total: 0
-	},
+	all: { docs: [], total: 0 },
 	one: {},
-	details: {},
 	options: []
 };

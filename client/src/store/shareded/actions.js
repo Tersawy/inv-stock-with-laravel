@@ -1,7 +1,7 @@
 import api from "@/plugins/api";
 
-const all = ({ commit, state }, queries) => {
-	api("get", state.prefix + queries || "", (err, res) => {
+const all = ({ commit, state }, queries = "") => {
+	api("get", state.prefix + queries, (err, res) => {
 		if (err) return;
 		commit("all", res);
 	});
@@ -18,13 +18,6 @@ const one = ({ commit, state }, itemId) => {
 	return api("get", `${state.prefix}/${itemId}`, (err, res) => {
 		if (err) return;
 		commit("one", res);
-	});
-};
-
-const details = ({ commit, state }, itemId) => {
-	return api("get", `${state.prefix}/details/${itemId}`, (err, res) => {
-		if (err) return;
-		commit("details", res);
 	});
 };
 
@@ -77,4 +70,4 @@ const remove = ({ commit, state }, item) => {
 	});
 };
 
-export default { all, options, one, details, create, update, moveToTrash, trashed, restore, remove };
+export default { all, options, one, create, update, moveToTrash, trashed, restore, remove };
