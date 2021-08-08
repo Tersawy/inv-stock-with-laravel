@@ -15,7 +15,6 @@ import { mapActions } from "vuex";
 import { DISCOUNT_FIXED, DISCOUNT_PERCENT, TAX_INCLUSIVE } from "@/helpers/constants";
 
 import { required, numeric, minLength, maxLength, minValue } from "vuelidate/lib/validators";
-import errorMixin from "./errorMixin";
 
 export default {
 	components: {
@@ -31,8 +30,6 @@ export default {
 		InvoiceDetails,
 		ProductsAutoComplete
 	},
-
-	mixins: [errorMixin],
 
 	data() {
 		let zeroFill = (v) => (+v < 10 ? `0${v}` : v);
