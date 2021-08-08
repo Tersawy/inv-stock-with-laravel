@@ -9,9 +9,12 @@ import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 
-import i18n from "./i18n";
+import i18n from "./plugins/i18n";
 
 import "@/assets/scss/main.scss";
+
+import vuelidate from "vuelidate";
+Vue.use(vuelidate);
 
 import store from "@/store";
 Vue.prototype.$store = store;
@@ -25,6 +28,9 @@ Vue.component("EditIcon", EditIcon);
 import DeleteIcon from "@/components/ui/DeleteIcon.vue";
 Vue.component("DeleteIcon", DeleteIcon);
 
+import InputError from "@/components/ui/InputError.vue";
+Vue.component("InputError", InputError);
+
 import { runGlobalMixins } from "@/mixins";
 runGlobalMixins();
 
@@ -34,7 +40,6 @@ function breads() {
 	let path = router.history.current.path;
 
 	path = "dashboard" + path;
-
 	let paths = path.split("/");
 
 	paths = paths.filter((p) => !!p);
@@ -76,6 +81,7 @@ router.beforeEach(async (to, from, next) => {
 });
 
 import "./directives";
+import "./filters";
 
 new Vue({
 	store,
