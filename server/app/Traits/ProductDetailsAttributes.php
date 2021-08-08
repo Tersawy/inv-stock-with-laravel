@@ -145,7 +145,12 @@ trait ProductDetailsAttributes
 
     $unit = $attrName == 'cost' ? 'purchase_unit' : 'sale_unit';
 
-    $value = $value / $this->{$unit}->value;
+    if ($this->{$unit}->operator == '/') {
+      $value = $value / $this->{$unit}->value;
+    } else {
+      $value = $value * $this->{$unit}->value;
+    }
+
 
     return $value;
   }
