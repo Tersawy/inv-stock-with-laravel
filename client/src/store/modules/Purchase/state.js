@@ -2,7 +2,7 @@ import { PURCHASE_RECEIVED, PURCHASE_PENDING, PURCHASE_ORDERED } from "@/helpers
 
 export default {
 	prefix: "purchase",
-	options: [
+	statusOptions: [
 		{ text: "Received", value: PURCHASE_RECEIVED },
 		{ text: "Pending", value: PURCHASE_PENDING },
 		{ text: "Ordered", value: PURCHASE_ORDERED }
