@@ -19,8 +19,6 @@ $primary: #03a9f4 !default;
 @import "~bootstrap/scss/bootstrap.scss";
 @import "~bootstrap-vue/src/index.scss";
 
-$mainFontSize: 13px;
-
 body {
 	background-color: #ebeef0;
 }
@@ -33,12 +31,72 @@ body {
 	font-size: 14px !important;
 }
 
-.font-d {
+.font-default {
 	font-size: 16px !important;
 }
 
 .c-pointer {
 	cursor: pointer;
+}
+
+.outline-0 {
+	outline: none;
+}
+
+$fontWeightSizes: 100, 200, 300, 400, 500, 600, 700, 800, 900;
+
+@each $size in $fontWeightSizes {
+	.font-weight-#{$size} {
+		font-weight: $size;
+	}
+}
+
+$marginSizes: 10, 20, 30, 40, 50, 60;
+
+@each $size in $marginSizes {
+	.m-#{$size}px {
+		margin: $size + px;
+	}
+	.mr-#{$size}px,
+	.mx-#{$size}px {
+		margin-right: $size + px;
+	}
+	.ml-#{$size}px,
+	.mx-#{$size}px {
+		margin-left: $size + px;
+	}
+	.mt-#{$size}px,
+	.my-#{$size}px {
+		margin-top: $size + px;
+	}
+	.mb-#{$size}px,
+	.my-#{$size}px {
+		margin-bottom: $size + px;
+	}
+}
+
+$paddingSizes: 10, 20, 30, 40, 50, 60;
+
+@each $size in $paddingSizes {
+	.p-#{$size}px {
+		padding: $size + px;
+	}
+	.pr-#{$size}px,
+	.px-#{$size}px {
+		padding-right: $size + px;
+	}
+	.pl-#{$size}px,
+	.px-#{$size}px {
+		padding-left: $size + px;
+	}
+	.pt-#{$size}px,
+	.py-#{$size}px {
+		padding-top: $size + px;
+	}
+	.pb-#{$size}px,
+	.py-#{$size}px {
+		padding-bottom: $size + px;
+	}
 }
 
 .badge {
@@ -83,6 +141,11 @@ body {
 }
 
 .table {
+	tr.border-0 {
+		th {
+			border: none;
+		}
+	}
 	th {
 		font-weight: 500;
 	}
@@ -92,19 +155,5 @@ body {
 	&.b-table[aria-busy="true"] {
 		opacity: 0.4;
 		user-select: none;
-		// position: relative;
-		// z-index: 1;
-		// &::before {
-		// 	width: 100%;
-		// 	height: 100%;
-		// 	left: 0;
-		// 	top: 0;
-		// 	content: "\f110";
-		// 	font-family: "fontAwesome";
-		// 	color: var(--primary);
-		// 	position: absolute;
-		// 	z-index: 5;
-		// 	font-weight: 900;
-		// }
 	}
 }
