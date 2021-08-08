@@ -1,12 +1,4 @@
-import {
-	TAX_EXCLUSIVE,
-	TAX_INCLUSIVE,
-	DISCOUNT_FIXED,
-	DISCOUNT_PERCENT,
-	PURCHASE_RECEIVED,
-	PURCHASE_PENDING,
-	PURCHASE_ORDERED
-} from "@/helpers/constants";
+import { TAX_EXCLUSIVE, TAX_INCLUSIVE, DISCOUNT_FIXED, DISCOUNT_PERCENT } from "@/helpers/constants";
 
 const state = {
 	successMsg: "",
@@ -22,11 +14,6 @@ const state = {
 	discountMethods: [
 		{ text: "Fixed", value: DISCOUNT_FIXED },
 		{ text: "Percent %", value: DISCOUNT_PERCENT }
-	],
-	purchaseStatus: [
-		{ text: "Received", value: PURCHASE_RECEIVED },
-		{ text: "Pending", value: PURCHASE_PENDING },
-		{ text: "Ordered", value: PURCHASE_ORDERED }
 	]
 };
 
