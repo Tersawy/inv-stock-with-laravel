@@ -111,9 +111,10 @@ class ProductController extends Controller
 
   public function details(Request $req)
   {
-    $req->merge(['id' => $req->route('id')]);
-
-    $req->validate(['id' => ['required', 'numeric', 'min:1']]);
+    $req->validate([
+      'id'            => ['required', 'numeric', 'min:1'],
+      'warehouse_id'  => ['required', 'numeric', 'min:1'],
+    ]);
 
     $saleUnit = ['sale_unit' => function ($query) {
       $query->select(['id', 'short_name', 'value', 'operator']);
@@ -123,7 +124,15 @@ class ProductController extends Controller
       $query->select(['id', 'short_name', 'value', 'operator']);
     }];
 
-    $with_fields = array_merge($saleUnit, $purchaseUnit);
+    $purchaseUnit = ['purchase_unit' => function ($query) {
+      $query->select(['id', 'short_name', 'value', 'operator']);
+    }];
+
+    $products_warehouse = ['warehouse' => function ($query) use ($req) {
+      $query->where('warehouse_id', $req->warehouse_id);
+    }];
+
+    $with_fields = array_merge($saleUnit, $purchaseUnit, $products_warehouse);
 
     $columns = ['id', 'purchase_unit_id', 'sale_unit_id', 'cost', 'price', 'tax', 'tax_method'];
 
