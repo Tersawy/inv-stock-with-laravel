@@ -94,7 +94,7 @@ export default {
 		}
 
 		if (this.invoiceIdParam) {
-			await this.getInvoice(invoiceIdParam);
+			await this.getInvoice(this.invoiceIdParam);
 			this.invoice = { ...this.oldInvoice };
 		}
 	},
