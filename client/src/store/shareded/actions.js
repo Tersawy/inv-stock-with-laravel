@@ -22,16 +22,10 @@ const one = ({ commit, state }, itemId) => {
 };
 
 const create = ({ state, dispatch }, item) => {
-	return api(
-		"post",
-		`${state.prefix}/create`,
-		item,
-		(err) => {
-			if (err) return;
-			dispatch("all");
-		},
-		true
-	);
+	return api("post", `${state.prefix}/create`, item, (err) => {
+		if (err) return;
+		dispatch("all");
+	});
 };
 
 const update = ({ state, dispatch }, item) => {
