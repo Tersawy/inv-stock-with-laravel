@@ -9,7 +9,7 @@
 		props: ["invoice", "namespace"],
 		computed: {
 			statusOpts() {
-				return this.$store.state[this.namespace].options;
+				return this.$store.state[this.namespace].statusOptions;
 			}
 		}
 	};
