@@ -16,11 +16,10 @@
 
 <script>
 	import { mapActions } from "vuex";
-	import InputError from "@/components/ui/InputError.vue";
 	import DefaultInput from "@/components/ui/DefaultInput.vue";
 	import { formMixin } from "@/mixins";
 	export default {
-		components: { DefaultInput, InputError },
+		components: { DefaultInput },
 
 		props: ["oldItem"],
 

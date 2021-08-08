@@ -9,13 +9,13 @@
 								<b-col>
 									<b-form-group label="Product Name" label-for="name">
 										<b-form-input id="name" placeholder="Enter Product Name" v-model="product.name" />
-										<InputError field="name" />
+										<input-error namespace="Product" field="name" />
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Barcode Symbology" label-for="barcode_type">
 										<b-select id="barcode_type" v-model="product.barcode_type" :options="barcodeOpt" @change="generateCode" />
-										<InputError field="barcode_type" />
+										<input-error namespace="Product" field="barcode_type" />
 									</b-form-group>
 								</b-col>
 								<b-col>
@@ -28,19 +28,19 @@
 												</span>
 											</b-input-group-prepend>
 										</b-input-group>
-										<InputError field="code" />
+										<input-error namespace="Product" field="code" />
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Product Price" label-for="price">
 										<b-form-input id="price" type="number" placeholder="Enter Product Price" v-model.number="product.price" />
-										<InputError field="price" />
+										<input-error namespace="Product" field="price" />
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Product Cost" label-for="cost">
 										<b-form-input id="cost" type="number" placeholder="Enter Product Cost" v-model.number="product.cost" />
-										<InputError field="cost" />
+										<input-error namespace="Product" field="cost" />
 									</b-form-group>
 								</b-col>
 								<b-col>
@@ -51,7 +51,7 @@
 											placeholder="Enter Product Minimum Alert"
 											v-model.number="product.minimum"
 										/>
-										<InputError field="minimum" />
+										<input-error namespace="Product" field="minimum" />
 									</b-form-group>
 								</b-col>
 								<b-col>
@@ -64,37 +64,37 @@
 								<b-col>
 									<b-form-group label="Tax Type" label-for="tax_method">
 										<b-select id="tax_method" v-model.number="product.tax_method" :options="taxMethodOpt" />
-										<InputError field="tax_method" />
+										<input-error namespace="Product" field="tax_method" />
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Category" label-for="category_id">
 										<b-select id="category_id" v-model.number="product.category_id" :options="categoriesOpt" />
-										<InputError field="category_id" />
+										<input-error namespace="Product" field="category_id" />
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Brand" label-for="brand">
 										<b-select id="brand" v-model.number="product.brand_id" :options="brandsOpt" />
-										<InputError field="brand" />
+										<input-error namespace="Product" field="brand" />
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Product Unit" label-for="unit_id">
 										<b-select id="unit_id" v-model.number="product.unit_id" :options="unitsOpt" @change="setSubUnits" />
-										<InputError field="unit_id" />
+										<input-error namespace="Product" field="unit_id" />
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Purchase Unit" label-for="purchase_unit">
 										<b-select id="purchase_unit" v-model.number="product.purchase_unit_id" :options="purchaseUnitsOpt" />
-										<InputError field="purchase_unit" />
+										<input-error namespace="Product" field="purchase_unit" />
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Sale Unit" label-for="sale_unit">
 										<b-select id="sale_unit" v-model.number="product.sale_unit_id" :options="saleUnitsOpt" />
-										<InputError field="sale_unit" />
+										<input-error namespace="Product" field="sale_unit" />
 									</b-form-group>
 								</b-col>
 							</b-row>
@@ -141,7 +141,7 @@
 								<div id="tags-validation-help" class="small text-muted">
 									Product variant must be 3 to 54 characters in length.
 								</div>
-								<div class="d-block font-d mt-1">
+								<div class="d-block font-default mt-1">
 									<b-form-tag
 										v-for="tag in tags"
 										@remove="removeTag(tag)"
@@ -166,12 +166,11 @@
 <script>
 	import { mapActions, mapState } from "vuex";
 	import { formMixin } from "@/mixins";
-	import InputError from "@/components/ui/InputError.vue";
 	import DefaultInput from "@/components/ui/DefaultInput.vue";
 	import VueTagsInput from "@johmun/vue-tags-input";
 	import VueUploadMultipleImage from "vue-upload-multiple-image";
 	export default {
-		components: { DefaultInput, InputError, VueTagsInput, VueUploadMultipleImage },
+		components: { DefaultInput, VueTagsInput, VueUploadMultipleImage },
 
 		mixins: [formMixin],
 
