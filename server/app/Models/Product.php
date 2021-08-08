@@ -37,7 +37,7 @@ class Product extends Model
     public function getInstockAttribute()
     {
         $result = 0;
-        $this->warehouses->each(function ($warehouse) use (&$result) {
+        $this->warehouse->each(function ($warehouse) use (&$result) {
             $result += $warehouse->instock;
         });
         return $result;
@@ -78,9 +78,9 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
-    public function warehouses()
+    public function warehouse()
     {
-        return $this->hasMany(ProductWarehouse::class, 'variant_id');
+        return $this->hasMany(ProductWarehouse::class);
     }
 
     // const BARCODE_UPC_TYPE       = "UPC";
