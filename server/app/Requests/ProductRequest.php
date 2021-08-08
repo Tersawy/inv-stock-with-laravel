@@ -21,7 +21,7 @@ class ProductRequest extends ValidateRequest
       'tax_method'        => ['required', Rule::in(Constants::TAX_METHODS)],
       'note'              => ['string', 'max:255', 'nullable'],
       'category_id'       => ['required', 'numeric', 'min:1', 'exists:categories,id'],
-      'brand_id'          => ['exclude_if:brand_id,0', 'required', 'numeric', 'min:1', 'exists:brands,id'],
+      'brand_id'          => ['exclude_if:brand_id,null', 'required', 'numeric', 'min:1', 'exists:brands,id'],
       'has_variants'      => ['required', 'boolean'],
       'has_images'        => ['required', 'boolean'],
       'unit_id'           => ['required', 'numeric', 'min:1', Rule::exists('units', 'id')->whereNull('main_unit_id')],
@@ -42,19 +42,6 @@ class ProductRequest extends ValidateRequest
         })
       ]
     ];
-
-    $variants_rules = [
-      'variants'              => ['required', 'array', 'max:54', 'min:1'],
-      'variants.*'            => ['required', 'array', 'max:54', 'min:1'],
-      'variants.*.name'       => ['required', 'string', 'distinct', 'max:54', 'min:3']
-    ];
-
-    if (count($req->get('variants', []))) {
-      $rules = array_merge($rules, $variants_rules);
-      $req->has_variants = true;
-    } else {
-      $req->has_variants = false;
-    }
 
     $images_rules = [
       'images'            => ['required', 'array', 'max:54', 'min:1'],
@@ -83,6 +70,19 @@ class ProductRequest extends ValidateRequest
     ];
 
     $rules = array_merge($rules, $newRules);
+
+    $variants_rules = [
+      'variants'              => ['required', 'array', 'max:54', 'min:1'],
+      'variants.*'            => ['required', 'array', 'max:54', 'min:1'],
+      'variants.*.name'       => ['required', 'string', 'distinct', 'max:54', 'min:3']
+    ];
+
+    if (count($req->get('variants', []))) {
+      $rules = array_merge($rules, $variants_rules);
+      $req->has_variants = true;
+    } else {
+      $req->has_variants = false;
+    }
 
     return $req->validate($rules);
   }
