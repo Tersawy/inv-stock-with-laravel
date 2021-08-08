@@ -8,21 +8,20 @@
 				removeError(field);
 			"
 		/>
-		<InputError :field="field" />
+		<input-error :field="field" />
 	</b-form-group>
 </template>
 
 <script>
-	import InputError from "@/components/ui/InputError.vue";
 	export default {
-		components: { InputError },
 		props: {
 			placeholder: String,
 			field: String,
 			type: String,
 			label: String,
 			value: "",
-			disabled: Boolean
+			disabled: Boolean,
+			namespace: String
 		},
 		data: () => ({
 			id: "input",
