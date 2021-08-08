@@ -4,7 +4,7 @@
 		<div class="main">
 			<Navbar v-if="isAuth" />
 			<div class="main-content px-3 pt-3">
-				<b-breadcrumb class="mb-0" v-if="isAuth">
+				<b-breadcrumb class="mb-0 bg-transparent" v-if="isAuth">
 					<b-breadcrumb-item v-for="(bread, i) in breads" :key="i" :active="true">
 						<span v-if="bread.active">{{ bread.name }}</span>
 						<router-link v-else :to="bread.to">
