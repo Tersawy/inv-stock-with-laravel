@@ -58,7 +58,7 @@ class ProductController extends Controller
         'name'      => $product->name,
         'code'      => $product->code,
         'price'     => $product->price,
-        'quantity'  => $product->instock,
+        'instock'   => $product->instock,
         'unit'      => $product->unit->short_name,
         'brand'     => $product->brand ? $product->brand->name : 'N/D',
         'category'  => $product->category->name,
