@@ -58,7 +58,8 @@ class SaleController extends Controller
                 'total_price'       => $sale->total_price,
                 'paid'              => $sale->paid,
                 'due'               => $sale->due,
-                'payment_status'    => $sale->payment_status
+                'payment_status'    => $sale->payment_status,
+                'date'              => $sale->date
             ];
         });
 

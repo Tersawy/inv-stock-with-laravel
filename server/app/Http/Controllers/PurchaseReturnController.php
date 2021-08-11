@@ -59,6 +59,7 @@ class PurchaseReturnController extends Controller
                 'paid'              => $purchase->paid,
                 'due'               => $purchase->due,
                 'payment_status'    => $purchase->payment_status,
+                'date'              => $purchase->date
             ];
         });
 

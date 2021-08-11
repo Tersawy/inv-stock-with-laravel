@@ -58,7 +58,8 @@ class TransferController extends Controller
                 'total_price'       => $transfer->total_price,
                 'items_count'       => $transfer->items_count,
                 'paid'              => $transfer->paid,
-                'due'               => $transfer->due
+                'due'               => $transfer->due,
+                'date'              => $transfer->date
             ];
         });
 
