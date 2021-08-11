@@ -46,7 +46,7 @@ class SaleController extends Controller
 
         $this->handleQuery($req, $sales);
 
-        $sales = Sale::select(['id', 'reference', 'status', 'payment_status', 'customer_id', 'warehouse_id', 'total_price'])->with($with_fields)->paginate($req->per_page);
+        $sales = Sale::select(['id', 'reference', 'status', 'payment_status', 'customer_id', 'warehouse_id', 'total_price', 'date'])->with($with_fields)->paginate($req->per_page);
 
         $sales->getCollection()->transform(function ($sale) {
             return [
