@@ -5,7 +5,7 @@
 	"semi": true,
 	"trailingComma": "none",
 	"singleQuote": false,
-	"printWidth": 130,
+	"printWidth": 170,
 	"vueIndentScriptAndStyle": true,
 	"bracketSpacing": true
 }
