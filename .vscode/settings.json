@@ -6,6 +6,7 @@
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": true
 	},
+	"editor.wordWrapColumn": 170,
 	"eslint.validate": ["javascript", "javascriptreact", "vue"],
 	"[vue]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
