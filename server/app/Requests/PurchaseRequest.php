@@ -8,8 +8,7 @@ use Illuminate\Validation\Rule;
 
 class PurchaseRequest
 {
-
-  public static function rules()
+  protected static function rules()
   {
     $rules = [
       'warehouse_id'                => ['required', 'numeric', 'min:1', 'exists:warehouses,id'],

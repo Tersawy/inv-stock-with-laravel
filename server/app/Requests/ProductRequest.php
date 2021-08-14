@@ -3,14 +3,13 @@
 namespace App\Requests;
 
 use App\Helpers\Constants;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class ProductRequest extends ValidateRequest
 {
 
-  public static function rules(Request $req)
+  protected static function rules(Request $req)
   {
     $rules = [
       'barcode_type'      => ['required', 'string', 'max:54', 'min:3'],
@@ -46,7 +45,8 @@ class ProductRequest extends ValidateRequest
     $images_rules = [
       'images'            => ['required', 'array', 'max:54', 'min:1'],
       'images.*'          => ['required', 'array', 'max:54', 'min:1'],
-      'images.*.path'     => ['required', 'base64_image:jpeg,png,jpg']
+      'images.*.path'     => ['required', 'base64_image:jpeg,png,jpg'],
+      'images.*.default'  => ['numeric', 'min:0', 'max:1'],
     ];
 
     if (count($req->get('images', []))) {
