@@ -24,6 +24,14 @@ const userMixin = {
 
 		isCustomer() {
 			return this.me.type === 3;
+		},
+
+		APP_PRODUCTS_URL() {
+			return process.env.VUE_APP_BASE_URL + "images/products/";
+		},
+
+		APP_BRANDS_URL() {
+			return process.env.VUE_APP_BASE_URL + "images/brands/";
 		}
 	}
 };
