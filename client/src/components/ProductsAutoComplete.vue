@@ -24,7 +24,7 @@
 	import Autocomplete from "@trevoreyre/autocomplete-vue";
 	import "@trevoreyre/autocomplete-vue/dist/style.css";
 	export default {
-		props: ["invoice", "invoiceFieldName"],
+		props: ["invoice", "checkQuantity"],
 
 		components: { Autocomplete },
 
@@ -34,12 +34,8 @@
 				productDetails: (state) => state.Product.details
 			}),
 
-			isPrice() {
-				return this.invoiceFieldName == "price";
-			},
-
-			APP_PRODUCTS_URL() {
-				return process.env.VUE_APP_BASE_URL + "images/products/";
+			checkQty() {
+				return this.checkQuantity == "" || this.checkQuantity == true;
 			}
 		},
 
@@ -78,9 +74,9 @@
 
 				if (!product) return;
 
-				if (!this.invoice.warehouse_id) return this.setError("Please choose the warehouse first");
+				if (!this.invoice.warehouse_id) return this.setGlobalError("Please choose the warehouse first");
 
-				await this.getProductDetails({ id: product.id, warehouse_id: this.invoice.warehouse_id });
+				await this.getProductDetails({ id: product.id, variant_id: product.variant_id, warehouse_id: this.invoice.warehouse_id });
 
 				if (this.productDetails && Object.keys(this.productDetails).length > 1) {
 					let productWithDetails = {
@@ -91,7 +87,17 @@
 						...this.productDetails
 					};
 
-					this.productDetails.subtotal = this.isPrice ? this.productDetails.total_price : this.productDetails.total_cost;
+					if (this.checkQty) {
+						if (+productWithDetails.instock < +productWithDetails.quantity) {
+							let msg = `${productWithDetails.name} doesn't have quantity in this warehouse`;
+
+							if (productWithDetails.variant_id) {
+								msg = `${productWithDetails.name}-${productWithDetails.variant} doesn't have quantity in this warehouse`;
+							}
+
+							return this.setGlobalError(msg + " , Please create a purchase for this product first");
+						}
+					}
 
 					this.invoice.products = [...this.invoice.products, productWithDetails];
 				}
@@ -99,3 +105,9 @@
 		}
 	};
 </script>
+
+<style lang="scss">
+	.autocomplete-result-list {
+		z-index: 3 !important;
+	}
+</style>
