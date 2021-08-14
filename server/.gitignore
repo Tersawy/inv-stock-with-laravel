@@ -12,3 +12,4 @@ npm-debug.log
 yarn-error.log
 _*.php
 /public/images
+.vscode
