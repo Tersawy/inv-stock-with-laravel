@@ -174,10 +174,18 @@ trait InvoiceOperations
 
       $num = $i + 1;
 
-      $final = $product_warehouse->instock - $detail['quantity'];
+      $instock = 0;
+
+      if ($product->{$this->unitName}->operator == '/') {
+        $instock = $product_warehouse->instock * $product->{$this->unitName}->value;
+      } else {
+        $instock = $product_warehouse->instock / $product->{$this->unitName}->value;
+      }
+
+      $final = $instock - $detail['quantity'];
 
       if ($final < 0) {
-        throw CustomException::withMessage("detail.{$num}", "{$product->name} has {$product_warehouse->instock} quantity in stock and you try to subtract {$detail['quantity']} quantity!");
+        throw CustomException::withMessage("detail.{$num}", "{$product->name} has {$product_warehouse->instock} {$product->{$this->unitName}->short_name} in stock and you try to subtract {$detail['quantity']} quantity!");
       }
     }
   }
