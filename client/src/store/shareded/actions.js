@@ -22,24 +22,26 @@ const one = ({ commit, state }, itemId) => {
 };
 
 const create = ({ state, dispatch }, item) => {
-	return api("post", `${state.prefix}/create`, item, (err) => {
-		if (err) return;
+	return api("post", `${state.prefix}/create`, item, (err, res) => {
+		if (err) return Promise.reject(err);
 		dispatch("all");
+		return Promise.resolve(res);
 	});
 };
 
 const update = ({ state, dispatch }, item) => {
-	item.set("_method", "put");
-	return api("post", `${state.prefix}/${item.get("id")}`, item, (err) => {
-		if (err) return;
+	return api("put", `${state.prefix}/${item.id}`, item, (err, res) => {
+		if (err) return Promise.reject(err);
 		dispatch("all");
+		return Promise.resolve(res);
 	});
 };
 
 const moveToTrash = ({ commit, state }, item) => {
-	api("post", `${state.prefix}/${item.id}/trash`, item, (err) => {
-		if (err) return;
+	return api("post", `${state.prefix}/${item.id}/trash`, item, (err, res) => {
+		if (err) return Promise.reject(err);
 		commit("remove", item.id);
+		return Promise.resolve(res);
 	});
 };
 
@@ -51,16 +53,18 @@ const trashed = ({ commit, state }, item) => {
 };
 
 const restore = ({ commit, state }, item) => {
-	api("post", `${state.prefix}/${item.id}/restore`, item, (err) => {
-		if (err) return;
+	return api("post", `${state.prefix}/${item.id}/restore`, item, (err, res) => {
+		if (err) return Promise.reject(err);
 		commit("remove", item.id);
+		return Promise.resolve(res);
 	});
 };
 
 const remove = ({ commit, state }, item) => {
-	api("post", `${state.prefix}/${item.id}`, item, (err) => {
-		if (err) return;
+	return api("post", `${state.prefix}/${item.id}`, item, (err, res) => {
+		if (err) return Promise.reject(err);
 		commit("remove", item.id);
+		return Promise.resolve(res);
 	});
 };
 
