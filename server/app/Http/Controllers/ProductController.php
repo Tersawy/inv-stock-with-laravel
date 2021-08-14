@@ -41,7 +41,7 @@ class ProductController extends Controller
     }];
 
     $images = ['images' => function ($query) {
-      $query->select(['name', 'product_id']);
+      $query->select(['name', 'product_id', 'default'])->where('default', 1);
     }];
 
     $with_fields = array_merge($category, $brand, $unit, $images);
@@ -114,6 +114,7 @@ class ProductController extends Controller
     $req->validate([
       'id'            => ['required', 'numeric', 'min:1'],
       'warehouse_id'  => ['required', 'numeric', 'min:1'],
+      'variant_id'    => ['nullable', 'numeric', 'min:1'],
     ]);
 
     $saleUnit = ['sale_unit' => function ($query) {
@@ -129,7 +130,7 @@ class ProductController extends Controller
     }];
 
     $products_warehouse = ['warehouse' => function ($query) use ($req) {
-      $query->where('warehouse_id', $req->warehouse_id);
+      $query->where('warehouse_id', $req->warehouse_id)->where('variant_id', $req->variant_id);
     }];
 
     $with_fields = array_merge($saleUnit, $purchaseUnit, $products_warehouse);
@@ -144,23 +145,20 @@ class ProductController extends Controller
 
   public function show(Request $req)
   {
-    $req->merge(['id' => $req->route('id')]);
-
-    $req->validate(['id' => ['required', 'numeric', 'min:1']]);
+    ProductRequest::validationId($req);
 
     $images = ['images' => function ($query) {
-      $query->select(['name', 'product_id']);
+      $query->select(['name', 'product_id', 'default']);
     }];
 
-    $variants = ['variants' => function ($query) {
-      $query->select(['name', 'product_id']);
-    }];
+    $product = Product::where('id', $req->id)->with($images)->get()->first();
 
-    $with_fields = array_merge($images, $variants);
+    if (!$product) return $this->error('Product is not found !', 404);
 
-    $product = Product::where('id', $req->id)->with($with_fields)->get()->first();
-
-    $product->path = $product->path;
+    $product->images = $product->images->map(function ($productImage) {
+      $productImage->path = $productImage->path;
+      return $productImage;
+    });
 
     return $this->success($product);
   }
@@ -271,7 +269,7 @@ class ProductController extends Controller
   {
     $files = Arr::pluck($req->images, 'path');
 
-    foreach ($files as $file) {
+    foreach ($files as $key => $file) {
 
       $imageInfo = explode(';base64,', $file);
 
@@ -287,7 +285,7 @@ class ProductController extends Controller
 
       Storage::disk('images_products')->put($imageName, base64_decode($file));
 
-      $images[] = ['product_id' => $product->id, 'name' => $imageName];
+      $images[] = ['product_id' => $product->id, 'name' => $imageName, 'default' => $req->images[$key]['default']];
     }
 
     ProductImage::insert($images);
