@@ -19,9 +19,7 @@
 		</template>
 
 		<template #modal-footer="{ ok, cancel }">
-			<b-button size="sm" :disabled="btnLoading" v-if="!category" variant="secondary" @click.prevent="resetModal">
-				Reset
-			</b-button>
+			<b-button size="sm" :disabled="btnLoading" v-if="!category" variant="secondary" @click.prevent="resetModal"> Reset </b-button>
 			<div class="ml-auto">
 				<b-button class="mx-3" size="sm" :variant="category ? 'success' : 'primary'" @click.prevent="ok" v-if="!btnLoading">
 					{{ category ? "Update" : "Create" }}
