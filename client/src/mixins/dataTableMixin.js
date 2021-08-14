@@ -67,11 +67,15 @@ export default {
 		},
 
 		moveToTrash(item) {
-			this.$store.dispatch(`${this.namespace}/moveToTrash`, item);
+			return this.$store.dispatch(`${this.namespace}/moveToTrash`, item);
 		},
 
 		remove(item) {
-			this.$store.dispatch(`${this.namespace}/remove`, item);
+			return this.$store.dispatch(`${this.namespace}/remove`, item);
+		},
+
+		setOne(data) {
+			this.$store.commit(`${this.namespace}/one`, { data });
 		},
 
 		contextChanged(ctx) {
