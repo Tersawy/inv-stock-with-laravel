@@ -1,97 +1,88 @@
 <template>
-	<v-row justify="center" class="product-form">
-		<v-dialog v-model="dialog" max-width="600px">
-			<v-card v-if="productDetails">
-				<v-card-title>
-					<span class="text-h5">{{ productDetails.name }}</span>
-				</v-card-title>
-				<v-card-text>
-					<v-form @submit.prevent="handleSave">
-						<v-text-field label="Product Cost" hide-details="auto" v-model.number="productDetails.unit_cost"> </v-text-field>
+	<b-modal id="productDetailModal" @hidden="$emit('reset-modal')" hide-footer @ok="handleSave">
+		<template #modal-header="{ close }">
+			<div class="d-flex align-items-center justify-content-between w-100">
+				<div class="d-flex align-items-center">
+					<b-avatar :src="APP_PRODUCTS_URL + product.image"></b-avatar>
+					<span class="m-2">{{ product.name }}</span>
+				</div>
+				<b-button size="sm" variant="outline-danger" @click="close()"> Close </b-button>
+			</div>
+		</template>
+		<template #default="{ ok }">
+			<b-form @submit.prevent="handleSave" v-if="product">
+				<!-- -------------Product Unit Price------------- -->
+				<div v-if="isPrice">
+					<price-input :object="product" />
+					<input-error :vuelidate="$v.product.unit_price" field="unit_price" :namespace="namespace" />
+				</div>
 
-						<v-text-field label="Order Tax" hide-details="auto" v-model.number="productDetails.tax">
-							<v-btn slot="append" color="dark" v-if="productDetails.tax_method === TAX_EXCLUSIVE" @click="changeTaxMethod">
-								Exclusive
-							</v-btn>
-							<v-btn slot="append" color="dark" v-else @click="changeTaxMethod"> Inclusive </v-btn>
-						</v-text-field>
+				<!-- -------------Product Unit Cost------------- -->
+				<div v-else>
+					<cost-input :object="product" />
+					<input-error :vuelidate="$v.product.unit_cost" field="unit_cost" :namespace="namespace" />
+				</div>
 
-						<v-text-field label="Discount" hide-details="auto" v-model.number="productDetails.discount">
-							<v-btn slot="append" v-if="productDetails.discount_method === DISCOUNT_FIXED" @click="changeDiscountMethod">
-								<v-icon color="dark"> mdi-currency-usd </v-icon>
-							</v-btn>
-							<v-btn slot="append" color="dark" v-else @click="changeDiscountMethod">
-								<v-icon color="dark"> mdi-percent </v-icon>
-							</v-btn>
-						</v-text-field>
-					</v-form>
-					<v-card-actions class="mt-5">
-						<v-spacer></v-spacer>
+				<!-- -------------Order Tax------------- -->
+				<tax-input :object="product" />
+				<input-error :vuelidate="$v.product.tax" field="tax" :namespace="namespace" />
 
-						<v-btn color="green darken-1 text-white" small @click="dialog = false"> Close </v-btn>
+				<!-- -------------Tax Method------------- -->
+				<tax-methods-input :object="product" />
+				<input-error :vuelidate="$v.product.tax_method" field="tax_method" :namespace="namespace" />
 
-						<v-btn color="blue darken-1 text-white" small @click="handleSave"> Save </v-btn>
-					</v-card-actions>
-				</v-card-text>
-			</v-card>
-		</v-dialog>
-	</v-row>
+				<!-- -------------Discount------------- -->
+				<discount-input :object="product" />
+				<input-error :vuelidate="$v.product.discount" field="tax" :namespace="namespace" />
+
+				<div class="text-right">
+					<b-btn @click="ok()" variant="outline-primary">Done</b-btn>
+				</div>
+			</b-form>
+		</template>
+	</b-modal>
 </template>
 
 <script>
-	import InputError from "@/components/ui/InputError.vue";
-	import DefaultInput from "@/components/ui/DefaultInput.vue";
-	import { DISCOUNT_FIXED, TAX_EXCLUSIVE, DISCOUNT_PERCENT, TAX_INCLUSIVE } from "@/helpers/constants";
+	import DiscountInput from "./ui/inputs/DiscountInput.vue";
+	import TaxMethodsInput from "./ui/inputs/TaxMethodsInput.vue";
+	import TaxInput from "./ui/inputs/TaxInput.vue";
+	import CostInput from "./ui/inputs/CostInput.vue";
+	import PriceInput from "./ui/inputs/PriceInput.vue";
+
+	import { required, numeric, minValue } from "vuelidate/lib/validators";
+
 	export default {
-		components: { DefaultInput, InputError },
+		components: { DiscountInput, TaxMethodsInput, TaxInput, CostInput, PriceInput },
 
-		props: ["product", "status"],
+		props: ["namespace", "product", "invoiceFieldName"],
 
-		data: () => ({
-			productDetails: null
-		}),
+		validations() {
+			let product = {
+				tax: { numeric, minValue: minValue(0) },
+				tax_method: { numeric, minValue: minValue(0) },
+				discount: { numeric, minValue: minValue(0) },
+				discount_method: { numeric, minValue: minValue(0) }
+			};
 
-		watch: {
-			status(v) {
-				this.productDetails = v ? { ...this.product } : null;
+			if (this.isPrice) {
+				product.unit_price = { required, numeric, minValue: minValue(1) };
+			} else {
+				product.unit_cost = { required, numeric, minValue: minValue(1) };
 			}
+
+			return { product };
 		},
 
 		computed: {
-			dialog: {
-				get() {
-					return this.status;
-				},
-				set() {
-					// closed instead of changed coz we don't use Activator change this status to true in this dialog
-					this.$emit("closed", false);
-				}
-			},
-
-			DISCOUNT_FIXED() {
-				return DISCOUNT_FIXED;
-			},
-
-			TAX_EXCLUSIVE() {
-				return TAX_EXCLUSIVE;
+			isPrice() {
+				return this.invoiceFieldName == "price";
 			}
 		},
 
 		methods: {
-			changeDiscountMethod() {
-				let isFixed = this.productDetails.discount_method == DISCOUNT_FIXED;
-
-				this.productDetails.discount_method = isFixed ? DISCOUNT_PERCENT : DISCOUNT_FIXED;
-			},
-
-			changeTaxMethod() {
-				let isInclusive = this.productDetails.tax_method == TAX_INCLUSIVE;
-
-				this.productDetails.tax_method = isInclusive ? TAX_EXCLUSIVE : TAX_INCLUSIVE;
-			},
-
 			handleSave() {
-				this.$emit("done", this.productDetails);
+				this.$emit("done", this.product);
 			}
 		}
 	};
