@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Models\PurchaseDetail;
 use App\Helpers\CustomException;
+use App\Models\ProductWarehouse;
 use App\Requests\PurchaseRequest;
 use App\Traits\InvoiceOperations;
 use Illuminate\Support\Facades\DB;
@@ -68,6 +69,72 @@ class PurchaseController extends Controller
     }
 
 
+    public function show(Request $req)
+    {
+        PurchaseRequest::validationId($req);
+
+        $details = [
+            'details' => function ($query) {
+                $query->select(['purchase_id', 'product_id', 'variant_id', 'cost', 'tax', 'tax_method', 'discount', 'discount_method', 'quantity']);
+            },
+            'details.product' => function ($query) {
+                $query->select(['id', 'name', 'code', 'purchase_unit_id']);
+            },
+            'details.product.purchase_unit' => function ($query) {
+                $query->select(['id', 'short_name', 'operator', 'value']);
+            },
+            'details.variant' => function ($query) {
+                $query->select(['id', 'name', 'product_id']);
+            },
+            'details.image' => function ($query) {
+                $query->select(['product_id', 'name']);
+            },
+        ];
+
+        $select = ['id', 'warehouse_id', 'supplier_id', 'discount', 'discount_method', 'tax', 'status', 'shipping', 'total_price', 'note', 'date'];
+
+        $purchase = Purchase::select($select)->with($details)->find($req->id);
+
+        if (!$purchase) return $this->error('The purchase invoice was not found', 404);
+
+        $purchase->details->transform(function ($detail) use ($purchase) {
+
+            $product_warehouse = ProductWarehouse::where('variant_id', $detail->variant_id)->where('warehouse_id', $purchase->warehouse_id)->where('product_id', $detail->product_id)->first();
+
+            $instock = 0;
+
+            if ($detail->product->purchase_unit->operator == "*") {
+                $instock =  $product_warehouse->instock / $detail->product->purchase_unit->value;
+            } else {
+                $instock = $product_warehouse->instock * $detail->product->purchase_unit->value;
+            }
+
+            return [
+                'id'                => $detail->product_id,
+                'variant_id'        => $detail->variant_id,
+                'variant'           => $detail->variant ? $detail->variant->name : null,
+                'unit_cost'         => $detail->cost,
+                'quantity'          => $detail->quantity,
+                'instock'           => $instock,
+                'tax'               => $detail->tax,
+                'tax_method'        => $detail->tax_method,
+                'discount'          => $detail->discount,
+                'discount_method'   => $detail->discount_method,
+                'code'              => $detail->product->code,
+                'name'              => $detail->product->name,
+                'purchase_unit'     => $detail->product->purchase_unit->short_name,
+                'image'             => $detail->image->name,
+            ];
+        });
+
+        $purchase->products = $purchase->details;
+
+        unset($purchase->details);
+
+        return $this->success($purchase);
+    }
+
+
     public function create(Request $req)
     {
         try {
@@ -83,7 +150,7 @@ class PurchaseController extends Controller
 
                 $ids = Arr::pluck($details, 'product_id');
 
-                $products = Product::select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
+                $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
 
                 $this->check_products_with_variants($details, $products);
 
@@ -145,7 +212,7 @@ class PurchaseController extends Controller
 
                 $ids = [...$old_products_ids, ...$new_products_ids];
 
-                $products = Product::select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
+                $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
 
                 $all_details = [...$new_details, ...$old_details];
 

@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Requests\SaleRequest;
 use App\Helpers\CustomException;
+use App\Models\ProductWarehouse;
 use App\Traits\InvoiceOperations;
 use Illuminate\Support\Facades\DB;
 
@@ -67,6 +68,72 @@ class SaleController extends Controller
     }
 
 
+    public function show(Request $req)
+    {
+        SaleRequest::validationId($req);
+
+        $details = [
+            'details' => function ($query) {
+                $query->select(['sale_id', 'product_id', 'variant_id', 'price', 'tax', 'tax_method', 'discount', 'discount_method', 'quantity']);
+            },
+            'details.product' => function ($query) {
+                $query->select(['id', 'name', 'code', 'sale_unit_id']);
+            },
+            'details.product.sale_unit' => function ($query) {
+                $query->select(['id', 'short_name', 'operator', 'value']);
+            },
+            'details.variant' => function ($query) {
+                $query->select(['id', 'name', 'product_id']);
+            },
+            'details.image' => function ($query) {
+                $query->select(['product_id', 'name']);
+            },
+        ];
+
+        $select = ['id', 'warehouse_id', 'customer_id', 'discount', 'discount_method', 'tax', 'status', 'shipping', 'total_price', 'note', 'date'];
+
+        $sale = Sale::select($select)->with($details)->find($req->id);
+
+        if (!$sale) return $this->error('The sale invoice was not found', 404);
+
+        $sale->details->transform(function ($detail) use ($sale) {
+
+            $product_warehouse = ProductWarehouse::where('variant_id', $detail->variant_id)->where('warehouse_id', $sale->warehouse_id)->where('product_id', $detail->product_id)->first();
+
+            $instock = 0;
+
+            if ($detail->product->sale_unit->operator == "*") {
+                $instock =  $product_warehouse->instock / $detail->product->sale_unit->value;
+            } else {
+                $instock = $product_warehouse->instock * $detail->product->sale_unit->value;
+            }
+
+            return [
+                'id'                => $detail->product_id,
+                'variant_id'        => $detail->variant_id,
+                'variant'           => $detail->variant ? $detail->variant->name : null,
+                'unit_price'        => $detail->price,
+                'quantity'          => $detail->quantity,
+                'instock'           => $instock,
+                'tax'               => $detail->tax,
+                'tax_method'        => $detail->tax_method,
+                'discount'          => $detail->discount,
+                'discount_method'   => $detail->discount_method,
+                'code'              => $detail->product->code,
+                'name'              => $detail->product->name,
+                'sale_unit'         => $detail->product->sale_unit->short_name,
+                'image'             => $detail->image->name,
+            ];
+        });
+
+        $sale->products = $sale->details;
+
+        unset($sale->details);
+
+        return $this->success($sale);
+    }
+
+
     public function create(Request $req)
     {
         try {
@@ -82,7 +149,7 @@ class SaleController extends Controller
 
                 $ids = Arr::pluck($details, 'product_id');
 
-                $products = Product::select(['id', 'name', 'has_variants', 'sale_unit_id'])->find($ids);
+                $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants', 'sale_unit_id'])->find($ids);
 
                 $this->check_products_with_variants($details, $products);
 
@@ -146,7 +213,7 @@ class SaleController extends Controller
 
                 $ids = [...$oldProductsIds, ...$newProductsIds];
 
-                $products = Product::select(['id', 'name', 'has_variants', 'sale_unit_id'])->find($ids);
+                $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants', 'sale_unit_id'])->find($ids);
 
                 $all_details = [...$new_details, ...$old_details];
 

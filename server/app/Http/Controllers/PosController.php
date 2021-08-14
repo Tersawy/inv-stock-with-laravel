@@ -38,7 +38,7 @@ class PosController extends Controller
 
                 $ids = Arr::pluck($details, 'product_id');
 
-                $products = Product::select(['id', 'name', 'has_variants', 'sale_unit_id'])->find($ids);
+                $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants', 'sale_unit_id'])->find($ids);
 
                 $this->check_products_with_variants($details, $products);
 

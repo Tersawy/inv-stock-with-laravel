@@ -84,7 +84,7 @@ class TransferController extends Controller
 
                 $ids = Arr::pluck($details, 'product_id');
 
-                $products = Product::select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
+                $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
 
                 $this->check_products_with_variants($details, $products);
 
@@ -159,7 +159,7 @@ class TransferController extends Controller
 
                 $ids = [...$old_products_ids, ...$new_products_ids];
 
-                $products = Product::select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
+                $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants', 'purchase_unit_id'])->find($ids);
 
                 $all_details = [...$new_details, ...$old_details];
 

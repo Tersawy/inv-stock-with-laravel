@@ -17,6 +17,8 @@ class AdjustmentController extends Controller
 {
     use InvoiceOperations;
 
+    public $unitName = 'unit';
+
     protected $filterationFields = [
         'date'      => 'date',
         'warehouse' => 'warehouse_id',
@@ -70,7 +72,7 @@ class AdjustmentController extends Controller
 
                     $ids = Arr::pluck($details, 'product_id');
 
-                    $products = Product::select(['id', 'name', 'has_variants'])->find($ids);
+                    $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants'])->find($ids);
 
                     $this->check_products_with_variants($details, $products);
 
@@ -130,7 +132,7 @@ class AdjustmentController extends Controller
 
                 $ids = [...$old_products_ids, ...$new_products_ids];
 
-                $products = Product::select(['id', 'name', 'has_variants'])->find($ids);
+                $products = Product::with($this->unitName)->select(['id', 'name', 'has_variants'])->find($ids);
 
                 $all_details = [...$new_details, ...$old_details];
 
