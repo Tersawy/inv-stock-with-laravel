@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductImage extends Model
 {
-    protected $fillable = ['name', 'product_id'];
-
-    // protected $appends = ['path'];
+    protected $fillable = ['name', 'product_id', 'default'];
 
     public function getPathAttribute()
     {
