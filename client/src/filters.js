@@ -17,5 +17,15 @@ Vue.filter("relation", function (value, key) {
 Vue.filter("floating", function (value, num = 2) {
 	value = value ? value : 0;
 
-	return value.toFixed(num);
+	let [f, l] = value.toString().split(".");
+
+	if (!l) return `${f}.${Array(num).fill(0).join("")}`;
+
+	if (l.length < num) {
+		return `${f}.${l.slice(0, num)}${Array(num - l.length)
+			.fill(0)
+			.join("")}`;
+	}
+
+	return `${f}.${l.slice(0, num)}`;
 });
