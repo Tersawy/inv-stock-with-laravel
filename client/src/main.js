@@ -47,7 +47,7 @@ function breads() {
 	let results = paths.map((p, i) => {
 		let name = p.charAt(0).toUpperCase() + p.slice(1),
 			isLast = i + 1 == paths.length;
-		return { name, to: router.resolve({ name }).href, active: isLast, isFirst: i == 0 };
+		return { name, to: { name: name }, active: isLast, isFirst: i == 0 };
 	});
 
 	return results;
