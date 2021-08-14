@@ -1,13 +1,6 @@
 <template>
 	<div>
-		<b-table
-			:fields="fields"
-			:items="invoice.products"
-			show-empty
-			emptyText="There are no products to show"
-			class="mb-0"
-			thead-tr-class="border-0"
-		>
+		<b-table :fields="fields" :items="invoice.products" show-empty emptyText="There are no products to show" class="mb-0" thead-tr-class="border-0">
 			<template #empty="scope">
 				<div class="text-center text-muted">{{ scope.emptyText }}</div>
 			</template>
@@ -24,19 +17,34 @@
 				<b-icon @click="removeProduct(row)" icon="trash" scale="1.5" variant="danger" class="c-pointer"></b-icon>
 			</template>
 
+			<template #cell(image)="row">
+				<b-avatar :src="APP_PRODUCTS_URL + row.value" class="shadow-sm" rounded="lg"></b-avatar>
+			</template>
+
+			<template #cell(name)="row">
+				<div>
+					<div class="mb-2">
+						<span>{{ row.value }}</span>
+						<span v-if="row.item.variant_id" class="text-muted"> - {{ row.item.variant }} </span>
+					</div>
+					<b-badge variant="outline-info">
+						{{ row.item.code }}
+					</b-badge>
+				</div>
+			</template>
+
 			<template #cell(net_price)="row" v-if="isPrice"> $ {{ net(row.item).price | floating }} </template>
+
 			<template #cell(net_cost)="row" v-else> $ {{ net(row.item).cost | floating }} </template>
 
 			<template #cell(instock)="row">
-				<b-badge variant="outline-success">
-					{{ row.value | floating }} {{ row.item[isPrice ? "sale_unit" : "purchase_unit"] }}</b-badge
-				>
+				<b-badge :variant="row.item.instockVariant"> {{ row.value | floating }} {{ row.item[isPrice ? "sale_unit" : "purchase_unit"] }} </b-badge>
 			</template>
 
 			<template #cell(quantity)="row">
 				<b-input-group style="width: 110px">
 					<b-input-group-prepend>
-						<b-btn variant="primary" size="sm" class="font-default" @click="decrementQuantity(row)"> - </b-btn>
+						<b-btn :variant="row.item.decrementBtn" size="sm" class="font-default" @click="decrementQuantity(row)"> - </b-btn>
 					</b-input-group-prepend>
 					<b-form-input
 						class="form-control border-0 shadow-none bg-light text-center"
@@ -44,9 +52,10 @@
 						@keypress="quantityPress"
 						@paste="quantityPress"
 						v-model.number="row.item.quantity"
+						@change="quantityChanged(row)"
 					/>
 					<b-input-group-append>
-						<b-btn variant="primary" size="sm" class="font-default" @click="incrementQuantity(row)"> + </b-btn>
+						<b-btn :variant="row.item.incrementBtn" size="sm" class="font-default" @click="incrementQuantity(row)"> + </b-btn>
 					</b-input-group-append>
 				</b-input-group>
 			</template>
@@ -77,7 +86,7 @@
 <script>
 	import ProductDetailForm from "@/components/ProductDetailsForm";
 	export default {
-		props: ["invoice", "invoiceFieldName", "namespace", "net"],
+		props: ["invoice", "invoiceFieldName", "namespace", "net", "checkQuantity"],
 
 		components: { ProductDetailForm },
 
@@ -85,7 +94,8 @@
 			return {
 				productDetail: null,
 				productsFields: [
-					{ key: "name", label: "Product Name" },
+					{ key: "image", label: "Image" },
+					{ key: "name", label: "Name" },
 					{ key: "net_cost", label: "Net Unit Cost" },
 					{ key: "instock", label: "Instock" },
 					{ key: "quantity", label: "Quantity" },
@@ -105,10 +115,14 @@
 			fields() {
 				let fields = this.productsFields;
 				if (this.isPrice) {
-					fields[1] = { key: "net_price", label: "Net Unit Price" };
-					fields[6] = { key: "total_price", label: "Subtotal Price" };
+					fields[2] = { key: "net_price", label: "Net Unit Price" };
+					fields[7] = { key: "total_price", label: "Subtotal Price" };
 				}
 				return fields;
+			},
+
+			checkQty() {
+				return this.checkQuantity == "" || this.checkQuantity == true;
 			}
 		},
 
@@ -140,6 +154,14 @@
 
 			incrementQuantity(row) {
 				if (/\d+/.test(row.item.quantity)) {
+					if (this.checkQty && row.item.quantity >= row.item.instock) {
+						row.item.instockVariant = "outline-danger";
+						row.item.incrementBtn = "danger";
+						return setTimeout(() => {
+							row.item.instockVariant = "outline-success";
+							row.item.incrementBtn = "primary";
+						}, 1000);
+					}
 					row.item.quantity += 1;
 					row.value += 1;
 				} else {
@@ -149,30 +171,41 @@
 			},
 
 			decrementQuantity(row) {
-				if (/\d+/.test(row.item.quantity) && row.item.quantity && row.item.quantity - 1 > 0) {
+				if (/\d+/.test(row.item.quantity) && row.item.quantity - 1 > 0) {
 					row.item.quantity -= 1;
 					row.value -= 1;
 				} else {
+					if (row.item.quantity == 1) {
+						row.item.decrementBtn = "danger";
+						return setTimeout(() => (row.item.decrementBtn = "primary"), 1000);
+					}
 					row.item.quantity = 1;
 					row.value = 1;
 				}
 			},
 
 			quantityPress(evt) {
-				var theEvent = evt || window.event;
+				var theEvent = evt || window.event,
+					key;
 
 				// Handle paste
 				if (theEvent.type === "paste") {
-					var key = window.event.clipboardData.getData("text/plain");
+					key = window.event.clipboardData.getData("text/plain");
 				} else {
 					// Handle key press
-					var key = theEvent.keyCode || theEvent.which;
+					key = theEvent.keyCode || theEvent.which;
 					key = String.fromCharCode(key);
 				}
 				var regex = /[0-9]|\./;
 				if (!regex.test(key)) {
 					theEvent.returnValue = false;
 					if (theEvent.preventDefault) theEvent.preventDefault();
+				}
+			},
+
+			quantityChanged(row) {
+				if (!row.item.quantity || (this.checkQty && row.item.instock < row.item.quantity)) {
+					row.item.quantity = row.item.instock < 1 ? row.item.instock : 1;
 				}
 			},
 
