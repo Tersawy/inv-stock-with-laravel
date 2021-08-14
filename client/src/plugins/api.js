@@ -20,14 +20,16 @@ let api = async (method, route, data, callback, formData = false) => {
 
 	isCallback = typeof callback === "function";
 
-	store.commit("removeErrors");
-
 	try {
 		let res = await axios[method](...params, config);
 
 		if (res.data.message) store.commit("setSuccess", res.data.message);
 
-		isCallback ? callback(null, res.data) : null;
+		if (isCallback) {
+			return callback(null, res.data);
+		}
+
+		return Promise.resolve(res.data);
 	} catch (err) {
 		if (!err.response) return;
 
@@ -42,7 +44,11 @@ let api = async (method, route, data, callback, formData = false) => {
 			if (router.history.current.name != "Login") router.push("/login");
 		}
 
-		isCallback ? callback(data) : null;
+		if (isCallback) {
+			return callback(data);
+		}
+
+		return Promise.reject(data);
 	}
 };
 
