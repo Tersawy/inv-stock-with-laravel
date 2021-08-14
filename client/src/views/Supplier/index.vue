@@ -67,25 +67,13 @@
 						<b-card body-class="d-flex align-items-center py-0 px-3" class="rounded-pill">
 							<span class="text-muted">Rows per page: </span>
 							<b-form-group class="mb-0">
-								<b-form-select
-									v-model="perPage"
-									:options="perPageOptions"
-									class="bg-transparent border-0 shadow-none"
-								></b-form-select>
+								<b-form-select v-model="perPage" :options="perPageOptions" class="bg-transparent border-0 shadow-none"></b-form-select>
 							</b-form-group>
 						</b-card>
 					</div>
 				</b-col>
 				<b-col sm="6" md="6" lg="4" class="ml-auto">
-					<b-pagination
-						v-model="page"
-						:total-rows="docsCount"
-						:per-page="perPage"
-						align="fill"
-						size="md"
-						class="pagination"
-						pills
-					></b-pagination>
+					<b-pagination v-model="page" :total-rows="docsCount" :per-page="perPage" align="fill" size="md" class="pagination" pills></b-pagination>
 				</b-col>
 			</b-row>
 		</b-container>

@@ -29,13 +29,7 @@
 						Import
 					</b-btn>
 					<router-link to="/product/create" custom v-slot="{ navigate }">
-						<b-btn
-							@click="navigate"
-							@keypress.enter="navigate"
-							role="link"
-							variant="primary"
-							class="d-inline-flex align-items-center"
-						>
+						<b-btn @click="navigate" @keypress.enter="navigate" role="link" variant="primary" class="d-inline-flex align-items-center">
 							<b-icon icon="plus" scale="1.3" class="mr-1"></b-icon>
 							Create
 						</b-btn>
@@ -64,39 +58,26 @@
 				<template #cell(image)="row">
 					<b-avatar :src="APP_PRODUCTS_URL + row.value" class="shadow-sm" rounded="lg"></b-avatar>
 				</template>
+
+				<template #cell(price)="row">
+					<span>$ {{ row.value | floating }} </span>
+				</template>
+
+				<template #cell(instock)="row">
+					<span> {{ row.value | floating }} </span>
+				</template>
+
 				<template #cell(actions)="row">
-					<router-link :to="{ name: 'ProductUpdate', params: { productId: row.item.id } }" custom v-slot="{ navigate }">
-						<b-icon
-							@click="navigate"
-							@keypress.enter="navigate"
-							role="link"
-							icon="eye"
-							scale="1.5"
-							variant="info"
-							class="c-pointer"
-						></b-icon>
+					<router-link :to="{ name: 'ProductUpdate', params: { productId: row.item.id } }">
+						<b-icon icon="eye" scale="1.5" variant="info" class="c-pointer"></b-icon>
 					</router-link>
-					<router-link :to="{ name: 'ProductUpdate', params: { productId: row.item.id } }" custom v-slot="{ navigate }">
-						<b-icon
-							@click="navigate"
-							@keypress.enter="navigate"
-							role="link"
-							icon="pencil-square"
-							scale="1.5"
-							variant="success"
-							class="c-pointer mx-3"
-						></b-icon>
+
+					<router-link :to="{ name: 'ProductUpdate', params: { productId: row.item.id } }">
+						<b-icon icon="pencil-square" scale="1.5" variant="success" class="c-pointer mx-3"></b-icon>
 					</router-link>
-					<router-link :to="{ name: 'ProductUpdate', params: { productId: row.item.id } }" custom v-slot="{ navigate }">
-						<b-icon
-							@click="navigate"
-							@keypress.enter="navigate"
-							role="link"
-							icon="trash"
-							scale="1.5"
-							variant="danger"
-							class="c-pointer"
-						></b-icon>
+
+					<router-link :to="{ name: 'ProductUpdate', params: { productId: row.item.id } }">
+						<b-icon icon="trash" scale="1.5" variant="danger" class="c-pointer"></b-icon>
 					</router-link>
 				</template>
 			</b-table>
@@ -107,25 +88,13 @@
 						<b-card body-class="d-flex align-items-center py-0 px-3" class="rounded-pill">
 							<span class="text-muted">Rows per page: </span>
 							<b-form-group class="mb-0">
-								<b-form-select
-									v-model="perPage"
-									:options="perPageOptions"
-									class="bg-transparent border-0 shadow-none"
-								></b-form-select>
+								<b-form-select v-model="perPage" :options="perPageOptions" class="bg-transparent border-0 shadow-none"></b-form-select>
 							</b-form-group>
 						</b-card>
 					</div>
 				</b-col>
 				<b-col sm="6" md="6" lg="4" class="ml-auto">
-					<b-pagination
-						v-model="page"
-						:total-rows="docsCount"
-						:per-page="perPage"
-						align="fill"
-						size="md"
-						class="pagination"
-						pills
-					></b-pagination>
+					<b-pagination v-model="page" :total-rows="docsCount" :per-page="perPage" align="fill" size="md" class="pagination" pills></b-pagination>
 				</b-col>
 			</b-row>
 		</b-container>
@@ -139,8 +108,6 @@
 
 		mixins: [dataTableMixin],
 
-		mixins: [dataTableMixin],
-
 		data: () => ({
 			namespace: "Product",
 			fields: [
@@ -151,17 +118,11 @@
 				{ key: "brand", label: "Brand", sortable: true },
 				{ key: "price", label: "Price", sortable: true },
 				{ key: "unit", label: "Unit", sortable: true },
-				{ key: "quantity", label: "Stock", sortable: true },
+				{ key: "instock", label: "Stock", sortable: true },
 				{ key: "actions", label: "Actions" }
 			],
 			filterationFields: { name: "", code: "", category: "", brand: "" }
-		}),
-
-		computed: {
-			APP_PRODUCTS_URL() {
-				return process.env.VUE_APP_BASE_URL + "images/products/";
-			}
-		}
+		})
 	};
 	/*
 		Code 128 	=> 8

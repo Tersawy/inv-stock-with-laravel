@@ -1,11 +1,11 @@
 <template>
-	<div class="brands-list py-3">
+	<div class="units-list py-3">
 		<b-container fluid>
 			<b-row>
 				<b-col cols="4">
 					<b-form-group class="mb-0">
 						<b-input-group>
-							<b-form-input placeholder="Search in brands by name" v-model="search" />
+							<b-form-input placeholder="Search in units by name" v-model="search" />
 							<b-input-group-append>
 								<b-btn variant="primary">
 									<i class="fas fa-filter"></i>
@@ -55,10 +55,6 @@
 				:filter-function="() => items"
 				class="bg-white shadow-sm mt-3 mb-0"
 			>
-				<template #cell(image)="row">
-					<b-avatar :src="APP_BRANDS_URL + row.value" class="shadow-sm" rounded="lg"></b-avatar>
-				</template>
-
 				<template #cell(actions)="row">
 					<b-icon @click="edit(row.item)" icon="pencil-square" scale="1.5" variant="success" class="c-pointer mx-3"></b-icon>
 					<b-icon @click="moveToTrash(row.item)" icon="trash" scale="1.5" variant="danger" class="c-pointer"></b-icon>
@@ -71,25 +67,13 @@
 						<b-card body-class="d-flex align-items-center py-0 px-3" class="rounded-pill">
 							<span class="text-muted">Rows per page: </span>
 							<b-form-group class="mb-0">
-								<b-form-select
-									v-model="perPage"
-									:options="perPageOptions"
-									class="bg-transparent border-0 shadow-none"
-								></b-form-select>
+								<b-form-select v-model="perPage" :options="perPageOptions" class="bg-transparent border-0 shadow-none"></b-form-select>
 							</b-form-group>
 						</b-card>
 					</div>
 				</b-col>
 				<b-col sm="6" md="6" lg="4" class="ml-auto">
-					<b-pagination
-						v-model="page"
-						:total-rows="docsCount"
-						:per-page="perPage"
-						align="fill"
-						size="md"
-						class="pagination"
-						pills
-					></b-pagination>
+					<b-pagination v-model="page" :total-rows="docsCount" :per-page="perPage" align="fill" size="md" class="pagination" pills></b-pagination>
 				</b-col>
 			</b-row>
 		</b-container>
@@ -99,25 +83,21 @@
 <script>
 	import dataTableMixin from "@/mixins/dataTableMixin";
 	export default {
-		name: "Brand",
+		name: "Unit",
 
 		mixins: [dataTableMixin],
 
 		data: () => ({
-			namespace: "Brand",
+			namespace: "Unit",
 			fields: [
-				{ key: "image", label: "Image", sortable: true },
 				{ key: "name", label: "Name", sortable: true },
-				{ key: "description", label: "Description", sortable: true },
+				{ key: "short_name", label: "Short name", sortable: true },
+				{ key: "value", label: "Value", sortable: true },
+				{ key: "operator", label: "Operator", sortable: true },
+				{ key: "main_unit", label: "Main unit", sortable: true },
 				{ key: "actions", label: "Actions" }
 			],
-			filterationFields: { name: "", city: "", country: "", email: "", phone: "", address: "" }
-		}),
-
-		computed: {
-			APP_BRANDS_URL() {
-				return process.env.VUE_APP_BASE_URL + "images/brands/";
-			}
-		}
+			filterationFields: { name: "", short_name: "", value: "", operator: "", main_unit_id: "" }
+		})
 	};
 </script>

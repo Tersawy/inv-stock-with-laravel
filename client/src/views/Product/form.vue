@@ -9,13 +9,13 @@
 								<b-col>
 									<b-form-group label="Product Name" label-for="name">
 										<b-form-input id="name" placeholder="Enter Product Name" v-model="product.name" />
-										<input-error namespace="Product" field="name" />
+										<!-- <input-error namespace="Product" field="name" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Barcode Symbology" label-for="barcode_type">
 										<b-select id="barcode_type" v-model="product.barcode_type" :options="barcodeOpt" @change="generateCode" />
-										<input-error namespace="Product" field="barcode_type" />
+										<!-- <input-error namespace="Product" field="barcode_type" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
@@ -28,30 +28,25 @@
 												</span>
 											</b-input-group-prepend>
 										</b-input-group>
-										<input-error namespace="Product" field="code" />
+										<!-- <input-error namespace="Product" field="code" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Product Price" label-for="price">
 										<b-form-input id="price" type="number" placeholder="Enter Product Price" v-model.number="product.price" />
-										<input-error namespace="Product" field="price" />
+										<!-- <input-error namespace="Product" field="price" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Product Cost" label-for="cost">
 										<b-form-input id="cost" type="number" placeholder="Enter Product Cost" v-model.number="product.cost" />
-										<input-error namespace="Product" field="cost" />
+										<!-- <input-error namespace="Product" field="cost" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Product Minimum Alert" label-for="minimum">
-										<b-form-input
-											id="minimum"
-											type="number"
-											placeholder="Enter Product Minimum Alert"
-											v-model.number="product.minimum"
-										/>
-										<input-error namespace="Product" field="minimum" />
+										<b-form-input id="minimum" type="number" placeholder="Enter Product Minimum Alert" v-model.number="product.minimum" />
+										<!-- <input-error namespace="Product" field="minimum" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
@@ -64,37 +59,37 @@
 								<b-col>
 									<b-form-group label="Tax Type" label-for="tax_method">
 										<b-select id="tax_method" v-model.number="product.tax_method" :options="taxMethodOpt" />
-										<input-error namespace="Product" field="tax_method" />
+										<!-- <input-error namespace="Product" field="tax_method" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Category" label-for="category_id">
 										<b-select id="category_id" v-model.number="product.category_id" :options="categoriesOpt" />
-										<input-error namespace="Product" field="category_id" />
+										<!-- <input-error namespace="Product" field="category_id" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Brand" label-for="brand">
 										<b-select id="brand" v-model.number="product.brand_id" :options="brandsOpt" />
-										<input-error namespace="Product" field="brand" />
+										<!-- <input-error namespace="Product" field="brand" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Product Unit" label-for="unit_id">
 										<b-select id="unit_id" v-model.number="product.unit_id" :options="unitsOpt" @change="setSubUnits" />
-										<input-error namespace="Product" field="unit_id" />
+										<!-- <input-error namespace="Product" field="unit_id" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Purchase Unit" label-for="purchase_unit">
 										<b-select id="purchase_unit" v-model.number="product.purchase_unit_id" :options="purchaseUnitsOpt" />
-										<input-error namespace="Product" field="purchase_unit" />
+										<!-- <input-error namespace="Product" field="purchase_unit" /> -->
 									</b-form-group>
 								</b-col>
 								<b-col>
 									<b-form-group label="Sale Unit" label-for="sale_unit">
 										<b-select id="sale_unit" v-model.number="product.sale_unit_id" :options="saleUnitsOpt" />
-										<input-error namespace="Product" field="sale_unit" />
+										<!-- <input-error namespace="Product" field="sale_unit" /> -->
 									</b-form-group>
 								</b-col>
 							</b-row>
@@ -108,10 +103,12 @@
 							browseText="(or) Select"
 							dragText="Drag & Drop Multiple images For product"
 							primaryText="Success"
+							markIsPrimaryText="Make it default"
+							popupText="This image will be displayed as default"
 							:data-images="images"
 							@upload-success="uploadImageSuccess"
 							@before-remove="beforeRemoveImage"
-							:showPrimary="false"
+							@mark-is-primary="markIsPrimary"
 							:showEdit="false"
 							accept="image/jpeg,image/png,image/jpg"
 						/>
@@ -119,37 +116,17 @@
 				</b-col>
 				<b-col cols="6" class="py-3" v-if="!isUpdate">
 					<b-card header="Product variants" class="h-100">
-						<b-form-tags
-							v-model="variants"
-							no-outer-focus
-							class="mb-2 border-0"
-							tagVariant="success"
-							:tag-validator="tagValidator"
-						>
+						<b-form-tags v-model="variants" no-outer-focus class="mb-2 border-0" tagVariant="success" :tag-validator="tagValidator">
 							<template v-slot="{ tags, inputAttrs, inputHandlers, tagVariant, addTag, removeTag }">
 								<b-input-group class="mb-2">
-									<b-form-input
-										v-bind="inputAttrs"
-										v-on="inputHandlers"
-										placeholder="Enter Variant Name"
-										id="variantName"
-									></b-form-input>
+									<b-form-input v-bind="inputAttrs" v-on="inputHandlers" placeholder="Enter Variant Name" id="variantName"></b-form-input>
 									<b-input-group-append>
 										<b-button @click="addTag()" variant="outline-success">Add</b-button>
 									</b-input-group-append>
 								</b-input-group>
-								<div id="tags-validation-help" class="small text-muted">
-									Product variant must be 3 to 54 characters in length.
-								</div>
+								<div id="tags-validation-help" class="small text-muted">Product variant must be 3 to 54 characters in length.</div>
 								<div class="d-block font-default mt-1">
-									<b-form-tag
-										v-for="tag in tags"
-										@remove="removeTag(tag)"
-										:key="tag"
-										:title="tag"
-										:variant="tagVariant"
-										class="mr-1"
-									>
+									<b-form-tag v-for="tag in tags" @remove="removeTag(tag)" :key="tag" :title="tag" :variant="tagVariant" class="mr-1">
 										{{ tag }}
 									</b-form-tag>
 								</div>
@@ -225,16 +202,17 @@
 					this.setSubUnits(this.product.unit_id);
 
 					this.images = this.product.images.map((img) => ({
-						default: 0,
-						highlight: 0,
+						default: img.default,
 						name: img.name,
 						path: img.path
 					}));
 
-					this.variants = this.product.variants.map((variant) => ({
-						text: variant.name,
-						tiClasses: ["ti-valid"]
-					}));
+					if (this.product.variants && this.product.variants.length) {
+						this.variants = this.product.variants.map((variant) => ({
+							text: variant.name,
+							tiClasses: ["ti-valid"]
+						}));
+					}
 				});
 			}
 		},
@@ -272,6 +250,10 @@
 				var r = confirm("remove image");
 
 				if (r == true) return done();
+			},
+
+			markIsPrimary(_index, fileList) {
+				this.images = fileList;
 			},
 
 			setSubUnits(v) {
@@ -319,6 +301,7 @@
 					this.images.forEach((img, i) => {
 						formData.append(`images[${i}][path]`, img.path);
 						formData.append(`images[${i}][name]`, img.name);
+						formData.append(`images[${i}][default]`, img.default);
 					});
 				}
 

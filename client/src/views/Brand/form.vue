@@ -38,10 +38,6 @@
 		},
 
 		computed: {
-			APP_BRANDS_URL() {
-				return process.env.VUE_APP_BASE_URL + "images/brands/";
-			},
-
 			brandData() {
 				let formData = new FormData();
 				for (let k in this.brand) {

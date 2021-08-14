@@ -1,11 +1,11 @@
 <template>
-	<div class="warehouses-list py-3">
+	<div class="categories-list py-3">
 		<b-container fluid>
 			<b-row>
 				<b-col cols="4">
 					<b-form-group class="mb-0">
 						<b-input-group>
-							<b-form-input placeholder="Search in warehouses by name" v-model="search" />
+							<b-form-input placeholder="Search in categories by name or code" v-model="search" />
 							<b-input-group-append>
 								<b-btn variant="primary">
 									<i class="fas fa-filter"></i>
@@ -30,7 +30,7 @@
 						<b-icon icon="cloud-upload" scale="1" class="mr-2"></b-icon>
 						Import
 					</b-btn>
-					<b-btn variant="primary" class="d-inline-flex align-items-center" v-b-modal.warehouseFormModal>
+					<b-btn variant="primary" class="d-inline-flex align-items-center" v-b-modal.categoryFormModal>
 						<b-icon icon="plus" scale="1.3" class="mr-1"></b-icon>
 						Create
 					</b-btn>
@@ -67,25 +67,13 @@
 						<b-card body-class="d-flex align-items-center py-0 px-3" class="rounded-pill">
 							<span class="text-muted">Rows per page: </span>
 							<b-form-group class="mb-0">
-								<b-form-select
-									v-model="perPage"
-									:options="perPageOptions"
-									class="bg-transparent border-0 shadow-none"
-								></b-form-select>
+								<b-form-select v-model="perPage" :options="perPageOptions" class="bg-transparent border-0 shadow-none"></b-form-select>
 							</b-form-group>
 						</b-card>
 					</div>
 				</b-col>
 				<b-col sm="6" md="6" lg="4" class="ml-auto">
-					<b-pagination
-						v-model="page"
-						:total-rows="docsCount"
-						:per-page="perPage"
-						align="fill"
-						size="md"
-						class="pagination"
-						pills
-					></b-pagination>
+					<b-pagination v-model="page" :total-rows="docsCount" :per-page="perPage" align="fill" size="md" class="pagination" pills></b-pagination>
 				</b-col>
 			</b-row>
 		</b-container>
@@ -95,22 +83,18 @@
 <script>
 	import dataTableMixin from "@/mixins/dataTableMixin";
 	export default {
-		name: "Warehouse",
+		name: "Category",
 
 		mixins: [dataTableMixin],
 
 		data: () => ({
-			namespace: "Warehouse",
+			namespace: "Category",
 			fields: [
 				{ key: "name", label: "Name", sortable: true },
-				{ key: "city", label: "City", sortable: true },
-				{ key: "country", label: "Country", sortable: true },
-				{ key: "email", label: "Email", sortable: true },
-				{ key: "phone", label: "Phone", sortable: true },
-				{ key: "zip_code", label: "Zip code", sortable: true },
+				{ key: "code", label: "Code", sortable: true },
 				{ key: "actions", label: "Actions" }
 			],
-			filterationFields: { name: "", city: "", country: "", email: "", phone: "", zip_code: "" }
+			filterationFields: { name: "", code: "" }
 		})
 	};
 </script>
