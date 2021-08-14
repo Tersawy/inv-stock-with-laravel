@@ -1,25 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Login from "@/views/Login.vue";
-import Dashboard from "@/views/Dashboard.vue";
-import Warehouse from "@/views/Warehouse.vue";
-import WarehouseForm from "@/components/WarehouseForm.vue";
-import WarehouseTrashed from "@/views/Trashed/Warehouse.vue";
-import Category from "@/views/Category.vue";
-import CategoryTrashed from "@/views/Trashed/Category.vue";
-import Brand from "@/views/Brand.vue";
-import BrandTrashed from "@/views/Trashed/Brand.vue";
-import Unit from "@/views/Unit.vue";
-import Currency from "@/views/Currency.vue";
-import Product from "@/views/Product.vue";
-import ProductForm from "@/components/ProductForm.vue";
-// import ProductTrashed from "@/views/Trashed/Product.vue";
-import Supplier from "@/views/Supplier.vue";
-import SupplierForm from "@/components/SupplierForm.vue";
-import SupplierTrashed from "@/views/Trashed/Supplier.vue";
-import PurchaseForm from "@/components/PurchaseForm.vue";
-import CustomerDashboard from "@/views/Customer/Dashboard.vue";
-import Customer from "@/views/Customer.vue";
 
 Vue.use(VueRouter);
 
@@ -27,145 +7,193 @@ const routes = [
 	{
 		path: "/login",
 		name: "Login",
-		component: Login,
+		component: require("@/views/Auth/login").default,
 		meta: { auth: false }
 	},
 	{
 		path: "/",
 		name: "Dashboard",
-		component: Dashboard,
+		component: require("@/views/Dashboard").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/warehouse",
 		name: "Warehouse",
-		component: Warehouse,
+		component: require("@/views/Warehouse/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/warehouse/create",
 		name: "WarehouseCreate",
-		component: WarehouseForm,
+		component: require("@/views/Warehouse/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/warehouse/:warehouseId(\\d+)/update",
 		name: "WarehouseUpdate",
-		component: WarehouseForm,
+		component: require("@/views/Warehouse/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/warehouse/trashed",
 		name: "WarehouseTrashed",
-		component: WarehouseTrashed,
+		component: require("@/views/Warehouse/trash").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/category",
 		name: "Category",
-		component: Category,
+		component: require("@/views/Category/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/category/trashed",
 		name: "CategoryTrashed",
-		component: CategoryTrashed,
+		component: require("@/views/Category/trash").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/brand",
 		name: "Brand",
-		component: Brand,
+		component: require("@/views/Brand/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/brand/trashed",
 		name: "BrandTrashed",
-		component: BrandTrashed,
+		component: require("@/views/Brand/trash").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/unit",
 		name: "Unit",
-		component: Unit,
+		component: require("@/views/Unit/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/product",
 		name: "Product",
-		component: Product,
+		component: require("@/views/Product/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/product/create",
 		name: "ProductCreate",
-		component: ProductForm,
+		component: require("@/views/Product/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/product/:productId(\\d+)/update",
 		name: "ProductUpdate",
-		component: ProductForm,
+		component: require("@/views/Product/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/supplier",
 		name: "Supplier",
-		component: Supplier,
+		component: require("@/views/Supplier/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/supplier/create",
 		name: "SupplierCreate",
-		component: SupplierForm,
+		component: require("@/views/Supplier/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/supplier/:supplierId(\\d+)/update",
 		name: "SupplierUpdate",
-		component: SupplierForm,
+		component: require("@/views/Supplier/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/supplier/trashed",
 		name: "SupplierTrashed",
-		component: SupplierTrashed,
+		component: require("@/views/Supplier/trash").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/customer",
 		name: "Customer",
-		component: Customer,
+		component: require("@/views/Customer/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
-	// {
-	// 	path: "/supplier/trashed",
-	// 	name: "SupplierTrashed",
-	// 	component: SupplierTrashed,
-	// 	meta: { auth: true, userType: [0, 1, 2] }
-	// },
+	{
+		path: "/purchase",
+		name: "Purchase",
+		component: require("@/views/Purchase/index").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
 	{
 		path: "/purchase/create",
 		name: "PurchaseCreate",
-		component: PurchaseForm,
+		component: require("@/views/Purchase/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/purchase/:purchaseId(\\d+)/update",
+		path: "/purchase/:invoiceId(\\d+)/update",
 		name: "PurchaseUpdate",
-		component: PurchaseForm,
+		component: require("@/views/Purchase/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/",
-		name: "CustomerDashboard",
-		component: CustomerDashboard,
-		meta: { auth: true, userType: [3] }
+		path: "/purchase-return",
+		name: "PurchaseReturn",
+		component: require("@/views/PurchaseReturn/index").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/purchase-return/create",
+		name: "PurchaseReturnCreate",
+		component: require("@/views/PurchaseReturn/form").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/purchase-return/:invoiceId(\\d+)/update",
+		name: "PurchaseReturnUpdate",
+		component: require("@/views/PurchaseReturn/form").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/sale",
+		name: "Sale",
+		component: require("@/views/Sale/index").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/sale/create",
+		name: "SaleCreate",
+		component: require("@/views/Sale/form").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/sale/:invoiceId(\\d+)/update",
+		name: "SaleUpdate",
+		component: require("@/views/Sale/form").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/sale-return",
+		name: "SaleReturn",
+		component: require("@/views/SaleReturn/index").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/sale-return/create",
+		name: "SaleReturnCreate",
+		component: require("@/views/SaleReturn/form").default,
+		meta: { auth: true, userType: [0, 1, 2] }
+	},
+	{
+		path: "/sale-return/:invoiceId(\\d+)/update",
+		name: "SaleReturnUpdate",
+		component: require("@/views/SaleReturn/form").default,
+		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
 		path: "/currency",
 		name: "Currency",
-		component: Currency,
+		component: require("@/views/Currency/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	}
 ];
