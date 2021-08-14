@@ -84,7 +84,10 @@
 						discount: 0,
 						discount_method: DISCOUNT_FIXED,
 						...product,
-						...this.productDetails
+						...this.productDetails,
+						decrementBtn: "primary",
+						incrementBtn: "primary",
+						instockVariant: "outline-success"
 					};
 
 					if (this.checkQty) {
