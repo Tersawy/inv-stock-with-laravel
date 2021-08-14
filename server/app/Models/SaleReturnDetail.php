@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\ProductDetailsAttributes;
+use App\Traits\InvoiceDetailsAttributes;
 
 class SaleReturnDetail extends Model
 {
-    use ProductDetailsAttributes;
+    use InvoiceDetailsAttributes;
 
     protected $fillable = [
         'product_id',

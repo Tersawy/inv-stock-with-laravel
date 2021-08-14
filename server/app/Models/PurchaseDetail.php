@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\ProductDetailsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\InvoiceDetailsAttributes;
 
 class PurchaseDetail extends Model
 {
-    use ProductDetailsAttributes;
+    use InvoiceDetailsAttributes;
 
     protected $fillable = [
         'product_id',
