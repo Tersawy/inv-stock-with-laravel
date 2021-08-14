@@ -2,6 +2,7 @@ import DiscountInput from "@/components/ui/inputs/DiscountInput";
 import TaxInput from "@/components/ui/inputs/TaxInput.vue";
 import ShippingInput from "@/components/ui/inputs/ShippingInput.vue";
 import SupplierInput from "@/components/ui/inputs/SupplierInput.vue";
+import CustomerInput from "@/components/ui/inputs/CustomerInput.vue";
 import WarehouseInput from "@/components/ui/inputs/WarehouseInput.vue";
 import DateInput from "@/components/ui/inputs/DateInput.vue";
 import NoteInput from "@/components/ui/inputs/NoteInput.vue";
@@ -22,6 +23,7 @@ export default {
 		TaxInput,
 		ShippingInput,
 		SupplierInput,
+		CustomerInput,
 		WarehouseInput,
 		DateInput,
 		NoteInput,
@@ -39,6 +41,8 @@ export default {
 		const today = `${y}-${zeroFill(m)}-${zeroFill(d)}`;
 
 		let invoice = {
+			customer_id: null,
+			supplier_id: null,
 			warehouse_id: null,
 			tax: 0,
 			discount: 0,
@@ -50,12 +54,6 @@ export default {
 			total_price: 0,
 			products: []
 		};
-
-		if (this.isPrice) {
-			invoice.customer_id = null;
-		} else {
-			invoice.supplier_id = null;
-		}
 
 		return { invoice };
 	},
@@ -80,7 +78,7 @@ export default {
 			invoice.supplier_id = { required, numeric, minValue: minValue(1) };
 		}
 
-		return { invoice, name: { required, numeric, minValue: minValue(1) } };
+		return { invoice };
 	},
 
 	async mounted() {
@@ -96,6 +94,14 @@ export default {
 		if (this.invoiceIdParam) {
 			await this.getInvoice(this.invoiceIdParam);
 			this.invoice = { ...this.oldInvoice };
+			this.invoice.products = this.invoice.products.map((product) => {
+				return {
+					...product,
+					decrementBtn: "primary",
+					incrementBtn: "primary",
+					instockVariant: "outline-success"
+				};
+			});
 		}
 	},
 
@@ -134,15 +140,15 @@ export default {
 		}),
 
 		getInvoice(invoiceId) {
-			this.$store.dispatch(`${this.namespace}/one`, invoiceId);
+			return this.$store.dispatch(`${this.namespace}/one`, invoiceId);
 		},
 
 		create(invoice) {
-			this.$store.dispatch(`${this.namespace}/create`, invoice);
+			return this.$store.dispatch(`${this.namespace}/create`, invoice);
 		},
 
 		update(invoice) {
-			this.$store.dispatch(`${this.namespace}/update`, invoice);
+			return this.$store.dispatch(`${this.namespace}/update`, invoice);
 		},
 
 		net(product) {
@@ -196,7 +202,7 @@ export default {
 			};
 		},
 
-		handleSave() {
+		async handleSave() {
 			let invoice = Object.assign({}, this.invoice);
 
 			invoice.products = invoice.products.map((selected) => {
@@ -219,23 +225,21 @@ export default {
 				return product;
 			});
 
-			invoice.total_price = this.invoiceTotalPrice;
-
 			this.$v.$touch();
 
 			if (this.$v.$invalid) return;
 
-			if (this.invoiceIdParam) return this.handleUpdate();
+			try {
+				if (this.invoiceIdParam) return this.update(invoice);
 
-			return this.handleCreate();
-		},
+				await this.create(invoice);
 
-		async handleCreate() {
-			await this.create(this.invoice);
-		},
-
-		async handleUpdate() {
-			await this.update(this.invoice);
+				this.$router.push({ name: this.namespace });
+			} catch (err) {
+				console.log(err);
+			} finally {
+				//
+			}
 		}
 	}
 };
