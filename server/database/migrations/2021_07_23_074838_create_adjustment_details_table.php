@@ -17,9 +17,9 @@ class CreateAdjustmentDetailsTable extends Migration
         Schema::create('adjustment_details', function (Blueprint $table) {
             $table->id();
 
-            $table->float('quantity');
+            $table->float('quantity', 10, 0);
             $table->tinyInteger('type')->default(Constants::ADJUSTMENT_DETAILS_ADDITION);
-            
+
             $table->bigInteger('variant_id')->nullable();
 
             $table->unsignedBigInteger('product_id');

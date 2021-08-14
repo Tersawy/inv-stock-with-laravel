@@ -17,7 +17,7 @@ class CreateAdjustmentsTable extends Migration
         Schema::create('adjustments', function (Blueprint $table) {
             $table->id();
 
-            $table->float('items_count');
+            $table->float('items_count', 10, 0);
             $table->string('reference')->default("AD_1110");
 
             $table->text('note')->nullable();

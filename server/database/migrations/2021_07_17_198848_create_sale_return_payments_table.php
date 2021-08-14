@@ -18,8 +18,8 @@ class CreateSaleReturnPaymentsTable extends Migration
             $table->id();
             $table->string('reference')->default("INV/RT_1110");
 
-            $table->bigInteger('amount');
-            $table->bigInteger('payment_method')->default(Constants::PAYMENT_CASH);
+            $table->float('amount', 10, 0);
+            $table->integer('payment_method')->default(Constants::PAYMENT_CASH);
             $table->text('note')->nullable();
 
             $table->unsignedBigInteger('sale_return_id');

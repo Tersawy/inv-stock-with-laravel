@@ -21,11 +21,11 @@ class CreateProductsTable extends Migration
             $table->string("barcode_type");
             $table->string("code")->unique();
 
-            $table->integer("price");
-            $table->integer("cost");
-            // $table->integer("instock")->default(0);
-            $table->integer("minimum")->default(0);
-            $table->integer("tax")->default(0);
+            $table->float("price", 10, 0);
+            $table->float("cost", 10, 0);
+            // $table->float("instock")->default(0);
+            $table->float("minimum", 10, 0)->default(0);
+            $table->float("tax", 10, 0)->default(0);
             $table->integer("tax_method")->default(Constants::TAX_EXCLUSIVE); // 0 Exclusive, 1 Inclusive
             $table->text("note")->nullable();
 

@@ -18,7 +18,7 @@ class CreatePurchasePaymentsTable extends Migration
             $table->id();
             $table->string('reference')->default("INV/PR_1110");
 
-            $table->bigInteger('amount');
+            $table->float('amount', 10, 0);
             $table->bigInteger('payment_method')->default(Constants::PAYMENT_CASH);
             $table->text('note')->nullable();
 

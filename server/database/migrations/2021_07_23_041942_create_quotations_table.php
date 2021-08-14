@@ -18,12 +18,12 @@ class CreateQuotationsTable extends Migration
             $table->id();
             $table->string('reference')->default("QT_1110");
 
-            $table->integer('tax')->default(0);
-            $table->integer('discount')->default(0);
+            $table->float('tax', 10, 0)->default(0);
+            $table->float('discount', 10, 0)->default(0);
             $table->tinyInteger("discount_method")->default(Constants::DISCOUNT_FIXED); // 0 Fixed, 1 Percent
             $table->tinyInteger('status')->default(Constants::QUOTATION_SENT);
-            $table->integer('shipping')->default(0);
-            $table->float('total_price')->default(0);
+            $table->float('shipping', 10, 0)->default(0);
+            $table->float('total_price', 10, 0)->default(0);
 
             $table->text('note')->nullable();
             $table->date('date')->default(date('Y-m-d'));

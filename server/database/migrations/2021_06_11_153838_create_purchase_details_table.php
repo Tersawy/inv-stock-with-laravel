@@ -17,9 +17,9 @@ class CreatePurchaseDetailsTable extends Migration
         Schema::create('purchase_details', function (Blueprint $table) {
             $table->id();
 
-            $table->integer("cost");
-            $table->float("quantity");
-            $table->integer('tax')->default(0);
+            $table->float("cost", 10, 0);
+            $table->float("quantity", 10, 0);
+            $table->float('tax', 10, 0)->default(0);
             $table->tinyInteger("tax_method")->default(Constants::TAX_EXCLUSIVE); // 0 Exclusive, 1 Inclusive
             $table->integer('discount')->default(0);
             $table->tinyInteger("discount_method")->default(Constants::DISCOUNT_FIXED); // 0 Fixed, 1 Percent
