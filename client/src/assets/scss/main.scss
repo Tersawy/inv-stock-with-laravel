@@ -39,7 +39,8 @@ body {
 	cursor: pointer;
 }
 
-.outline-0 {
+.outline-0,
+.b-icon.bi:focus {
 	outline: none;
 }
 
