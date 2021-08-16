@@ -37,8 +37,6 @@ let api = async (method, route, data, callback, formData = false) => {
 			response: { status, data }
 		} = err;
 
-		store.commit("setErrors", data);
-
 		if (status === 401) {
 			store.commit("Auth/unAuth");
 			if (router.history.current.name != "Login") router.push("/login");
