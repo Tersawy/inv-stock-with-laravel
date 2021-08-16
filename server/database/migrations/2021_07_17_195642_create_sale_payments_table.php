@@ -21,6 +21,7 @@ class CreateSalePaymentsTable extends Migration
             $table->float('amount', 10, 0);
             $table->integer('payment_method')->default(Constants::PAYMENT_CASH);
             $table->text('note')->nullable();
+            $table->date('date')->default(date('Y-m-d'));
 
             $table->unsignedBigInteger('sale_id');
             $table->foreign('sale_id')->references('id')->on('sales')->onDelete('cascade');

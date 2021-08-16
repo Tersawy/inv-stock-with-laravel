@@ -21,6 +21,7 @@ class CreatePurchasePaymentsTable extends Migration
             $table->float('amount', 10, 0);
             $table->bigInteger('payment_method')->default(Constants::PAYMENT_CASH);
             $table->text('note')->nullable();
+            $table->date('date')->default(date('Y-m-d'));
 
             $table->unsignedBigInteger('purchase_id');
             $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('cascade');
