@@ -1,6 +1,6 @@
 <template>
 	<div class="input-error text-danger">
-		<span v-if="errorExist">{{ errorMsg }}</span>
+		<span v-if="errorExist">{{ errorMsg() }}</span>
 	</div>
 </template>
 
@@ -13,7 +13,7 @@
 			},
 
 			isVuelidateError() {
-				return this.vuelidate.$invalid;
+				return this.vuelidate.$invalid && this.vuelidate.$dirty;
 			},
 
 			isStoreError() {
@@ -22,12 +22,16 @@
 
 			errorExist() {
 				return this.isVuelidateError || this.isStoreError;
-			},
-
+			}
+		},
+		methods: {
 			errorMsg() {
+				if (this.isStoreError) return this.errors[this.field][0];
+
 				let error = "";
-				if (this.isVuelidateError && this.vuelidate.$invalid && this.vuelidate.$dirty) {
-					Object.keys(this.vuelidate.$params).every((p) => {
+
+				if (this.isVuelidateError) {
+					Object.keys(this.vuelidate.$params).forEach((p) => {
 						if (!this.vuelidate[p]) {
 							let [attr] = this.field.split("_");
 
@@ -44,12 +48,10 @@
 								value = this.vuelidate.$params[p].max;
 							}
 
-							return (error = this.$t(`validation.${p}`, { attr, value }));
+							error = this.$t(`validation.${p}`, { attr, value });
 						}
 					});
 				}
-
-				if (this.isStoreError) return this.errors[this.field][0];
 
 				return error;
 			}
