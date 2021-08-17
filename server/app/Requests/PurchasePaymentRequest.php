@@ -8,8 +8,10 @@ use Illuminate\Validation\Rule;
 
 class PurchasePaymentRequest
 {
-  private static function rules()
+  protected static function rules(Request $req)
   {
+    $req->merge(['purchase_id' => $req->route('purchaseId')]);
+
     return [
       'purchase_id'     => ['required', 'numeric', 'min:1'],
       'amount'          => ['required', 'numeric', 'min:1'],
@@ -21,7 +23,7 @@ class PurchasePaymentRequest
 
   public static function validationCreate(Request $req)
   {
-    $rules = PurchasePaymentRequest::rules();
+    $rules = PurchasePaymentRequest::rules($req);
 
     return $req->validate($rules);
   }
@@ -29,9 +31,9 @@ class PurchasePaymentRequest
 
   public static function validationUpdate(Request $req)
   {
-    $req->merge(['id' => $req->route('id'), 'purchase_id' => $req->route('purchaseId')]);
+    $req->merge(['id' => $req->route('id')]);
 
-    $rules = PurchasePaymentRequest::rules();
+    $rules = PurchasePaymentRequest::rules($req);
 
     $rules['id'] = ['required', 'numeric', 'min:1'];
 

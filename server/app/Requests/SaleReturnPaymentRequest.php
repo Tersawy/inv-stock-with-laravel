@@ -5,12 +5,13 @@ namespace App\Requests;
 use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use App\Models\SaleReturnPayment;
 
 class SaleReturnPaymentRequest
 {
-  protected static function rules()
+  protected static function rules(Request $req)
   {
+    $req->merge(['sale_id' => $req->route('saleId')]);
+
     return [
       'sale_id'         => ['required', 'numeric', 'min:1'],
       'amount'          => ['required', 'numeric', 'min:1'],
@@ -22,7 +23,7 @@ class SaleReturnPaymentRequest
 
   public static function validationCreate(Request $req)
   {
-    $rules = SaleReturnPaymentRequest::rules();
+    $rules = SaleReturnPaymentRequest::rules($req);
 
     return $req->validate($rules);
   }
@@ -30,9 +31,9 @@ class SaleReturnPaymentRequest
 
   public static function validationUpdate(Request $req)
   {
-    $req->merge(['id' => $req->route('id'), 'sale_id' => $req->route('saleId')]);
+    $req->merge(['id' => $req->route('id')]);
 
-    $rules = SaleReturnPaymentRequest::rules();
+    $rules = SaleReturnPaymentRequest::rules($req);
 
     $rules['id'] = ['required', 'numeric', 'min:1'];
 

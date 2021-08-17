@@ -5,12 +5,13 @@ namespace App\Requests;
 use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use App\Models\PurchaseReturnPayment;
 
 class PurchaseReturnPaymentRequest
 {
-  protected static function rules()
+  protected static function rules(Request $req)
   {
+    $req->merge(['purchase_id' => $req->route('purchaseId')]);
+
     return [
       'purchase_id'     => ['required', 'numeric', 'min:1'],
       'amount'          => ['required', 'numeric', 'min:1'],
@@ -22,7 +23,7 @@ class PurchaseReturnPaymentRequest
 
   public static function validationCreate(Request $req)
   {
-    $rules = PurchaseReturnPaymentRequest::rules();
+    $rules = PurchaseReturnPaymentRequest::rules($req);
 
     return $req->validate($rules);
   }
@@ -30,9 +31,9 @@ class PurchaseReturnPaymentRequest
 
   public static function validationUpdate(Request $req)
   {
-    $req->merge(['id' => $req->route('id'), 'purchase_id' => $req->route('purchaseId')]);
+    $req->merge(['id' => $req->route('id')]);
 
-    $rules = PurchaseReturnPaymentRequest::rules();
+    $rules = PurchaseReturnPaymentRequest::rules($req);
 
     $rules['id'] = ['required', 'numeric', 'min:1'];
 
