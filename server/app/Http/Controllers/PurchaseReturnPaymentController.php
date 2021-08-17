@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\Constants;
 use Illuminate\Http\Request;
 use App\Models\PurchaseReturn;
+use App\Helpers\CustomException;
+use Illuminate\Support\Facades\DB;
 use App\Models\PurchaseReturnPayment;
 use App\Requests\PurchaseReturnPaymentRequest;
 
@@ -24,78 +26,96 @@ class PurchaseReturnPaymentController extends Controller
 
     public function create(Request $req, $purchaseId)
     {
-        $attr = PurchaseReturnPaymentRequest::validationCreate($req);
+        try {
+            DB::transaction(function () use ($req, $purchaseId) {
+                $attr = PurchaseReturnPaymentRequest::validationCreate($req);
 
-        $purchase = PurchaseReturn::find($purchaseId);
+                $purchase = PurchaseReturn::find($purchaseId);
 
-        if (!$purchase) return $this->error('The purchase return invoice is not found to add payment', 404);
+                if (!$purchase) return $this->error('The purchase return invoice is not found to add payment', 404);
 
-        if ($purchase->payment_status == Constants::PAYMENT_STATUS_PAID) {
-            return $this->error('This purchase invoice has been paid !', 422);
+                if ($purchase->payment_status == Constants::PAYMENT_STATUS_PAID) {
+                    return $this->error('This purchase invoice has been paid !', 422);
+                }
+
+                $payment = PurchaseReturnPayment::create($attr);
+
+                $payment->reference = "INV/RT_" . (1110 + $payment->id);
+
+                $payment->save();
+
+                $purchase->paid += $payment->amount;
+
+                $purchase->payment_status = $purchase->new_payment_status;
+
+                $purchase->save();
+            }, 10);
+
+            return $this->success([], 'The Payment has been added successfully');
+        } catch (CustomException $e) {
+            return $this->error($e->first_error(), $e->status_code());
         }
-
-        $payment = PurchaseReturnPayment::create($attr);
-
-        $payment->reference = "INV/RT_" . (1110 + $payment->id);
-
-        $payment->save();
-
-        $purchase->paid += $payment->amount;
-
-        $purchase->payment_status = $purchase->new_payment_status;
-
-        $purchase->save();
-
-        return $this->success([], 'The Payment has been added successfully');
     }
 
 
     public function update(Request $req, $purchaseId, $id)
     {
-        $attr = PurchaseReturnPaymentRequest::validationUpdate($req);
+        try {
+            DB::transaction(function () use ($req, $purchaseId, $id) {
+                $attr = PurchaseReturnPaymentRequest::validationUpdate($req);
 
-        $purchase = PurchaseReturn::find($purchaseId);
+                $purchase = PurchaseReturn::find($purchaseId);
 
-        if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
+                if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
 
-        $payment = PurchaseReturnPayment::find($id);
+                $payment = PurchaseReturnPayment::find($id);
 
-        if (!$payment) return $this->error('This payment is not found', 404);
+                if (!$payment) return $this->error('This payment is not found', 404);
 
-        $purchase->paid = $purchase->paid - $payment->amount + $attr['amount'];
+                $purchase->paid = $purchase->paid - $payment->amount + $attr['amount'];
 
-        $purchase->payment_status = $purchase->new_payment_status;
+                $purchase->payment_status = $purchase->new_payment_status;
 
-        $payment->fill($attr);
+                $payment->fill($attr);
 
-        $payment->save();
+                $payment->save();
 
-        $purchase->save();
+                $purchase->save();
+            }, 10);
 
-        return $this->success([], 'The Payment has been updated successfully');
+            return $this->success([], 'The Payment has been updated successfully');
+        } catch (CustomException $e) {
+            return $this->error($e->first_error(), $e->status_code());
+        }
     }
 
 
     public function remove(Request $req, $purchaseId, $id)
     {
-        PurchaseReturnPaymentRequest::validationRemove($req);
+        try {
+            DB::transaction(function () use ($req, $purchaseId, $id) {
+                PurchaseReturnPaymentRequest::validationRemove($req);
 
-        $purchase = PurchaseReturn::find($purchaseId);
+                $purchase = PurchaseReturn::find($purchaseId);
 
-        if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
+                if (!$purchase) return $this->error('The purchase invoice is not found to add payment', 404);
 
-        $payment = PurchaseReturnPayment::find($id);
+                $payment = PurchaseReturnPayment::find($id);
 
-        if (!$payment) return $this->error('This payment is not found', 404);
+                if (!$payment) return $this->error('This payment is not found', 404);
 
-        $purchase->paid -= $payment->amount;
+                $purchase->paid -= $payment->amount;
 
-        $purchase->payment_status = $purchase->new_payment_status;
+                $purchase->payment_status = $purchase->new_payment_status;
 
-        $payment->delete();
+                $payment->delete();
 
-        $purchase->save();
+                $purchase->save();
+            }, 10);
 
-        return $this->success([], 'The Payment has been deleted successfully');
+            return $this->success([], 'The Payment has been deleted successfully');
+        } catch (CustomException $e) {
+            return $this->error($e->first_error(), $e->status_code());
+        }
     }
 }
