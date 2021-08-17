@@ -16,7 +16,7 @@ class SaleReturnPaymentController extends Controller
 
         $req->validate(['saleId' => ['required', 'numeric', 'exists:sale_returns,id']]);
 
-        $payments = SaleReturnPayment::select(['id', 'reference', 'amount', 'payment_method', 'date'])->where('sale_id', $saleId)->get();
+        $payments = SaleReturnPayment::select(['id', 'reference', 'amount', 'payment_method', 'date'])->where('sale_return_id', $saleId)->get();
 
         return $this->success($payments);
     }

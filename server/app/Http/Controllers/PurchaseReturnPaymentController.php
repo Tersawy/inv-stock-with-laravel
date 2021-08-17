@@ -16,7 +16,7 @@ class PurchaseReturnPaymentController extends Controller
 
         $req->validate(['purchaseId' => ['required', 'numeric', 'exists:purchase_returns,id']]);
 
-        $payments = PurchaseReturnPayment::select(['id', 'reference', 'amount', 'payment_method', 'date'])->where('purchase_id', $purchaseId)->get();
+        $payments = PurchaseReturnPayment::select(['id', 'reference', 'amount', 'payment_method', 'date'])->where('purchase_return_id', $purchaseId)->get();
 
         return $this->success($payments);
     }
