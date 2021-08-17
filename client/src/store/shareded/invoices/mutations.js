@@ -1,17 +1,22 @@
 const payments = (state, res) => {
-	let invoice = state.all.docs.find((invoice) => res.data.id == invoice.id);
-
-	if (invoice) {
-		invoice.payments = res.data.payments;
-	}
-};
-
-const removePayment = (state, res) => {
 	let invoice = state.all.docs.find((invoice) => state.one.id == invoice.id);
 
 	if (invoice) {
-		invoice.payments = invoice.payments.filter((payment) => payment.id != res.data);
+		invoice.payments = res.data;
+		state.one = invoice;
 	}
 };
 
-export default { payments, removePayment };
+const setOldPayment = (state, payment) => (state.oldPayment = payment);
+
+const removePayment = (state, id) => {
+	let invoice = state.all.docs.find((invoice) => state.one.id == invoice.id);
+
+	if (invoice) {
+		invoice.payments = invoice.payments.filter((payment) => payment.id != id);
+
+		state.one = invoice;
+	}
+};
+
+export default { payments, setOldPayment, removePayment };
