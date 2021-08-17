@@ -74,7 +74,7 @@ class SaleReturnController extends Controller
 
         $details = [
             'details' => function ($query) {
-                $query->select(['sale_id', 'product_id', 'variant_id', 'price', 'tax', 'tax_method', 'discount', 'discount_method', 'quantity']);
+                $query->select(['sale_return_id', 'product_id', 'variant_id', 'price', 'tax', 'tax_method', 'discount', 'discount_method', 'quantity']);
             },
             'details.product' => function ($query) {
                 $query->select(['id', 'name', 'code', 'sale_unit_id']);

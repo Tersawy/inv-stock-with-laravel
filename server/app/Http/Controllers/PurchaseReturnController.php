@@ -74,7 +74,7 @@ class PurchaseReturnController extends Controller
 
         $details = [
             'details' => function ($query) {
-                $query->select(['purchase_id', 'product_id', 'variant_id', 'cost', 'tax', 'tax_method', 'discount', 'discount_method', 'quantity']);
+                $query->select(['purchase_return_id', 'product_id', 'variant_id', 'cost', 'tax', 'tax_method', 'discount', 'discount_method', 'quantity']);
             },
             'details.product' => function ($query) {
                 $query->select(['id', 'name', 'code', 'purchase_unit_id']);
