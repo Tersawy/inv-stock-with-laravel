@@ -10,6 +10,18 @@ use App\Requests\SalePaymentRequest;
 
 class SalePaymentController extends Controller
 {
+  public function index(Request $req, $saleId)
+  {
+    $req->merge(['saleId' => $saleId]);
+
+    $req->validate(['saleId' => ['required', 'numeric', 'exists:sales,id']]);
+
+    $payments = SalePayment::select(['id', 'reference', 'amount', 'payment_method', 'date'])->where('sale_id', $saleId)->get();
+
+    return $this->success($payments);
+  }
+
+
   public function create(Request $req, $saleId)
   {
     $attr = SalePaymentRequest::validationCreate($req);
@@ -50,15 +62,13 @@ class SalePaymentController extends Controller
 
     if (!$payment) return $this->error('This payment is not found', 404);
 
-    $payment->amount = $attr['amount'];
-
-    $payment->payment_method = $attr['payment_method'];
-
-    $payment->save();
-
     $sale->paid = $sale->paid - $payment->amount + $attr['amount'];
 
     $sale->payment_status = $sale->new_payment_status;
+
+    $payment->fill($attr);
+
+    $payment->save();
 
     $sale->save();
 

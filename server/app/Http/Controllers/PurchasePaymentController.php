@@ -10,6 +10,18 @@ use App\Requests\PurchasePaymentRequest;
 
 class PurchasePaymentController extends Controller
 {
+  public function index(Request $req, $purchaseId)
+  {
+    $req->merge(['purchaseId' => $purchaseId]);
+
+    $req->validate(['purchaseId' => ['required', 'numeric', 'exists:purchases,id']]);
+
+    $payments = PurchasePayment::select(['id', 'reference', 'amount', 'payment_method', 'date'])->where('purchase_id', $purchaseId)->get();
+
+    return $this->success($payments);
+  }
+
+
   public function create(Request $req, $purchaseId)
   {
     $attr = PurchasePaymentRequest::validationCreate($req);
@@ -50,15 +62,13 @@ class PurchasePaymentController extends Controller
 
     if (!$payment) return $this->error('This payment is not found', 404);
 
-    $payment->amount = $attr['amount'];
-
-    $payment->payment_method = $attr['payment_method'];
-
-    $payment->save();
-
     $purchase->paid = $purchase->paid - $payment->amount + $attr['amount'];
 
     $purchase->payment_status = $purchase->new_payment_status;
+
+    $payment->fill($attr);
+
+    $payment->save();
 
     $purchase->save();
 
