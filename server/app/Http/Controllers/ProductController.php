@@ -7,8 +7,10 @@ use Illuminate\Support\Arr;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use App\Models\ProductVariant;
+use App\Helpers\CustomException;
 use App\Models\ProductWarehouse;
 use App\Requests\ProductRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use App\Traits\ProductWarehouseOperations;
@@ -166,37 +168,49 @@ class ProductController extends Controller
 
   public function create(Request $req)
   {
-    $attr = ProductRequest::validationCreate($req);
+    try {
+      DB::transaction(function () use ($req) {
+        $attr = ProductRequest::validationCreate($req);
 
-    $product = Product::create($attr);
+        $product = Product::create($attr);
 
-    if ($req->has_images) $this->createImages($req, $product);
+        if ($req->has_images) $this->createImages($req, $product);
 
-    if ($req->has_variants) $this->createVariants($req, $product);
+        if ($req->has_variants) $this->createVariants($req, $product);
 
-    $this->addProductToWarehouses($product);
+        $this->addProductToWarehouses($product);
+      }, 10);
 
-    return $this->success([], 'The product has been created successfully');
+      return $this->success([], 'The product has been created successfully');
+    } catch (CustomException $e) {
+      return $this->error($e->first_error(), $e->status_code());
+    }
   }
 
 
   public function update(Request $req)
   {
-    $attr = ProductRequest::validationUpdate($req);
+    try {
+      DB::transaction(function () use ($req) {
+        $attr = ProductRequest::validationUpdate($req);
 
-    $product = Product::find($req->id);
+        $product = Product::find($req->id);
 
-    if (!$product) return $this->error('The product was not found', 404);
+        if (!$product) return $this->error('The product was not found', 404);
 
-    $product->fill($attr);
+        $product->fill($attr);
 
-    $product->save();
+        $product->save();
 
-    if ($product->has_images) $this->deleteImages($product->images);
+        if ($product->has_images) $this->deleteImages($product->images);
 
-    if ($req->has_images) $this->createImages($req, $product);
+        if ($req->has_images) $this->createImages($req, $product);
+      }, 10);
 
-    return $this->success($product, 'The product has been updated successfully');
+      return $this->success($req->id, 'The product has been updated successfully');
+    } catch (CustomException $e) {
+      return $this->error($e->first_error(), $e->status_code());
+    }
   }
 
 
