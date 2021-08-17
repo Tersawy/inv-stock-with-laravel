@@ -16,7 +16,8 @@ class PurchaseReturnPaymentRequest
       'purchase_id'     => ['required', 'numeric', 'min:1'],
       'amount'          => ['required', 'numeric', 'min:1'],
       'payment_method'  => ['required', Rule::in(Constants::PAYMENT_METHODS)],
-      'note'            => ['string', 'max:255', 'nullable']
+      'note'            => ['string', 'max:255', 'nullable'],
+      'date'            => ['required', 'string', 'max:10', 'date_format:Y-m-d']
     ];
   }
 
