@@ -53,11 +53,17 @@ function breads() {
 	return results;
 }
 
-router.afterEach(() => {
+const DEFAULT_TITLE = "Inv-Stock";
+
+router.afterEach((to) => {
 	store.commit("setBreads", breads());
+
+	Vue.nextTick(() => {
+		document.title = to.meta.title || DEFAULT_TITLE;
+	});
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
 	let user = store.state.user;
 
 	user = user ? user : sessionStorage.getItem("user");
