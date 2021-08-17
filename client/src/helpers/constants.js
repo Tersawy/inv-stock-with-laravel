@@ -1,6 +1,6 @@
 import i18n from "@/plugins/i18n";
 
-let $t = (name) => i18n.messages[i18n.locale][name];
+let $t = (name) => i18n.messages[i18n.locale].constants[name];
 
 export const PURCHASE_RECEIVED = 0;
 export const PURCHASE_PENDING = 1;
