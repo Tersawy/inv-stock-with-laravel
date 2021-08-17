@@ -1,1 +1,6 @@
-export default {};
+export default {
+	one: {
+		payments: []
+	},
+	oldPayment: null
+};
