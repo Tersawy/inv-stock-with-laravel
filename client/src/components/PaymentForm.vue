@@ -78,7 +78,7 @@
 	import { required, numeric, maxLength, minValue } from "vuelidate/lib/validators";
 
 	export default {
-		props: ["namespace", "invoiceIdName"],
+		props: ["namespace"],
 
 		components: { DateInput, AmountInput, PaymentMethodsInput, NoteInput },
 
@@ -144,11 +144,11 @@
 
 				try {
 					if (this.isUpdate) {
-						await this.$store.dispatch(`${this.namespace}/updatePayment`, { ...this.payment, [this.invoiceIdName]: this.invoice.id });
+						await this.$store.dispatch(`${this.namespace}/updatePayment`, this.payment);
 
 						this.$bvModal.hide("paymentForm");
 					} else {
-						await this.$store.dispatch(`${this.namespace}/createPayment`, { ...this.payment, [this.invoiceIdName]: this.invoice.id });
+						await this.$store.dispatch(`${this.namespace}/createPayment`, this.payment);
 
 						this.$bvModal.hide("paymentForm");
 
