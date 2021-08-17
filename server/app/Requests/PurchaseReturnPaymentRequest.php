@@ -10,14 +10,14 @@ class PurchaseReturnPaymentRequest
 {
   protected static function rules(Request $req)
   {
-    $req->merge(['purchase_id' => $req->route('purchaseId')]);
+    $req->merge(['purchase_return_id' => $req->route('purchaseId')]);
 
     return [
-      'purchase_id'     => ['required', 'numeric', 'min:1'],
-      'amount'          => ['required', 'numeric', 'min:1'],
-      'payment_method'  => ['required', Rule::in(Constants::PAYMENT_METHODS)],
-      'note'            => ['string', 'max:255', 'nullable'],
-      'date'            => ['required', 'string', 'max:10', 'date_format:Y-m-d']
+      'purchase_return_id'  => ['required', 'numeric', 'min:1'],
+      'amount'              => ['required', 'numeric', 'min:1'],
+      'payment_method'      => ['required', Rule::in(Constants::PAYMENT_METHODS)],
+      'note'                => ['string', 'max:255', 'nullable'],
+      'date'                => ['required', 'string', 'max:10', 'date_format:Y-m-d']
     ];
   }
 
@@ -44,11 +44,11 @@ class PurchaseReturnPaymentRequest
 
   public static function validationRemove(Request $req)
   {
-    $req->merge(['id' => $req->route('id'), 'purchase_id' => $req->route('purchaseId')]);
+    $req->merge(['id' => $req->route('id'), 'purchase_return_id' => $req->route('purchaseId')]);
 
     $rule = ['required', 'numeric', 'min:1'];
 
-    $rules = ['id' => $rule, 'purchase_id' => $rule];
+    $rules = ['id' => $rule, 'purchase_return_id' => $rule];
 
     return $req->validate($rules);
   }
