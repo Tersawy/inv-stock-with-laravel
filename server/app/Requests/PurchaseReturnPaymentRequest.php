@@ -9,7 +9,7 @@ use App\Models\PurchaseReturnPayment;
 
 class PurchaseReturnPaymentRequest
 {
-  private static function rules()
+  protected static function rules()
   {
     return [
       'purchase_id'     => ['required', 'numeric', 'min:1'],
@@ -22,7 +22,7 @@ class PurchaseReturnPaymentRequest
 
   public static function validationCreate(Request $req)
   {
-    $rules = PurchaseReturnPayment::rules();
+    $rules = PurchaseReturnPaymentRequest::rules();
 
     return $req->validate($rules);
   }
@@ -32,7 +32,7 @@ class PurchaseReturnPaymentRequest
   {
     $req->merge(['id' => $req->route('id'), 'purchase_id' => $req->route('purchaseId')]);
 
-    $rules = PurchaseReturnPayment::rules();
+    $rules = PurchaseReturnPaymentRequest::rules();
 
     $rules['id'] = ['required', 'numeric', 'min:1'];
 

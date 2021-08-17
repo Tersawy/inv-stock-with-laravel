@@ -9,7 +9,7 @@ use App\Models\SaleReturnPayment;
 
 class SaleReturnPaymentRequest
 {
-  private static function rules()
+  protected static function rules()
   {
     return [
       'sale_id'         => ['required', 'numeric', 'min:1'],
@@ -22,7 +22,7 @@ class SaleReturnPaymentRequest
 
   public static function validationCreate(Request $req)
   {
-    $rules = SaleReturnPayment::rules();
+    $rules = SaleReturnPaymentRequest::rules();
 
     return $req->validate($rules);
   }
@@ -32,7 +32,7 @@ class SaleReturnPaymentRequest
   {
     $req->merge(['id' => $req->route('id'), 'sale_id' => $req->route('saleId')]);
 
-    $rules = SaleReturnPayment::rules();
+    $rules = SaleReturnPaymentRequest::rules();
 
     $rules['id'] = ['required', 'numeric', 'min:1'];
 
