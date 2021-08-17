@@ -1,4 +1,5 @@
 import Vue from "vue";
+import { PAYMENT_METHODS_STR } from "@/helpers/constants";
 
 Vue.filter("relation", function (value, key) {
 	if (!value) return "Unknown";
@@ -29,3 +30,5 @@ Vue.filter("floating", function (value, num = 2) {
 
 	return `${f}.${l.slice(0, num)}`;
 });
+
+Vue.filter("paymentMethod", (value) => PAYMENT_METHODS_STR[value]);
