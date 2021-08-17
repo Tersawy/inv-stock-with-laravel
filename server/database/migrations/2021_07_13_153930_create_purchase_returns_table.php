@@ -25,7 +25,7 @@ class CreatePurchaseReturnsTable extends Migration
             $table->tinyInteger('payment_status')->default(Constants::PAYMENT_STATUS_UNPAID);
             $table->float('shipping', 10, 0)->default(0);
             $table->float('total_price', 10, 0)->default(0);
-            $table->float('paid, 10, 0')->default(0);
+            $table->float('paid', 10, 0)->default(0);
 
             $table->text('note')->nullable();
             $table->date('date')->default(date('Y-m-d'));
