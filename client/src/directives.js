@@ -189,23 +189,3 @@ Vue.directive("transfer-status", function (el, binding) {
 
 	el.innerHTML = badge;
 });
-
-Vue.directive("relation", function (el, binding) {
-	let v = binding.value,
-		m = binding.modifiers,
-		mKeys = Object.keys(m);
-
-	if (!v) {
-		el.classList.add("text-muted");
-		el.textContent = "Unknown";
-		return;
-	}
-
-	if (typeof v === "object") {
-		if (mKeys.length && typeof v[mKeys[0]] !== "undefined") {
-			el.textContent = v[mKeys[0]];
-		} else {
-			el.textContent = v.name;
-		}
-	}
-});
