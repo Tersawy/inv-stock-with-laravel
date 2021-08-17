@@ -41,8 +41,7 @@
 
 			<b-table
 				show-empty
-				stacked="md"
-				responsive
+				stacked="lg"
 				hover
 				sort-icon-left
 				:busy="tableIsBusy"
@@ -58,10 +57,7 @@
 				class="bg-white shadow-sm mt-3 mb-0"
 			>
 				<template #cell(actions)="row">
-					<router-link :to="{ name: 'PurchaseUpdate', params: { invoiceId: row.item.id } }">
-						<b-icon icon="pencil-square" scale="1.5" variant="success" class="c-pointer mx-3"></b-icon>
-					</router-link>
-					<b-icon @click="moveToTrash(row.item)" icon="trash" scale="1.5" variant="danger" class="c-pointer"></b-icon>
+					<InvoiceActions :invoice="row.item" :namespace="namespace" invoiceName="Purchase" />
 				</template>
 
 				<template #cell(supplier)="row">
@@ -103,15 +99,18 @@
 				</b-col>
 			</b-row>
 		</b-container>
+		<PaymentForm :namespace="namespace" />
+		<Payments :namespace="namespace" />
 	</div>
 </template>
 
 <script>
 	import dataTableMixin from "@/mixins/dataTableMixin";
+	import invoicePaymentsMixin from "@/mixins/invoicePaymentsMixin";
 	export default {
 		name: "Purchase",
 
-		mixins: [dataTableMixin],
+		mixins: [dataTableMixin, invoicePaymentsMixin],
 
 		data: () => ({
 			namespace: "Purchase",
