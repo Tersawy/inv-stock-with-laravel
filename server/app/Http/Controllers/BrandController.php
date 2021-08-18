@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
@@ -99,58 +100,22 @@ class BrandController extends Controller
     }
 
 
-    public function moveToTrash(Request $req)
+    public function remove(Request $req, $id)
     {
-        $req->merge(['id' => $req->route('id')]);
+        $req->merge(['id' => $id]);
 
         $req->validate(['id' => ['required', 'numeric', 'min:1']]);
 
-        $brand = Brand::find($req->id);
+        $brand = Brand::find($id);
 
         if (!$brand) return $this->error('The brand was not found', 404);
 
+        $settings = Setting::where('brand_id', $id)->get();
+
+        if ($settings) return $this->error('The brand cannot be delete because it\'s a default in app settings', 422);
+
         $brand->delete();
 
-        return $this->success($req->id, 'The brand has been moved to the trash successfully');
-    }
-
-
-    public function trashed()
-    {
-        $brands = Brand::onlyTrashed()->get();
-
-        return $this->success($brands);
-    }
-
-
-    public function restore(Request $req)
-    {
-        $req->merge(['id' => $req->route('id')]);
-
-        $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-        $isDone = Brand::onlyTrashed()->where('id', $req->id)->restore();
-
-        if (!$isDone) return $this->error('The brand is not in the trash', 404);
-
-        return $this->success($req->id, 'The brand has been restored successfully');
-    }
-
-
-    public function remove(Request $req)
-    {
-        $req->merge(['id' => $req->route('id')]);
-
-        $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-        $isDone = Brand::onlyTrashed()->where('id', $req->id)->forceDelete();
-
-        if (!$isDone) return $this->error('The brand is not in the trash', 404);
-
-        $product = Product::where('brand_id', $req->id)->first();
-
-        if ($product) return $this->error('The brand cannot be deleted because there are products that depend on it', 422);
-
-        return $this->success($req->id, 'The brand has been deleted successfully');
+        return $this->success($id, 'The brand has been deleted successfully');
     }
 }
