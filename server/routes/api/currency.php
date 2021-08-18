@@ -7,8 +7,6 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'currency'], functio
 
     Route::get('/', [CurrencyController::class, 'index']);
 
-    Route::get('/{id}', [CurrencyController::class, 'show']);
-
     Route::post('/create', [CurrencyController::class, 'create']);
 
     Route::put('/{id}', [CurrencyController::class, 'update']);

@@ -51,18 +51,6 @@ class ExpenseController extends Controller
     }
 
 
-    public function show(Request $req)
-    {
-        ExpenseRequest::validationId($req);
-
-        $expense = Expense::find($req->id);
-
-        if (!$expense) return $this->error('The expense was not found', 404);
-
-        return $this->success($expense);
-    }
-
-
     public function create(Request $req)
     {
         $attr = ExpenseRequest::validationCreate($req);

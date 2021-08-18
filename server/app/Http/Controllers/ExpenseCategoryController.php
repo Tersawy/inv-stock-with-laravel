@@ -31,18 +31,6 @@ class ExpenseCategoryController extends Controller
     }
 
 
-    public function show(Request $req)
-    {
-        ExpenseCategoryRequest::validationId($req);
-
-        $category = ExpenseCategory::find($req->id);
-
-        if (!$category) return $this->error('The expense category was not found', 404);
-
-        return $this->success($category);
-    }
-
-
     public function create(Request $req)
     {
         $attr = ExpenseCategoryRequest::validationCreate($req);

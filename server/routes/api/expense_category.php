@@ -9,8 +9,6 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'expense-category'],
 
     Route::get('/options', [ExpenseCategoryController::class, 'options']);
 
-    Route::get('/{id}', [ExpenseCategoryController::class, 'show']);
-
     Route::put('/{id}', [ExpenseCategoryController::class, 'update']);
 
     Route::post('/create', [ExpenseCategoryController::class, 'create']);

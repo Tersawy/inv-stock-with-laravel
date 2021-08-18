@@ -30,20 +30,6 @@ class CategoryController extends Controller
     }
 
 
-    public function show(Request $req)
-    {
-        $req->merge(['id' => $req->route('id')]);
-
-        $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-        $category = Category::find($req->id);
-
-        if (!$category) return $this->error('The category was not found', 404);
-
-        return $this->success($category);
-    }
-
-
     public function create(Request $req)
     {
         $attr = $req->validate([

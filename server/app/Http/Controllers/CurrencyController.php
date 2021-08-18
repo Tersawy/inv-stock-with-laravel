@@ -31,18 +31,6 @@ class CurrencyController extends Controller
     }
 
 
-    public function show(Request $req)
-    {
-        CurrencyRequest::validationId($req);
-
-        $currency = Currency::find($req->id);
-
-        if (!$currency) return $this->error('The currency was not found', 404);
-
-        return $this->success($currency);
-    }
-
-
     public function create(Request $req)
     {
         $attr = CurrencyRequest::validationCreate($req);
