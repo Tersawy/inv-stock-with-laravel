@@ -87,6 +87,6 @@ class CustomerController extends Controller
 
         $customer->delete();
 
-        return $this->success($id, 'The customer has been moved to the trash successfully');
+        return $this->success($id, 'The customer has been deleted successfully');
     }
 }
