@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Requests\CustomerRequest;
@@ -72,48 +73,20 @@ class CustomerController extends Controller
     }
 
 
-    public function moveToTrash(Request $req)
+    public function remove(Request $req, $id)
     {
         CustomerRequest::validationId($req);
 
-        $customer = Customer::find($req->id);
+        $customer = Customer::find($id);
 
         if (!$customer) return $this->error('The customer was not found', 404);
 
+        $settings = Setting::where('customer_id', $id)->get();
+
+        if ($settings) return $this->error('The customer cannot be delete because it\'s a default in app settings', 422);
+
         $customer->delete();
 
-        return $this->success($req->id, 'The customer has been moved to the trash successfully');
-    }
-
-
-    public function trashed()
-    {
-        $customers = Customer::onlyTrashed()->get();
-
-        return $this->success($customers);
-    }
-
-
-    public function restore(Request $req)
-    {
-        CustomerRequest::validationId($req);
-
-        $isDone = Customer::onlyTrashed()->where('id', $req->id)->restore();
-
-        if (!$isDone) return $this->error('The customer is not in the trash', 404);
-
-        return $this->success($req->id, 'The customer has been restored successfully');
-    }
-
-
-    public function remove(Request $req)
-    {
-        CustomerRequest::validationId($req);
-
-        $isDone = Customer::onlyTrashed()->where('id', $req->id)->forceDelete();
-
-        if (!$isDone) return $this->error('The customer is not in the trash', 404);
-
-        return $this->success($req->id, 'The customer has been deleted successfully');
+        return $this->success($id, 'The customer has been moved to the trash successfully');
     }
 }
