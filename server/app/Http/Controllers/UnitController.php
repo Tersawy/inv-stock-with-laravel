@@ -93,20 +93,20 @@ class UnitController extends Controller
     }
 
 
-    public function remove(Request $req)
+    public function remove(Request $req, $id)
     {
         UnitRequest::validationId($req);
 
-        $unit = Unit::find($req->id);
+        $unit = Unit::find($id);
 
         if (!$unit) return $this->error("The unit was not found", 404);
 
-        $product = Product::where('purchase_unit', $req->id)->orWhere('sale_unit', $req->id)->limit(1)->get('id');
+        $product = Product::where('purchase_unit', $id)->orWhere('sale_unit', $id)->orWhere('unit', $id)->limit(1)->get('id');
 
         if ($product) return $this->error('The unit cannot be deleted because there are products that depend on it', 422);
 
         $unit->delete();
 
-        return $this->success($req->id, "The unit has been deleted successfully");
+        return $this->success($id, "The unit has been deleted successfully");
     }
 }
