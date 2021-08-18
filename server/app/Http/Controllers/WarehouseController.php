@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
-use App\Models\ProductWarehouse;
+use App\Models\Setting;
 use Illuminate\Support\Facades\DB;
 use App\Traits\ProductWarehouseOperations;
 
@@ -71,7 +71,7 @@ class WarehouseController extends Controller
     {
         $req->merge(['id' => $req->route('id')]);
 
-        $req->validate([
+        $attr = $req->validate([
             'id'        => ['required', 'numeric', 'min:1'],
             'name'      => ['required', 'string', 'max:255', 'unique:warehouses,name,' . $req->id],
             'phone'     => ['required', 'string', 'max:255'],
@@ -81,13 +81,11 @@ class WarehouseController extends Controller
             'email'     => ['required', 'email:rfc,dns', 'max:255'],
         ]);
 
-        $inputs = $req->only(['name', 'phone', 'country', 'city', 'zip_code', 'email']);
-
         $warehouse = Warehouse::find($req->id);
 
         if (!$warehouse) return $this->error('The warehouse was not found', 404);
 
-        $warehouse->fill($inputs);
+        $warehouse->fill($attr);
 
         $warehouse->save();
 
@@ -95,60 +93,26 @@ class WarehouseController extends Controller
     }
 
 
-    public function moveToTrash(Request $req, $id)
+    public function remove(Request $req, $id)
     {
         $req->merge(['id' => $req->route('id')]);
 
         $req->validate(['id' => ['required', 'numeric', 'min:1']]);
 
-        $warehouse = Warehouse::find($req->id);
+        $warehouse = Warehouse::find($id);
 
         if (!$warehouse) return $this->error('The warehouse was not found', 404);
 
-        $products = DB::table('product_warehouses')->where('warehouse_id', $req->id)->select(DB::raw('SUM(instock) as total'))->get();
+        $settings = Setting::where('warehouse_id', $id)->get();
 
-        if (!$products->total > 0) return $this->error('The warehouse cannot be remove because it has products with quantity', 422);
+        if ($settings) return $this->error('The warehouse cannot be delete because it\'s a default in app settings', 422);
+
+        $products = DB::table('product_warehouses')->where('warehouse_id', $id)->select(DB::raw('SUM(instock) as total'))->get();
+
+        if (!$products->total > 0) return $this->error('The warehouse cannot be delete because it has products with quantity', 422);
 
         $warehouse->delete();
 
-        return $this->success($req->id, 'The warehouse has been moved to the trash successfully');
-    }
-
-
-    public function trashed()
-    {
-        $warehouses = Warehouse::onlyTrashed()->get();
-
-        return $this->success($warehouses);
-    }
-
-
-    public function restore(Request $req)
-    {
-        $req->merge(['id' => $req->route('id')]);
-
-        $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-        $isDone = Warehouse::onlyTrashed()->where('id', $req->id)->restore();
-
-        if (!$isDone) return $this->error('The warehouse is not in the trash', 404);
-
-        return $this->success($req->id, 'The warehouse has been restored successfully');
-    }
-
-
-    public function remove(Request $req)
-    {
-        $req->merge(['id' => $req->route('id')]);
-
-        $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-        $isDone = Warehouse::onlyTrashed()->where('id', $req->id)->forceDelete();
-
-        if (!$isDone) return $this->error('The warehouse is not in the trash', 404);
-
-        ProductWarehouse::where('warehouse_id', $req->id)->delete();
-
-        return $this->success($req->id, 'The warehouse has been deleted successfully');
+        return $this->success($id, 'The warehouse has deleted successfully');
     }
 }
