@@ -21,6 +21,7 @@ class CreateUnitsTable extends Migration
             $table->string('operator')->default("*");
             $table->unsignedBigInteger('main_unit_id')->nullable();
             $table->foreign('main_unit_id')->references('id')->on('units')->onDelete('restrict');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
