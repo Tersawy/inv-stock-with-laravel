@@ -140,7 +140,7 @@ export default {
 		}),
 
 		getInvoice(invoiceId) {
-			return this.$store.dispatch(`${this.namespace}/one`, invoiceId);
+			return this.$store.dispatch(`${this.namespace}/edit`, invoiceId);
 		},
 
 		create(invoice) {

@@ -14,6 +14,13 @@ const options = ({ commit, state }) => {
 	});
 };
 
+const edit = ({ commit, state }, itemId) => {
+	return api("get", `${state.prefix}/${itemId}/edit`, (err, res) => {
+		if (err) return commit("setErrors", err);
+		commit("one", res);
+	});
+};
+
 const one = ({ commit, state }, itemId) => {
 	return api("get", `${state.prefix}/${itemId}`, (err, res) => {
 		if (err) return commit("setErrors", err);
@@ -83,4 +90,4 @@ const remove = ({ commit, state }, item) => {
 	});
 };
 
-export default { all, options, one, create, update, moveToTrash, trashed, restore, remove };
+export default { all, options, edit, one, create, update, moveToTrash, trashed, restore, remove };

@@ -13,6 +13,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'product'], function
 
     Route::get('/{id}', [ProductController::class, 'show']);
 
+    Route::get('/{id}/edit', [ProductController::class, 'edit']);
+
     Route::put('/{id}', [ProductController::class, 'update']);
 
     Route::post('/create', [ProductController::class, 'create']);

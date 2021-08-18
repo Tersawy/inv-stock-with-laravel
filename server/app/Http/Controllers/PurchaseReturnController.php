@@ -68,7 +68,7 @@ class PurchaseReturnController extends Controller
     }
 
 
-    public function show(Request $req)
+    public function edit(Request $req)
     {
         PurchaseReturnRequest::validationId($req);
 

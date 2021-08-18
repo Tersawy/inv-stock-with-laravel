@@ -13,6 +13,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'transfer'], functio
 
     Route::post('/create', [TransferController::class, 'create']);
 
+    Route::get('/{id}/edit', [TransferController::class, 'edit']);
+
     Route::put('/{id}', [TransferController::class, 'update']);
 
     Route::post('/{id}/trash', [TransferController::class, 'moveToTrash']);

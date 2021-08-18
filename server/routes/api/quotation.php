@@ -13,6 +13,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'quotation'], functi
 
     Route::post('/create', [QuotationController::class, 'create']);
 
+    Route::get('/{id}/edit', [QuotationController::class, 'edit']);
+
     Route::put('/{id}', [QuotationController::class, 'update']);
 
     Route::post('/{id}/trash', [QuotationController::class, 'moveToTrash']);

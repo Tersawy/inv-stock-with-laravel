@@ -68,7 +68,7 @@ class SaleController extends Controller
     }
 
 
-    public function show(Request $req)
+    public function edit(Request $req)
     {
         SaleRequest::validationId($req);
 

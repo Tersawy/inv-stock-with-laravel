@@ -68,7 +68,7 @@ class SaleReturnController extends Controller
     }
 
 
-    public function show(Request $req)
+    public function edit(Request $req)
     {
         SaleReturnRequest::validationId($req);
 

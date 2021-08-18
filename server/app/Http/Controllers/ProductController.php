@@ -145,7 +145,7 @@ class ProductController extends Controller
   }
 
 
-  public function show(Request $req)
+  public function edit(Request $req)
   {
     ProductRequest::validationId($req);
 

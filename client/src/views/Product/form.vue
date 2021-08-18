@@ -237,7 +237,7 @@
 				getCategoriesOpt: "Category/options",
 				getBrandsOpt: "Brand/options",
 				getUnitsOpt: "Unit/options",
-				getProduct: "Product/one"
+				getProduct: "Product/edit"
 			}),
 
 			uploadImageSuccess(_formData, _index, fileList) {

@@ -69,7 +69,7 @@ class PurchaseController extends Controller
     }
 
 
-    public function show(Request $req)
+    public function edit(Request $req)
     {
         PurchaseRequest::validationId($req);
 

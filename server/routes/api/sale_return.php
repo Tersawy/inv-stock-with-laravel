@@ -14,6 +14,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'sale-return'], func
 
     Route::post('/create', [SaleReturnController::class, 'create']);
 
+    Route::get('/{id}/edit', [SaleReturnController::class, 'edit']);
+
     Route::put('/{id}', [SaleReturnController::class, 'update']);
 
     Route::post('/{id}/trash', [SaleReturnController::class, 'moveToTrash']);

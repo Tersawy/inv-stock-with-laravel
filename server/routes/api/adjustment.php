@@ -13,6 +13,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'adjustment'], funct
 
     Route::post('/create', [AdjustmentController::class, 'create']);
 
+    Route::get('/{id}/edit', [AdjustmentController::class, 'edit']);
+
     Route::put('/{id}', [AdjustmentController::class, 'update']);
 
     Route::post('/{id}/trash', [AdjustmentController::class, 'moveToTrash']);
