@@ -39,15 +39,22 @@ Vue.config.productionTip = false;
 function breads() {
 	let path = router.history.current.path;
 
-	path = "dashboard" + path;
 	let paths = path.split("/");
 
-	paths = paths.filter((p) => !!p);
+	let realpaths = paths.filter((p) => !!p);
 
-	let results = paths.map((p, i) => {
-		let name = p.charAt(0).toUpperCase() + p.slice(1),
-			isLast = i + 1 == paths.length;
-		return { name, to: { name: name }, active: isLast, isFirst: i == 0 };
+	realpaths = ["", ...realpaths];
+
+	let results = realpaths.map((p, i) => {
+		let isLast = i + 1 == realpaths.length,
+			isFirst = i == 0,
+			name = isFirst ? "dashboard" : p;
+
+		name = name.charAt(0).toUpperCase() + name.slice(1);
+
+		let path = isFirst ? "/" : realpaths.slice(0, i + 1).join("/");
+
+		return { name, to: path, isLast, isFirst };
 	});
 
 	return results;
@@ -56,7 +63,7 @@ function breads() {
 const DEFAULT_TITLE = "Inv-Stock";
 
 router.afterEach((to) => {
-	store.commit("setBreads", breads());
+	store.commit("setBreads", breads(to));
 
 	Vue.nextTick(() => {
 		document.title = to.meta.title || DEFAULT_TITLE;

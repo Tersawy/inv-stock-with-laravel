@@ -6,8 +6,8 @@
 			<div class="main-content px-3 pt-3">
 				<b-breadcrumb class="mb-0 bg-transparent" v-if="isAuth">
 					<b-breadcrumb-item v-for="(bread, i) in breads" :key="i" :active="true">
-						<b-icon v-if="bread.isFirst && bread.active" icon="house-fill" scale="1.25" shift-v="1.25" class="mr-1"></b-icon>
-						<span v-if="bread.active">{{ bread.name }}</span>
+						<b-icon v-if="bread.isFirst && bread.isLast" icon="house-fill" scale="1.25" shift-v="1.25" class="mr-1"></b-icon>
+						<span v-if="bread.isLast">{{ bread.name }}</span>
 						<router-link v-else :to="bread.to">
 							<b-icon v-if="bread.isFirst" icon="house-fill" scale="1.25" shift-v="1.25" class="mr-1"></b-icon>
 							{{ bread.name }}
