@@ -214,72 +214,40 @@ class ProductController extends Controller
   }
 
 
-  public function moveToTrash(Request $req)
-  {
-    ProductRequest::validationId($req);
-
-    $product = Product::find($req->id);
-
-    if (!$product) return $this->error('The product was not found', 404);
-
-    if ($product->has_variants) {
-
-      $variants = $product->variants;
-
-      foreach ($variants as $variant) {
-        if ($variant->instock > 0) {
-          return $this->error("Sorry, You can\'t remove this product because it has a variant ({$variant->name}) has instock", 422);
-        }
-      }
-    } else {
-      if ($product->instock > 0) {
-        return $this->error('Sorry, You can\'t remove this product because it has instock', 422);
-      }
-    }
-
-    ProductWarehouse::where('product_id', $product->id)->update(['deleted_at', now()]);
-
-    $product->delete();
-
-    return $this->success('The product has been moved to trash successfully');
-  }
-
-
-  public function trashed()
-  {
-    $products = Product::onlyTrashed()->get();
-
-    return $this->success($products);
-  }
-
-
-  public function restore(Request $req)
-  {
-    ProductRequest::validationId($req);
-
-    $isDone = Product::onlyTrashed()->where('id', $req->id)->restore();
-
-    if (!$isDone) return $this->error('The product is not in the trash', 404);
-
-    ProductWarehouse::where('product_id', $req->id)->update(['deleted_at', null]);
-
-    return $this->success($req->id, 'The product has been restored successfully');
-  }
-
-
   public function remove(Request $req)
   {
-    ProductRequest::validationId($req);
+    try {
+      DB::transaction(function () use ($req) {
+        ProductRequest::validationId($req);
 
-    $isDone = Product::onlyTrashed()->where('id', $req->id)->forceDelete();
+        $product = Product::find($req->id);
 
-    if (!$isDone) return $this->error('The product is not in the trash', 404);
+        if (!$product) throw CustomException::withMessage('id', 'The product was not found', 404);
 
-    return $this->success($req->id, 'The product has been deleted successfully');
+        foreach ($product->warehouse as $product_warehouse) {
+
+          if ($product->has_variants && !is_null($product_warehouse->variant_id) && $product_warehouse->instock > 0) {
+            throw CustomException::withMessage('id', "The product has quantity in variant {$product_warehouse->variant->name} in warehouse {$product_warehouse->warehouse->name}");
+          }
+
+          if (!$product->has_variants && is_null($product_warehouse->variant_id) && $product_warehouse->instock > 0) {
+            throw CustomException::withMessage('id', "The product {$product->name} has quantity in warehouse {$product_warehouse->warehouse->name}");
+          }
+        }
+
+        ProductWarehouse::where('product_id', $product->id)->update(['deleted_at' => now()]);
+
+        $product->delete();
+      }, 10);
+
+      return $this->success('The product has been deleted successfully');
+    } catch (CustomException $e) {
+      return $this->error($e->first_error(), $e->status_code());
+    }
   }
 
 
-  private function createImages(Request $req, Product $product)
+  protected function createImages(Request $req, Product $product)
   {
     $files = Arr::pluck($req->images, 'path');
 
@@ -306,7 +274,7 @@ class ProductController extends Controller
   }
 
 
-  private function deleteImages($images)
+  protected function deleteImages($images)
   {
     $imagesNames = Arr::pluck($images, 'name');
 
@@ -322,7 +290,7 @@ class ProductController extends Controller
   }
 
 
-  private function createVariants(Request $req, Product $product)
+  protected function createVariants(Request $req, Product $product)
   {
     $variants = [];
 
