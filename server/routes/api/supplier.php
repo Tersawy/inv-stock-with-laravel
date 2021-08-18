@@ -8,17 +8,11 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'supplier'], functio
 
     Route::get('/options', [SupplierController::class, 'options']);
 
-    Route::get('/trashed', [SupplierController::class, 'trashed']);
-
     Route::get('/{id}', [SupplierController::class, 'show']);
 
     Route::put('/{id}', [SupplierController::class, 'update']);
 
     Route::post('/create', [SupplierController::class, 'create']);
-
-    Route::post('/{id}/trash', [SupplierController::class, 'moveToTrash']);
-
-    Route::post('/{id}/restore', [SupplierController::class, 'restore']);
 
     Route::post('/{id}', [SupplierController::class, 'remove']);
 });

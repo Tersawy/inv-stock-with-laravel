@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login', function () {
-    return "you're welcome";
-})->name("login");
+// Route::get('/login', function () {
+//     return "you're welcome";
+// })->name("login");
 
-// Route::get('/{any}', 'SpaController@index')->where('any', '.*');
+Route::get('/{any}', [SpaController::class, 'index'])->where('any', '.*');

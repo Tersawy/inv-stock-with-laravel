@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -78,54 +79,22 @@ class CategoryController extends Controller
     }
 
 
-    public function moveToTrash(Request $req)
+    public function remove(Request $req, $id)
     {
-        $req->merge(['id' => $req->route('id')]);
+        $req->merge(['id' => $id]);
 
         $req->validate(['id' => ['required', 'numeric', 'min:1']]);
 
-        $category = Category::find($req->id);
+        $category = Category::find($id);
 
         if (!$category) return $this->error('The category was not found', 404);
 
+        $products = Product::where('category_id', $id)->limit(1)->get();
+
+        if ($products) return $this->error('The category cannot be delete because it have products', 422);
+
         $category->delete();
 
-        return $this->success($req->id, 'The category has been moved to the trash successfully');
-    }
-
-
-    public function trashed()
-    {
-        $categories = Category::onlyTrashed()->get();
-
-        return $this->success($categories);
-    }
-
-
-    public function restore(Request $req)
-    {
-        $req->merge(['id' => $req->route('id')]);
-
-        $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-        $isDone = Category::onlyTrashed()->where('id', $req->id)->restore();
-
-        if (!$isDone) return $this->error('The category is not in the trash', 404);
-
-        return $this->success($req->id, 'The category has been restored successfully');
-    }
-
-
-    public function remove(Request $req)
-    {
-        $req->merge(['id' => $req->route('id')]);
-
-        $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-        $isDone = Category::onlyTrashed()->where('id', $req->id)->forceDelete();
-
-        if (!$isDone) return $this->error('The category is not in the trash', 404);
-
-        return $this->success($req->id, 'The category has been deleted successfully');
+        return $this->success($id, 'The category has been deleted successfully');
     }
 }

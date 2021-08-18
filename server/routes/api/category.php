@@ -8,17 +8,11 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'category'], functio
 
     Route::get('/options', [CategoryController::class, 'options']);
 
-    Route::get('/trashed', [CategoryController::class, 'trashed']);
-
     Route::get('/{id}', [CategoryController::class, 'show']);
 
     Route::put('/{id}', [CategoryController::class, 'update']);
 
     Route::post('/create', [CategoryController::class, 'create']);
-
-    Route::post('/{id}/trash', [CategoryController::class, 'moveToTrash']);
-
-    Route::post('/{id}/restore', [CategoryController::class, 'restore']);
 
     Route::post('/{id}', [CategoryController::class, 'remove']);
 });

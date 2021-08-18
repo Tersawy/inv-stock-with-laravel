@@ -93,48 +93,16 @@ class ExpenseController extends Controller
     }
 
 
-    public function moveToTrash(Request $req)
+    public function remove(Request $req, $id)
     {
         ExpenseRequest::validationId($req);
 
-        $expense = Expense::find($req->id);
+        $expense = Expense::find($id);
 
         if (!$expense) return $this->error('The expense was not found', 404);
 
         $expense->delete();
 
-        return $this->success($req->id, 'The expense has been moved to the trash successfully');
-    }
-
-
-    public function trashed()
-    {
-        $expenses = Expense::onlyTrashed()->get();
-
-        return $this->success($expenses);
-    }
-
-
-    public function restore(Request $req)
-    {
-        ExpenseRequest::validationId($req);
-
-        $isDone = Expense::onlyTrashed()->where('id', $req->id)->restore();
-
-        if (!$isDone) return $this->error('The expense is not in the trash', 404);
-
-        return $this->success($req->id, 'The expense has been restored successfully');
-    }
-
-
-    public function remove(Request $req)
-    {
-        ExpenseRequest::validationId($req);
-
-        $isDone = Expense::onlyTrashed()->where('id', $req->id)->forceDelete();
-
-        if (!$isDone) return $this->error('The expense is not in the trash', 404);
-
-        return $this->success($req->id, 'The expense has been deleted successfully');
+        return $this->success($id, 'The expense has been deleted successfully');
     }
 }

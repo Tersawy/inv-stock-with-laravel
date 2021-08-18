@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use Illuminate\Http\Request;
 use App\Models\ExpenseCategory;
 use App\Requests\ExpenseCategoryRequest;
@@ -68,48 +69,20 @@ class ExpenseCategoryController extends Controller
     }
 
 
-    public function moveToTrash(Request $req)
+    public function remove(Request $req, $id)
     {
         ExpenseCategoryRequest::validationId($req);
 
-        $category = ExpenseCategory::find($req->id);
+        $category = ExpenseCategory::find($id);
 
         if (!$category) return $this->error('The expense category was not found', 404);
 
+        $expenses = Expense::where('expense_id', $id)->limit(1)->get();
+
+        if ($expenses) return $this->error('The category cannot be delete because it have expenses', 422);
+
         $category->delete();
 
-        return $this->success($req->id, 'The expense category has been moved to the trash successfully');
-    }
-
-
-    public function trashed()
-    {
-        $categories = ExpenseCategory::onlyTrashed()->get();
-
-        return $this->success($categories);
-    }
-
-
-    public function restore(Request $req)
-    {
-        ExpenseCategoryRequest::validationId($req);
-
-        $isDone = ExpenseCategory::onlyTrashed()->where('id', $req->id)->restore();
-
-        if (!$isDone) return $this->error('The expense category is not in the trash', 404);
-
-        return $this->success($req->id, 'The expense category has been restored successfully');
-    }
-
-
-    public function remove(Request $req)
-    {
-        ExpenseCategoryRequest::validationId($req);
-
-        $isDone = ExpenseCategory::onlyTrashed()->where('id', $req->id)->forceDelete();
-
-        if (!$isDone) return $this->error('The expense category is not in the trash', 404);
-
-        return $this->success($req->id, 'The expense category has been deleted successfully');
+        return $this->success($id, 'The expense category has been deleted successfully');
     }
 }

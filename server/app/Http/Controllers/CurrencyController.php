@@ -69,7 +69,7 @@ class CurrencyController extends Controller
     }
 
 
-    public function moveToTrash(Request $req, $id)
+    public function remove(Request $req, $id)
     {
         CurrencyRequest::validationId($req);
 
@@ -83,6 +83,6 @@ class CurrencyController extends Controller
 
         $currency->delete();
 
-        return $this->success($id, 'The currency has beendeleted successfully');
+        return $this->success($id, 'The currency has been deleted successfully');
     }
 }

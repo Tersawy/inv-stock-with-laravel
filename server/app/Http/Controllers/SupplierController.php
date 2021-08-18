@@ -92,54 +92,18 @@ class SupplierController extends Controller
   }
 
 
-  public function moveToTrash(Request $req)
+  public function remove(Request $req, $id)
   {
-    $req->merge(['id' => $req->route('id')]);
+    $req->merge(['id' => $id]);
 
     $req->validate(['id' => ['required', 'numeric', 'min:1']]);
 
-    $supplier = Supplier::find($req->id);
+    $supplier = Supplier::find($id);
 
     if (!$supplier) return $this->error('The supplier was not found', 404);
 
     $supplier->delete();
 
-    return $this->success($req->id, 'The supplier has been moved to the trash successfully');
-  }
-
-
-  public function trashed()
-  {
-    $suppliers = Supplier::onlyTrashed()->get();
-
-    return $this->success($suppliers);
-  }
-
-
-  public function restore(Request $req)
-  {
-    $req->merge(['id' => $req->route('id')]);
-
-    $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-    $isDone = Supplier::onlyTrashed()->where('id', $req->id)->restore();
-
-    if (!$isDone) return $this->error('The supplier is not in the trash', 404);
-
-    return $this->success($req->id, 'The supplier has been restored successfully');
-  }
-
-
-  public function remove(Request $req)
-  {
-    $req->merge(['id' => $req->route('id')]);
-
-    $req->validate(['id' => ['required', 'numeric', 'min:1']]);
-
-    $isDone = Supplier::onlyTrashed()->where('id', $req->id)->forceDelete();
-
-    if (!$isDone) return $this->error('The supplier is not in the trash', 404);
-
-    return $this->success($req->id, 'The supplier has been deleted successfully');
+    return $this->success($id, 'The supplier has been deleted successfully');
   }
 }
