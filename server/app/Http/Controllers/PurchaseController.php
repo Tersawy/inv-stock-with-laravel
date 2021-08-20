@@ -135,6 +135,73 @@ class PurchaseController extends Controller
     }
 
 
+    public function show(Request $req)
+    {
+        PurchaseRequest::validationId($req);
+
+        $details = [
+            'details' => function ($query) {
+                $query->select(['purchase_id', 'product_id', 'variant_id', 'cost', 'tax', 'tax_method', 'discount', 'discount_method', 'quantity']);
+            },
+            'details.product' => function ($query) {
+                $query->select(['id', 'name', 'code', 'purchase_unit_id']);
+            },
+            'details.product.purchase_unit' => function ($query) {
+                $query->select(['id', 'short_name', 'operator', 'value']);
+            },
+            'details.variant' => function ($query) {
+                $query->select(['id', 'name', 'product_id']);
+            },
+            'details.image' => function ($query) {
+                $query->select(['product_id', 'name']);
+            },
+            'supplier' => function ($query) {
+                $query->select(['id', 'name', 'phone', 'email', 'address']);
+            },
+            'warehouse' => function ($query) {
+                $query->select(['id', 'name']);
+            },
+            'payments' => function ($query) {
+                $query->select(['purchase_id', 'reference', 'amount', 'payment_method', 'date']);
+            }
+        ];
+
+        $select = ['id', 'reference', 'warehouse_id', 'supplier_id', 'discount', 'discount_method', 'tax', 'status', 'payment_status', 'paid', 'shipping', 'total_price', 'note', 'date'];
+
+        $purchase = Purchase::select($select)->with($details)->find($req->id);
+
+        if (!$purchase) return $this->error('The purchase invoice was not found', 404);
+
+        $purchase->details->transform(function ($detail) {
+
+            return [
+                'id'                => $detail->product_id,
+                'variant'           => $detail->variant ? $detail->variant->name : null,
+                'unit_cost'         => $detail->cost,
+                'quantity'          => $detail->quantity,
+                'tax'               => $detail->tax,
+                'tax_method'        => $detail->tax_method,
+                'discount'          => $detail->discount,
+                'discount_method'   => $detail->discount_method,
+                'code'              => $detail->product->code,
+                'name'              => $detail->product->name,
+                'purchase_unit'     => $detail->product->purchase_unit->short_name,
+                'image'             => $detail->image->name,
+            ];
+        });
+
+        $purchase->products = $purchase->details;
+
+        $purchase->due = $purchase->due;
+
+        unset($purchase->details);
+        unset($purchase->supplier_id);
+        unset($purchase->warehouse_id);
+
+        return $this->success($purchase);
+    }
+
+
     public function create(Request $req)
     {
         try {
