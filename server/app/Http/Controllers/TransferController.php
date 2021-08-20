@@ -192,8 +192,6 @@ class TransferController extends Controller
 
                     $this->checking_relations($old_details, $old_to_products_warehouse, $products);
 
-                    $this->checking_quantity($old_details, $old_to_products_warehouse, $products);
-
                     $this->subtract_instock($old_details, $old_to_products_warehouse, $products);
 
                     $this->update_instock($old_to_products_warehouse);
@@ -205,8 +203,6 @@ class TransferController extends Controller
                     $new_from_products_warehouse = $this->get_products_warehouse_by_details($req->from_warehouse_id, $new_details);
 
                     $this->checking_relations($new_details, $new_from_products_warehouse, $products);
-
-                    $this->checking_quantity($new_details, $new_from_products_warehouse, $products);
 
                     $this->subtract_instock($new_details, $new_from_products_warehouse, $products);
 

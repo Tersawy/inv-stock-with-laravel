@@ -242,8 +242,6 @@ class PurchaseReturnController extends Controller
 
                     $this->checking_relations($new_details, $new_products_warehouse, $products);
 
-                    $this->checking_quantity($new_details, $new_products_warehouse, $products);
-
                     $this->subtract_instock($new_details, $new_products_warehouse, $products);
 
                     $this->update_instock($new_products_warehouse);

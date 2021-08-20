@@ -229,8 +229,6 @@ class PurchaseController extends Controller
 
                     $this->checking_relations($old_details, $old_products_warehouse, $products);
 
-                    $this->checking_quantity($old_details, $old_products_warehouse, $products);
-
                     $this->subtract_instock($old_details, $old_products_warehouse, $products);
 
                     $this->update_instock($old_products_warehouse);
