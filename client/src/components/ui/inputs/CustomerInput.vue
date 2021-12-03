@@ -9,7 +9,7 @@
 		props: ["object"],
 		computed: {
 			customersOpt() {
-				return this.$store.state.Customer.options;
+				return this.$store.state.Customers.options;
 			}
 		}
 	};

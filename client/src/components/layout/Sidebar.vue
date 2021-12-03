@@ -1,5 +1,5 @@
 <template>
-	<div class="navigation">
+	<div class="sidebar-custom">
 		<VuePerfectScrollbar class="scroll-area" v-once :settings="{ suppressScrollX: true, wheelPropagation: false }">
 			<ul>
 				<li>
@@ -33,22 +33,22 @@
 			return {
 				items: [
 					{ title: "Dashboard", icon: "grid1x2", to: "/" },
-					{ title: "Warehouses", icon: "archive", to: "/warehouse" },
-					{ title: "Categories", icon: "layout-three-columns", to: "/category" },
-					{ title: "Products", icon: "box-seam", to: "/product" },
-					{ title: "Sales", icon: "cart3", to: "/sale" },
-					{ title: "Sales Return", icon: "arrow-return-left", to: "/sale-return" },
-					{ title: "Purchases", icon: "gift", to: "/purchase" },
-					{ title: "Purchases Return", icon: "arrow-return-left", to: "/purchase-return" },
-					{ title: "Expenses", icon: "wallet2", to: "/expense" },
-					{ title: "Adjustment", icon: "pen", to: "/adjustment" },
-					{ title: "Quotations", icon: "minecart-loaded", to: "/quotation" },
-					{ title: "Transfer", icon: "arrow-repeat", to: "/transfer" },
-					{ title: "Customers", icon: "person-plus", to: "/customer" },
-					{ title: "Suppliers", icon: "people", to: "/supplier" },
-					{ title: "Brands", icon: "tags", to: "/brand" },
-					{ title: "Units", icon: "diagram3", to: "/unit" },
-					{ title: "Currency", icon: "fas fa-dollar-sign fa-lg fa-fw", to: "/currency", awesome: true }
+					{ title: "Warehouses", icon: "archive", to: "/warehouses" },
+					{ title: "Categories", icon: "layout-three-columns", to: "/categories" },
+					{ title: "Products", icon: "box-seam", to: "/products" },
+					{ title: "Sales", icon: "cart3", to: "/sales" },
+					{ title: "Sales Return", icon: "arrow-return-left", to: "/sales-return" },
+					{ title: "Purchases", icon: "gift", to: "/purchases" },
+					{ title: "Purchases Return", icon: "arrow-return-left", to: "/purchases-return" },
+					{ title: "Expenses", icon: "wallet2", to: "/expenses" },
+					{ title: "Adjustments", icon: "pen", to: "/adjustments" },
+					{ title: "Quotations", icon: "minecart-loaded", to: "/quotations" },
+					{ title: "Transfers", icon: "arrow-repeat", to: "/transfers" },
+					{ title: "Customers", icon: "person-plus", to: "/customers" },
+					{ title: "Suppliers", icon: "people", to: "/suppliers" },
+					{ title: "Brands", icon: "tags", to: "/brands" },
+					{ title: "Units", icon: "diagram3", to: "/units" },
+					{ title: "Currencies", icon: "fas fa-dollar-sign fa-lg fa-fw", to: "/currencies", awesome: true }
 				]
 			};
 		}
@@ -56,18 +56,14 @@
 </script>
 
 <style lang="scss">
-	.navigation {
+	.sidebar-custom {
 		position: fixed;
 		width: 60px;
 		height: 100%;
 		background: var(--secondary);
-		transition: 0.2s;
 		overflow: auto;
 		overflow-x: hidden;
 		z-index: 90;
-		&.active {
-			width: 300px;
-		}
 		.scroll-area {
 			position: relative;
 			margin: auto;

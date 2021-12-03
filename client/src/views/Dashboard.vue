@@ -1,90 +1,88 @@
 <template>
-	<div class="dashboard">
-		<b-container fluid>
-			<div class="dashboard-card-box py-3">
-				<b-row>
-					<b-col>
-						<report-card name="Today Sales" icon="cart-plus" number="1780.00 $" />
-					</b-col>
-					<b-col>
-						<report-card name="Income" icon="fas fa-hand-holding-usd" awesome number="2300.00 $" />
-					</b-col>
-					<b-col>
-						<report-card name="Expenses" icon="far fa-money-bill-alt" awesome number="1888.00 $" />
-					</b-col>
-					<b-col>
-						<report-card name="Profits" icon="fas fa-coins" awesome number="412.00 $" />
-					</b-col>
-				</b-row>
-			</div>
-			<div class="details py-3">
-				<b-row>
-					<b-col cols="8">
-						<div class="recent-sales shadow-sm bg-white px-3 pb-3 rounded">
-							<div class="recent-header py-3 d-flex justify-content-between align-items-center">
-								<h3 class="mb-0">Recent Sales</h3>
-								<router-link to="/sale">
-									<b-btn variant="primary">View All</b-btn>
-								</router-link>
-							</div>
-							<table class="table table-hover mb-0">
-								<thead>
-									<tr>
-										<th>Reference</th>
-										<th>Customer</th>
-										<th>Status</th>
-										<th>Total Price</th>
-										<th>Paid</th>
-										<th>Due</th>
-										<th>Payment Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="(sale, i) in sales" :key="i">
-										<td>{{ sale.reference }}</td>
-										<td v-relation="sale.customer"></td>
-										<td v-sale-status="sale.status"></td>
-										<td v-floating.2="sale.grand_total"></td>
-										<td v-floating.2="sale.paid"></td>
-										<td v-floating.2="sale.due"></td>
-										<td v-payment-status="sale.payment_status"></td>
-									</tr>
-								</tbody>
-							</table>
+	<main-content class="dashboard" :breads="breads">
+		<div class="dashboard-card-box">
+			<b-row>
+				<b-col>
+					<report-card name="Today Sales" icon="cart-plus" number="1780.00 $" />
+				</b-col>
+				<b-col>
+					<report-card name="Income" icon="fas fa-hand-holding-usd" awesome number="2300.00 $" />
+				</b-col>
+				<b-col>
+					<report-card name="Expenses" icon="far fa-money-bill-alt" awesome number="1888.00 $" />
+				</b-col>
+				<b-col>
+					<report-card name="Profits" icon="fas fa-coins" awesome number="412.00 $" />
+				</b-col>
+			</b-row>
+		</div>
+		<div class="details mt-4">
+			<b-row>
+				<b-col cols="8">
+					<div class="recent-sales shadow-sm bg-white px-3 pb-3 rounded">
+						<div class="recent-header py-3 d-flex justify-content-between align-items-center">
+							<h3 class="mb-0">Recent Sales</h3>
+							<router-link to="/sale">
+								<b-btn variant="primary">View All</b-btn>
+							</router-link>
 						</div>
-					</b-col>
-					<b-col cols="4">
-						<div class="recent-customers shadow-sm bg-white px-3 pb-3 rounded">
-							<div class="recent-header py-3 d-flex justify-content-between align-items-center">
-								<h3 class="mb-0">Recent Customers</h3>
-								<router-link to="/customer">
-									<b-btn variant="primary">View All</b-btn>
-								</router-link>
-							</div>
-							<table class="table table-hover mb-0">
-								<tbody>
-									<tr v-for="(customer, i) in customers" :key="i">
-										<td width="60px">
-											<div class="customer-img">
-												<img :src="require(`@/assets/${customer.img}`)" alt="" />
-											</div>
-										</td>
-										<td>
-											<h4 class="mb-0">
-												{{ customer.name }}
-												<br />
-												<span>{{ customer.country }}</span>
-											</h4>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+						<table class="table table-hover mb-0">
+							<thead>
+								<tr>
+									<th>Reference</th>
+									<th>Customer</th>
+									<th>Status</th>
+									<th>Total Price</th>
+									<th>Paid</th>
+									<th>Due</th>
+									<th>Payment Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(sale, i) in sales" :key="i">
+									<td>{{ sale.reference }}</td>
+									<td>{{ sale.customer | relation }}</td>
+									<td v-sale-status="sale.status"></td>
+									<td>{{ sale.grand_total | floating }}</td>
+									<td>{{ sale.paid | floating }}</td>
+									<td>{{ sale.due | floating }}</td>
+									<td v-payment-status="sale.payment_status"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</b-col>
+				<b-col cols="4">
+					<div class="recent-customers shadow-sm bg-white px-3 pb-3 rounded">
+						<div class="recent-header py-3 d-flex justify-content-between align-items-center">
+							<h3 class="mb-0">Recent Customers</h3>
+							<router-link to="/customer">
+								<b-btn variant="primary">View All</b-btn>
+							</router-link>
 						</div>
-					</b-col>
-				</b-row>
-			</div>
-		</b-container>
-	</div>
+						<table class="table table-hover mb-0">
+							<tbody>
+								<tr v-for="(customer, i) in customers" :key="i">
+									<td width="60px">
+										<div class="customer-img">
+											<img :src="require(`@/assets/${customer.img}`)" alt="" />
+										</div>
+									</td>
+									<td>
+										<h4 class="mb-0">
+											{{ customer.name }}
+											<br />
+											<span>{{ customer.country }}</span>
+										</h4>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</b-col>
+			</b-row>
+		</div>
+	</main-content>
 </template>
 <script>
 	import ReportCard from "@/components/ui/ReportCard";
@@ -93,6 +91,7 @@
 		components: { ReportCard },
 		data() {
 			return {
+				breads: [{ title: "Dashboard" }],
 				customers: [
 					{ name: "David", country: "Italy", img: "user1.jpg" },
 					{ name: "Muhammad", country: "Egypt", img: "user2.jpg" },

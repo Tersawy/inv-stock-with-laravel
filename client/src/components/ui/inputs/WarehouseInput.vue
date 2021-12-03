@@ -9,7 +9,7 @@
 		props: ["object"],
 		computed: {
 			warehousesOpt() {
-				return this.$store.state.Warehouse.options;
+				return this.$store.state.Warehouses.options;
 			}
 		}
 	};

@@ -22,6 +22,9 @@ Vue.prototype.$store = store;
 import $axios from "@/plugins/api";
 Vue.prototype.$axios = $axios;
 
+import MainContent from "@/components/layout/MainContent.vue";
+Vue.component("MainContent", MainContent);
+
 import EditIcon from "@/components/ui/EditIcon.vue";
 Vue.component("EditIcon", EditIcon);
 
@@ -36,35 +39,9 @@ runGlobalMixins();
 
 Vue.config.productionTip = false;
 
-function breads() {
-	let path = router.history.current.path;
-
-	let paths = path.split("/");
-
-	let realpaths = paths.filter((p) => !!p);
-
-	realpaths = ["", ...realpaths];
-
-	let results = realpaths.map((p, i) => {
-		let isLast = i + 1 == realpaths.length,
-			isFirst = i == 0,
-			name = isFirst ? "dashboard" : p;
-
-		name = name.charAt(0).toUpperCase() + name.slice(1);
-
-		let path = isFirst ? "/" : realpaths.slice(0, i + 1).join("/");
-
-		return { name, to: path, isLast, isFirst };
-	});
-
-	return results;
-}
-
 const DEFAULT_TITLE = "Inv-Stock";
 
 router.afterEach((to) => {
-	store.commit("setBreads", breads(to));
-
 	Vue.nextTick(() => {
 		document.title = to.meta.title || DEFAULT_TITLE;
 	});

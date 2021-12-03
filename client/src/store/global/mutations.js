@@ -9,4 +9,4 @@ export const setErrors = (state, { message, errors }) => {
 
 export const setError = (_state, message) => showToast(message, "danger");
 
-export const setBreads = (state, breads) => (state.breads = breads);
+export const setSidebar = (state, value) => (state.sidebarOpen = value);

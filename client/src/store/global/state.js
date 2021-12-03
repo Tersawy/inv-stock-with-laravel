@@ -19,7 +19,7 @@ const state = {
 	errorMsg: "",
 	errorDismissSecs: 0,
 	errors: {},
-	breads: [],
+	sidebarOpen: false,
 	taxMethods: [
 		{ text: TAX_METHODS_STR[TAX_EXCLUSIVE], value: TAX_EXCLUSIVE },
 		{ text: TAX_METHODS_STR[TAX_INCLUSIVE], value: TAX_INCLUSIVE }

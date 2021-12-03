@@ -1,6 +1,6 @@
 <template>
-	<div class="topbar px-2">
-		<div class="toggle" @click="toggleMenu">
+	<div class="navbar-custom px-2">
+		<div class="toggle" @click="sidebarOpen = !sidebarOpen">
 			<b-icon icon="menu-button-wide" scale="1.6"></b-icon>
 		</div>
 		<div class="content">
@@ -28,35 +28,28 @@
 <script>
 	import { mapActions } from "vuex";
 	export default {
-		mounted() {
-			let navigation = document.querySelector("#app > .navigation");
-			let main = document.querySelector("#app > .main");
-			let mainContent = document.querySelector("#app > .main > .main-content");
-
-			mainContent.addEventListener("click", () => {
-				main.classList.remove("active");
-				navigation.classList.remove("active");
-			});
+		computed: {
+			sidebarOpen: {
+				set(v) {
+					this.$store.commit("setSidebar", v);
+				},
+				get() {
+					return this.$store.state.sidebarOpen;
+				}
+			}
 		},
 
 		methods: {
-			...mapActions({
-				logout: "Auth/logout"
-			}),
-
-			toggleMenu() {
-				let navigation = document.querySelector(".navigation");
-				let main = document.querySelector("#app > .main");
-				navigation.classList.toggle("active");
-				main.classList.toggle("active");
-			}
+			...mapActions({ logout: "Auth/logout" })
 		}
 	};
 </script>
 
 <style lang="scss">
-	.topbar {
-		width: 100%;
+	.navbar-custom {
+		position: relative;
+		width: calc(100% - 60px);
+		left: 60px;
 		background: #fff;
 		height: 60px;
 		display: flex;

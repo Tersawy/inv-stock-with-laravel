@@ -17,183 +17,183 @@ const routes = [
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/warehouse",
-		name: "Warehouse",
-		component: require("@/views/Warehouse/index").default,
+		path: "/warehouses",
+		name: "Warehouses",
+		component: require("@/views/Warehouses/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/warehouse/create",
-		name: "WarehouseCreate",
-		component: require("@/views/Warehouse/form").default,
+		path: "/warehouses/create",
+		name: "WarehousesCreate",
+		component: require("@/views/Warehouses/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/warehouse/:warehouseId(\\d+)/update",
-		name: "WarehouseUpdate",
-		component: require("@/views/Warehouse/form").default,
+		path: "/warehouses/:warehouseId(\\d+)/edit",
+		name: "WarehousesEdit",
+		component: require("@/views/Warehouses/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/warehouse/trashed",
-		name: "WarehouseTrashed",
-		component: require("@/views/Warehouse/trash").default,
+		path: "/warehouses/trashed",
+		name: "WarehousesTrashed",
+		component: require("@/views/Warehouses/trash").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/category",
-		name: "Category",
-		component: require("@/views/Category/index").default,
+		path: "/categories",
+		name: "Categories",
+		component: require("@/views/Categories/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/category/trashed",
-		name: "CategoryTrashed",
-		component: require("@/views/Category/trash").default,
+		path: "/categories/trashed",
+		name: "CategoriesTrashed",
+		component: require("@/views/Categories/trash").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/brand",
-		name: "Brand",
-		component: require("@/views/Brand/index").default,
+		path: "/brands",
+		name: "Brands",
+		component: require("@/views/Brands/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/brand/trashed",
-		name: "BrandTrashed",
-		component: require("@/views/Brand/trash").default,
+		path: "/brands/trashed",
+		name: "BrandsTrashed",
+		component: require("@/views/Brands/trash").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/unit",
-		name: "Unit",
-		component: require("@/views/Unit/index").default,
+		path: "/units",
+		name: "Units",
+		component: require("@/views/Units/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/product",
-		name: "Product",
-		component: require("@/views/Product/index").default,
+		path: "/products",
+		name: "Products",
+		component: require("@/views/Products/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/product/create",
-		name: "ProductCreate",
-		component: require("@/views/Product/form").default,
+		path: "/products/create",
+		name: "ProductsCreate",
+		component: require("@/views/Products/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/product/:productId(\\d+)/update",
-		name: "ProductUpdate",
-		component: require("@/views/Product/form").default,
+		path: "/products/:productId(\\d+)/edit",
+		name: "ProductsEdit",
+		component: require("@/views/Products/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/supplier",
-		name: "Supplier",
-		component: require("@/views/Supplier/index").default,
+		path: "/suppliers",
+		name: "Suppliers",
+		component: require("@/views/Suppliers/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/supplier/create",
-		name: "SupplierCreate",
-		component: require("@/views/Supplier/form").default,
+		path: "/suppliers/create",
+		name: "SuppliersCreate",
+		component: require("@/views/Suppliers/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/supplier/:supplierId(\\d+)/update",
-		name: "SupplierUpdate",
-		component: require("@/views/Supplier/form").default,
+		path: "/suppliers/:supplierId(\\d+)/edit",
+		name: "SuppliersEdit",
+		component: require("@/views/Suppliers/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/supplier/trashed",
-		name: "SupplierTrashed",
-		component: require("@/views/Supplier/trash").default,
+		path: "/suppliers/trashed",
+		name: "SuppliersTrashed",
+		component: require("@/views/Suppliers/trash").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/customer",
-		name: "Customer",
-		component: require("@/views/Customer/index").default,
+		path: "/customers",
+		name: "Customers",
+		component: require("@/views/Customers/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/purchase",
-		name: "Purchase",
-		component: require("@/views/Purchase/index").default,
+		path: "/purchases",
+		name: "Purchases",
+		component: require("@/views/Purchases/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/purchase/create",
-		name: "PurchaseCreate",
-		component: require("@/views/Purchase/form").default,
+		path: "/purchases/create",
+		name: "PurchasesCreate",
+		component: require("@/views/Purchases/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/purchase/:invoiceId(\\d+)/update",
-		name: "PurchaseUpdate",
-		component: require("@/views/Purchase/form").default,
+		path: "/purchases/:invoiceId(\\d+)/edit",
+		name: "PurchasesEdit",
+		component: require("@/views/Purchases/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/purchase-return",
-		name: "PurchaseReturn",
-		component: require("@/views/PurchaseReturn/index").default,
+		path: "/purchases-return",
+		name: "PurchasesReturn",
+		component: require("@/views/PurchasesReturn/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/purchase-return/create",
-		name: "PurchaseReturnCreate",
-		component: require("@/views/PurchaseReturn/form").default,
+		path: "/purchases-return/create",
+		name: "PurchasesReturnCreate",
+		component: require("@/views/PurchasesReturn/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/purchase-return/:invoiceId(\\d+)/update",
-		name: "PurchaseReturnUpdate",
-		component: require("@/views/PurchaseReturn/form").default,
+		path: "/purchases-return/:invoiceId(\\d+)/edit",
+		name: "PurchasesReturnEdit",
+		component: require("@/views/PurchasesReturn/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/sale",
-		name: "Sale",
-		component: require("@/views/Sale/index").default,
+		path: "/sales",
+		name: "Sales",
+		component: require("@/views/Sales/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/sale/create",
-		name: "SaleCreate",
-		component: require("@/views/Sale/form").default,
+		path: "/sales/create",
+		name: "SalesCreate",
+		component: require("@/views/Sales/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/sale/:invoiceId(\\d+)/update",
-		name: "SaleUpdate",
-		component: require("@/views/Sale/form").default,
+		path: "/sales/:invoiceId(\\d+)/edit",
+		name: "SalesEdit",
+		component: require("@/views/Sales/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/sale-return",
-		name: "SaleReturn",
-		component: require("@/views/SaleReturn/index").default,
+		path: "/sales-return",
+		name: "SalesReturn",
+		component: require("@/views/SalesReturn/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/sale-return/create",
-		name: "SaleReturnCreate",
-		component: require("@/views/SaleReturn/form").default,
+		path: "/sales-return/create",
+		name: "SalesReturnCreate",
+		component: require("@/views/SalesReturn/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/sale-return/:invoiceId(\\d+)/update",
-		name: "SaleReturnUpdate",
-		component: require("@/views/SaleReturn/form").default,
+		path: "/sales-return/:invoiceId(\\d+)/edit",
+		name: "SalesReturnEdit",
+		component: require("@/views/SalesReturn/form").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	},
 	{
-		path: "/currency",
-		name: "Currency",
-		component: require("@/views/Currency/index").default,
+		path: "/currencies",
+		name: "Currencies",
+		component: require("@/views/Currencies/index").default,
 		meta: { auth: true, userType: [0, 1, 2] }
 	}
 ];

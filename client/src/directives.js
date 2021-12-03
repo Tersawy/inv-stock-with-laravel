@@ -72,7 +72,7 @@ Vue.directive("purchase-status", function (el, binding) {
 	el.innerHTML = badge;
 });
 
-Vue.directive("purchase-return-status", function (el, binding) {
+Vue.directive("purchases-return-status", function (el, binding) {
 	let v = binding.value;
 
 	let variant = () => {
@@ -112,7 +112,7 @@ Vue.directive("sale-status", function (el, binding) {
 	el.innerHTML = badge;
 });
 
-Vue.directive("sale-return-status", function (el, binding) {
+Vue.directive("sales-return-status", function (el, binding) {
 	let v = binding.value;
 
 	let variant = () => {

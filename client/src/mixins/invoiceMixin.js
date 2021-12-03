@@ -91,8 +91,8 @@ export default {
 			this.getSuppliersOpt();
 		}
 
-		if (this.invoiceIdParam) {
-			await this.getInvoice(this.invoiceIdParam);
+		if (this.isUpdate) {
+			await this.getInvoice(this.invoiceId);
 			this.invoice = { ...this.oldInvoice };
 			this.invoice.products = this.invoice.products.map((product) => {
 				return {
@@ -114,8 +114,12 @@ export default {
 			return this.invoiceFieldName == "price";
 		},
 
-		invoiceIdParam() {
+		invoiceId() {
 			return this.$route.params.invoiceId;
+		},
+
+		isUpdate() {
+			return !!this.invoiceId;
 		},
 
 		DISCOUNT_FIXED() {
@@ -133,10 +137,10 @@ export default {
 
 	methods: {
 		...mapActions({
-			getWarehousesOpt: "Warehouse/options",
-			getProductsOpt: "Product/options",
-			getSuppliersOpt: "Supplier/options",
-			getCustomersOpt: "Customer/options"
+			getWarehousesOpt: "Warehouses/options",
+			getProductsOpt: "Products/options",
+			getSuppliersOpt: "Suppliers/options",
+			getCustomersOpt: "Customers/options"
 		}),
 
 		getInvoice(invoiceId) {
@@ -230,7 +234,7 @@ export default {
 			if (this.$v.$invalid) return;
 
 			try {
-				if (this.invoiceIdParam) return this.update(invoice);
+				if (this.isUpdate) return this.update(invoice);
 
 				await this.create(invoice);
 

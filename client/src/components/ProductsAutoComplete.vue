@@ -30,8 +30,8 @@
 
 		computed: {
 			...mapState({
-				productsOpt: (state) => state.Product.options,
-				productDetails: (state) => state.Product.details
+				productsOpt: (state) => state.Products.options,
+				productDetails: (state) => state.Products.details
 			}),
 
 			checkQty() {
@@ -41,7 +41,7 @@
 
 		methods: {
 			...mapActions({
-				getProductDetails: "Product/details"
+				getProductDetails: "Products/details"
 			}),
 
 			autoSearch(input) {
