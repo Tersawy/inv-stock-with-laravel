@@ -233,6 +233,10 @@
 
 					if (this.images.length >= this.max || !this.multiple) break;
 				}
+
+				if (this.images.length === 1) {
+					this.images[0].default = true;
+				}
 			},
 
 			deleteImage(image) {
