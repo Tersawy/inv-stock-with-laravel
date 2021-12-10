@@ -133,6 +133,18 @@
 					</b-form-tags>
 				</b-card>
 			</b-col>
+			<b-col cols="6" class="py-3">
+				<b-card header="My image uploader">
+					<image-uploader
+						@upload-image="uploadImage"
+						:data-images="imagesData"
+						@delete-image="deleteImage"
+						:max="10"
+						:multiple="true"
+						@error="handleUploadError"
+					></image-uploader>
+				</b-card>
+			</b-col>
 		</b-row>
 		<b-btn :variant="`${isUpdate ? 'success' : 'primary'}`" type="submit" @click="handleSave">save</b-btn>
 	</main-content>
@@ -140,14 +152,12 @@
 
 <script>
 	import { mapActions, mapState } from "vuex";
-	import { formMixin } from "@/mixins";
 	import DefaultInput from "@/components/ui/DefaultInput.vue";
 	import VueTagsInput from "@johmun/vue-tags-input";
 	import VueUploadMultipleImage from "vue-upload-multiple-image";
+	import ImageUploader from "@/components/ImageUploader";
 	export default {
-		components: { DefaultInput, VueTagsInput, VueUploadMultipleImage },
-
-		mixins: [formMixin],
+		components: { DefaultInput, VueTagsInput, VueUploadMultipleImage, ImageUploader },
 
 		data: () => ({
 			product: {
@@ -183,8 +193,64 @@
 				{ text: "Inclusive", value: 1, disabled: false },
 				{ text: "Exclusive", value: 0, disabled: false }
 			],
-			images: [],
-			variants: []
+			images: [
+				{
+					url: "https://picsum.photos/300/300/?image=10"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=11"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=12"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=13"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=14"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=15"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=16"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=17"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=18"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=19"
+				},
+				{
+					url: "https://media3.giphy.com/avatars/Packly/C4AvqGR2zXrN.gif"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=20"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=21"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=22"
+				},
+				{
+					url: "https://picsum.photos/300/300/?image=23"
+				},
+				{
+					url: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60"
+				},
+				{
+					url: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60"
+				},
+				{
+					url: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60"
+				}
+			],
+			variants: [],
+			formData: new FormData()
 		}),
 
 		async mounted() {
@@ -206,13 +272,6 @@
 						name: img.name,
 						path: img.path
 					}));
-
-					if (this.product.variants && this.product.variants.length) {
-						this.variants = this.product.variants.map((variant) => ({
-							text: variant.name,
-							tiClasses: ["ti-valid"]
-						}));
-					}
 				});
 			}
 		},
@@ -224,6 +283,13 @@
 				unitsOpt: (state) => state.Units.options,
 				oldProduct: (state) => state.Products.one
 			}),
+
+			imagesData() {
+				return this.images.map((image) => {
+					image.deleted = false;
+					return image;
+				});
+			},
 
 			isUpdate() {
 				return this.$route.params.productId;
@@ -255,16 +321,41 @@
 				getProduct: "Products/edit"
 			}),
 
-			uploadImageSuccess(_formData, _index, fileList) {
+			uploadImageSuccess(formData, _index, fileList) {
 				this.images = fileList;
+				this.formData = formData;
 			},
 
 			beforeRemoveImage(_index, done, fileList) {
 				this.images = fileList;
-
+				this.formData.forEach((f) => console.log(f));
 				var r = confirm("remove image");
 
 				if (r == true) return done();
+			},
+
+			uploadImage(image) {
+				console.log(image);
+			},
+
+			handleUploadError(err) {
+				console.log(err);
+			},
+
+			// deleteImage(_index, done, fileList) {
+			// 	this.images = fileList;
+			// 	this.formData.forEach((f) => console.log(f));
+			// 	var r = confirm("delete image");
+
+			// 	if (r == true) return done();
+			// },
+
+			deleteImage(image, stop) {
+				var r = confirm("are you sure to delete image");
+
+				if (!r) return stop();
+
+				image.deleted = true;
 			},
 
 			markIsPrimary(_index, fileList) {
@@ -275,6 +366,7 @@
 				let mainUnit = this.unitsOpt.find((opt) => opt.value == v);
 
 				this.purchaseUnitsOpt = [this.purchaseUnitsOpt[0], ...mainUnit.sub_units];
+
 				this.saleUnitsOpt = [this.saleUnitsOpt[0], ...mainUnit.sub_units];
 			},
 
@@ -302,46 +394,37 @@
 			},
 
 			handleSave() {
-				let formData = new FormData();
-
 				for (let k in this.product) {
 					if (k !== "images" && k !== "variants") {
-						formData.append(k, this.product[k]);
+						this.formData.set(k, this.product[k]);
 					}
 				}
 
 				if (this.images.length) {
-					formData.append("has_images", true);
+					this.formData.append("has_images", true);
 
 					this.images.forEach((img, i) => {
-						formData.append(`images[${i}][path]`, img.path);
-						formData.append(`images[${i}][name]`, img.name);
-						formData.append(`images[${i}][default]`, img.default);
+						this.formData.append(`images[${i}][path]`, img.path);
+						this.formData.append(`images[${i}][name]`, img.name);
+						this.formData.append(`images[${i}][default]`, img.default);
 					});
 				}
 
-				if (this.variants.length) {
-					formData.append("has_variants", true);
+				if (this.isUpdate && this.variants.length) {
+					this.formData.append("has_variants", true);
 
 					this.variants.forEach((variant, i) => {
-						formData.append(`variants[${i}][name]`, variant);
+						this.formData.append(`variants[${i}][name]`, variant);
 					});
 				}
 
-				if (this.isUpdate) return this.handleUpdate(formData);
+				try {
+					if (this.isUpdate) return this.update(this.formData);
 
-				return this.handleCreate(formData);
-			},
-
-			async handleCreate(formData) {
-				await this.create(formData);
-
-				this.finished();
-			},
-
-			async handleUpdate(formData) {
-				await this.update(formData);
-				this.finished();
+					this.create(this.formData);
+				} catch (e) {
+					console.log(e);
+				}
 			}
 		}
 	};
