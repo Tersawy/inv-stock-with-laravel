@@ -3,8 +3,6 @@
 		<div class="stepper-header">
 			<template v-for="(step, index) in steps">
 				<div class="step-item" :key="index" :class="{ 'is-active': index === currentStep, 'is-completed': step.completed, 'no-title': hideTitle }">
-					<!-- <span class="steps-header-title">{{ step.title }}</span>
-          <span class="steps-header-separator">/</span> -->
 					<div class="step-item-icon">
 						<CheckIcon v-if="step.completed" />
 						<template v-else>
@@ -33,10 +31,8 @@
 <style lang="scss" scoped></style>
 
 <script>
-	// const isMobile = () => {
-	// 	return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-	// };
 	import CheckIcon from "./icons/CheckIcon";
+
 	export default {
 		components: { CheckIcon },
 
@@ -65,12 +61,6 @@
 
 		methods: {
 			nextStep() {
-				// const currentIndex = this.currentStep;
-
-				// if (this.next(this.currentStep)) {
-				// 	this.steps[currentIndex].active = false;
-				// }
-
 				const currentStep = this.steps[this.currentStep];
 
 				const nextIndex = this.currentStep === this.steps.length - 1 ? this.currentStep - 1 : this.currentStep + 1;
@@ -91,12 +81,6 @@
 			},
 
 			prevStep() {
-				// const currentIndex = this.currentStep;
-
-				// if (this.prev(this.currentStep)) {
-				// 	this.steps[currentIndex].active = false;
-				// }
-
 				const currentStep = this.steps[this.currentStep];
 
 				const prevIndex = this.currentStep - 1 || 0;
@@ -135,90 +119,6 @@
 
 				this.$refs.stepsWrapper.scrollLeft = this.$refs.step[index].offsetLeft;
 			}
-
-			// next(currentIndex) {
-			// 	const nextIndex = currentIndex + 1;
-
-			// 	const nextStep = this.steps[nextIndex];
-
-			// 	if (nextStep && !nextStep.disabled) {
-			// 		nextStep.active = true;
-
-			// 		this.$refs.stepsWrapper.scrollLeft = this.$refs.step[nextIndex].offsetLeft;
-
-			// 		return true;
-			// 	}
-
-			// 	if (nextIndex == this.steps.length) return false;
-
-			// 	return this.next(nextIndex);
-			// },
-
-			// prev(currentIndex) {
-			// 	const prevIndex = currentIndex - 1;
-
-			// 	const prevStep = this.steps[prevIndex];
-
-			// 	if (prevStep && !prevStep.disabled) {
-			// 		prevStep.active = true;
-
-			// 		this.$refs.stepsWrapper.scrollLeft = this.$refs.step[prevIndex].offsetLeft;
-
-			// 		return true;
-			// 	}
-
-			// 	if (prevIndex == -1) return false;
-
-			// 	return this.prev(prevIndex);
-			// }
-
-			// completed(currentIndex) {}
-
-			// resetAllSteps() {
-			//   this.steps.forEach((step) => {
-			//     step.completed = false;
-			//   });
-			// },
-
-			// resetAllStepsButCurrent() {
-			//   this.steps.forEach((step) => {
-			//     if (step.active) {
-			//       step.completed = true;
-			//     } else {
-			//       step.completed = false;
-			//     }
-			//   });
-			// },
-
-			// resetAllStepsButFirst() {
-			//   this.steps.forEach((step, index) => {
-			//     if (index === 0) {
-			//       step.completed = true;
-			//     } else {
-			//       step.completed = false;
-			//     }
-			//   });
-			// },
-
-			// resetAllStepsButLast() {
-			//   this.steps.forEach((step, index) => {
-			//     if (index === this.steps.length - 1) {
-			//       step.completed = true;
-			//     } else {
-			//       step.completed = false;
-			//     }
-			//   });
-			// },
-
-			// resetAllStepsBut(index) {
-			//   this.steps.forEach((step, i) => {
-			//     if (i === index) {
-			//       step.completed = true;
-			//     } else {
-			//       step.completed = false;
-			//     }
-			//   });
-			// },
 		},
 
 		created() {
