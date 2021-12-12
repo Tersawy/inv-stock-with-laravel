@@ -216,7 +216,6 @@
 				flex-direction: row;
 				align-items: center;
 				justify-content: flex-start;
-				border-radius: 0.5rem;
 				color: #000;
 				overflow: hidden;
 				position: relative;
