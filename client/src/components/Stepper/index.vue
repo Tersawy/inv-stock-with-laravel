@@ -1,5 +1,5 @@
 <template>
-	<div class="stepper">
+	<div class="stepper" v-if="steps.length">
 		<div :class="`stepper-header ${headerClass}`">
 			<template v-for="(step, index) in steps">
 				<div class="step-item" :key="index" :class="{ 'is-active': index === currentStep, 'is-completed': step.completed, 'no-title': hideTitle }">
@@ -59,6 +59,18 @@
 			return {
 				hideTitle: false
 			};
+		},
+
+		mounted() {
+			if (!this.steps.length) {
+				return console.warn("[Vue-Stepper] You must provide at least one step.");
+			}
+
+			if (this.currentStep === -1) {
+				this.steps[0].active = true;
+			}
+
+			this.$refs.stepsWrapper.scrollLeft = this.$refs.step[this.currentStep].offsetLeft;
 		},
 
 		computed: {
