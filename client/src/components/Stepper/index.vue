@@ -136,6 +136,10 @@
 
 <style lang="scss" scoped>
 	.stepper {
+		margin-bottom: 24px;
+		border: 1px solid rgba(0, 0, 0, 0.125);
+		border-radius: 0.25rem;
+		background-color: #fff;
 		.stepper-header {
 			display: flex;
 			width: 100%;
@@ -144,11 +148,15 @@
 			justify-content: space-between;
 			background-color: #fff;
 			color: #000;
+			margin-bottom: 0;
+			background-color: rgba(0, 0, 0, 0.03);
+			border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+			border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
 			.step-item {
 				align-items: center;
 				display: flex;
 				flex-direction: row;
-				padding: 24px;
+				padding: 1rem;
 				position: relative;
 				.step-item-icon {
 					display: flex;
@@ -201,15 +209,14 @@
 			}
 		}
 		.stepper-body {
-			padding: 1rem;
 			overflow: hidden;
+			padding: 1.25rem;
 			.steps-wrapper {
 				display: flex;
 				flex-direction: row;
 				align-items: center;
 				justify-content: flex-start;
 				border-radius: 0.5rem;
-				background-color: #fff;
 				color: #000;
 				overflow: hidden;
 				position: relative;
