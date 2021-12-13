@@ -2,7 +2,12 @@
 	<div class="stepper" v-if="steps.length">
 		<div :class="`stepper-header ${headerClass}`">
 			<template v-for="(step, index) in steps">
-				<div class="step-item" :key="index" :class="{ 'is-active': index === currentStep, 'is-completed': step.completed, 'no-title': hideTitle }">
+				<div
+					class="step-item"
+					:key="index"
+					:class="{ 'is-active': index === currentStep, 'is-completed': step.completed, 'no-title': hideTitle, 'is-clickable': clickableTitle && !step.disabled }"
+					@click="!step.disabled && toStep(index)"
+				>
 					<div class="step-item-icon">
 						<CheckIcon v-if="step.completed" />
 						<template v-else>
@@ -41,17 +46,21 @@
 				type: Array,
 				default: () => []
 			},
+			clickableTitle: {
+				type: Boolean,
+				default: () => false
+			},
 			visibleTitleOn: {
 				type: [Number, String],
 				default: () => 768
 			},
 			headerClass: {
 				type: String,
-				default: ""
+				default: () => ""
 			},
 			bodyClass: {
 				type: String,
-				default: ""
+				default: () => ""
 			}
 		},
 
@@ -207,6 +216,30 @@
 						margin: 0;
 					}
 				}
+				&.is-clickable:not(.is-active) {
+					cursor: pointer;
+					position: relative;
+					z-index: 1;
+					overflow: hidden;
+					&:not(.is-active)::before {
+						content: "";
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						width: 0%;
+						height: 0%;
+						background-color: rgb(224, 224, 224);
+						z-index: -1;
+						border-radius: 50%;
+					}
+					&:not(.is-active):hover::before {
+						top: calc(((100vw - 100%) / 2) * -1);
+						left: calc(((100vw - 100%) / 2) * -1);
+						width: 100vw;
+						height: 100vw;
+						transition: all 0.5s ease-in-out;
+					}
+				}
 			}
 			hr {
 				align-self: center;
@@ -230,7 +263,6 @@
 			.steps-wrapper {
 				display: flex;
 				flex-direction: row;
-				align-items: center;
 				justify-content: flex-start;
 				color: #000;
 				overflow: hidden;
