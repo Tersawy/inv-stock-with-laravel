@@ -90,43 +90,43 @@
 
 		methods: {
 			nextStep() {
-				const currentStep = this.steps[this.currentStep];
+				let getNextIndex = (stepIndex) => {
+					let nextIndex = stepIndex + 1;
 
-				const nextIndex = this.currentStep === this.steps.length - 1 ? this.currentStep - 1 : this.currentStep + 1;
+					if (!this.steps[nextIndex]) return -1;
 
-				const nextStep = this.steps[nextIndex];
-
-				if (nextStep) {
-					currentStep.active = false;
-
-					nextStep.active = true;
-
-					this.$refs.stepsWrapper.scrollLeft = this.$refs.step[this.currentStep].offsetLeft;
-
-					if (nextStep.disabled) {
-						this.nextStep();
+					if (this.steps[nextIndex].disabled) {
+						return getNextIndex(nextIndex);
 					}
-				}
+
+					return nextIndex;
+				};
+
+				let nextIndex = getNextIndex(this.currentStep);
+
+				if (nextIndex === -1) return;
+
+				this.toStep(nextIndex);
 			},
 
 			prevStep() {
-				const currentStep = this.steps[this.currentStep];
+				let getPrevIndex = (stepIndex) => {
+					let prevIndex = stepIndex - 1;
 
-				const prevIndex = this.currentStep - 1 || 0;
+					if (!this.steps[prevIndex]) return -1;
 
-				const prevStep = this.steps[prevIndex];
-
-				if (prevStep) {
-					currentStep.active = false;
-
-					prevStep.active = true;
-
-					this.$refs.stepsWrapper.scrollLeft = this.$refs.step[this.currentStep].offsetLeft;
-
-					if (prevStep.disabled) {
-						this.prevStep();
+					if (this.steps[prevIndex].disabled) {
+						return getPrevIndex(prevIndex);
 					}
-				}
+
+					return prevIndex;
+				};
+
+				let prevIndex = getPrevIndex(this.currentStep);
+
+				if (prevIndex === -1) return;
+
+				this.toStep(prevIndex);
 			},
 
 			completeStep() {
