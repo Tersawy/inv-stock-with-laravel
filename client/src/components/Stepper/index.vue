@@ -258,7 +258,6 @@
 		.stepper-body {
 			overflow: hidden;
 			background-color: #fff;
-			padding: 1.25rem;
 			border-radius: 0 0 0.25rem 0.25rem;
 			.steps-wrapper {
 				display: flex;
@@ -270,6 +269,7 @@
 				scroll-behavior: smooth;
 				.step {
 					min-width: 100%;
+					padding: 1.25rem;
 				}
 			}
 		}
