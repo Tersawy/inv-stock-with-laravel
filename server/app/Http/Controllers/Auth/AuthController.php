@@ -77,7 +77,7 @@ class AuthController extends Controller
 
     public function me(Request $req)
     {
-        return $this->success(auth()->user());
+        return $this->success(['user' => auth()->user()]);
     }
 
 
@@ -85,6 +85,6 @@ class AuthController extends Controller
     {
         auth()->user()->tokens()->delete();
 
-        return $this->success([ 'message' => 'Tokens Revoked' ]);
+        return $this->success(['message' => 'Tokens Revoked']);
     }
 }
