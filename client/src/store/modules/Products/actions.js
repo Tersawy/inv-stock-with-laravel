@@ -1,33 +1,33 @@
-import api from "@/plugins/api";
+import axios from "@/plugins/axios";
 
 export default {
-	details({ commit, state }, item) {
-		return api("post", `${state.prefix}/details`, item, (err, res) => {
-			if (err) return;
-			commit("details", res);
-		});
+	async details({ commit }, payload) {
+		try {
+			let data = await axios.post("/products/details", payload);
+			commit("details", data);
+			return data;
+		} catch (error) {
+			throw error;
+		}
 	},
 
-	create({ state, dispatch }, item) {
-		return api(
-			"post",
-			`${state.prefix}/create`,
-			item,
-			(err, res) => {
-				if (err) return Promise.reject(err);
-				dispatch("all");
-				return Promise.resolve(res);
-			},
-			true
-		);
-	},
-
-	update({ state, dispatch }, item) {
-		item.set("_method", "put");
-		return api("post", `${state.prefix}/${item.get("id")}`, item, (err, res) => {
-			if (err) return Promise.reject(err);
+	async create({ dispatch }, payload) {
+		try {
+			let data = await axios.post("/products/create", payload);
 			dispatch("all");
-			return Promise.resolve(res);
-		});
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	},
+
+	async update({ dispatch }, item) {
+		try {
+			let data = await axios.put(`/products/${item.id}`, payload);
+			dispatch("all");
+			return data;
+		} catch (error) {
+			throw error;
+		}
 	}
 };

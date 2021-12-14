@@ -1,93 +1,104 @@
-import api from "@/plugins/api";
+import axios from "@/plugins/axios";
 
-const all = ({ commit, state }, queries = "") => {
-	api("get", state.prefix + queries, (err, res) => {
-		if (err) return commit("setErrors", err);
-		commit("all", res);
-	});
-};
-
-const options = ({ commit, state }) => {
-	return api("get", `${state.prefix}/options`, (err, res) => {
-		if (err) return commit("setErrors", err);
-		commit("options", res);
-	});
-};
-
-const edit = ({ commit, state }, itemId) => {
-	return api("get", `${state.prefix}/${itemId}/edit`, (err, res) => {
-		if (err) return commit("setErrors", err);
-		commit("one", res);
-	});
-};
-
-const one = ({ commit, state }, itemId) => {
-	return api("get", `${state.prefix}/${itemId}`, (err, res) => {
-		if (err) return commit("setErrors", err);
-		commit("one", res);
-	});
-};
-
-const create = ({ state, commit, dispatch }, item) => {
-	return api("post", `${state.prefix}/create`, item, (err, res) => {
-		if (err) {
-			commit("setErrors", err);
-			return Promise.reject(err);
+export default {
+	async all({ commit, state }, queries = "") {
+		try {
+			let data = await axios.get(state.prefix + queries);
+			commit("all", data);
+			return data;
+		} catch (error) {
+			throw error;
 		}
-		dispatch("all");
-		return Promise.resolve(res);
-	});
-};
+	},
 
-const update = ({ state, commit, dispatch }, item) => {
-	return api("put", `${state.prefix}/${item.id}`, item, (err, res) => {
-		if (err) {
-			commit("setErrors", err);
-			return Promise.reject(err);
+	async options({ commit, state }) {
+		try {
+			let data = await axios.get(`${state.prefix}/options`);
+			commit("options", data);
+			return data;
+		} catch (error) {
+			throw error;
 		}
-		dispatch("all");
-		return Promise.resolve(res);
-	});
-};
+	},
 
-const moveToTrash = ({ commit, state }, item) => {
-	return api("post", `${state.prefix}/${item.id}/trash`, item, (err, res) => {
-		if (err) {
-			commit("setErrors", err);
-			return Promise.reject(err);
+	async edit({ commit, state }, itemId) {
+		try {
+			let data = await axios.get(`${state.prefix}/${itemId}/edit`);
+			commit("one", data);
+			return data;
+		} catch (error) {
+			throw error;
 		}
-		commit("remove", item.id);
-		return Promise.resolve(res);
-	});
-};
+	},
 
-const trashed = ({ commit, state }, item) => {
-	api("get", `${state.prefix}/trashed`, item, (err, res) => {
-		if (err) return commit("setErrors", err);
-		commit("all", res);
-	});
-};
-
-const restore = ({ commit, state }, item) => {
-	return api("post", `${state.prefix}/${item.id}/restore`, item, (err, res) => {
-		if (err) {
-			commit("setErrors", err);
-			return Promise.reject(err);
+	async one({ commit, state }, itemId) {
+		try {
+			let data = await axios.get(`${state.prefix}/${itemId}`);
+			commit("one", data);
+			return data;
+		} catch (error) {
+			throw error;
 		}
-		commit("remove", item.id);
-		return Promise.resolve(res);
-	});
-};
+	},
 
-const remove = ({ commit, state }, item) => {
-	return api("post", `${state.prefix}/${item.id}`, item, (err, res) => {
-		if (err) {
-			commit("setErrors", err);
-			return Promise.reject(err);
+	async create({ state, commit, dispatch }, payload) {
+		try {
+			let data = await axios.post(`${state.prefix}/create`, payload);
+			commit("one", data);
+			dispatch("all");
+			return data;
+		} catch (error) {
+			throw error;
 		}
-		commit("remove", item.id);
-		return Promise.resolve(res);
-	});
-};
+	},
 
-export default { all, options, edit, one, create, update, moveToTrash, trashed, restore, remove };
+	async update({ state, commit, dispatch }, payload) {
+		try {
+			let data = await axios.put(`${state.prefix}/${payload.id}`, payload);
+			dispatch("all");
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	},
+
+	async moveToTrash({ commit, state }, payload) {
+		try {
+			let data = await axios.post(`${state.prefix}/${payload.id}/trash`, payload);
+			commit("remove", payload.id);
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	},
+
+	async trashed({ commit, state }) {
+		try {
+			let data = await axios.get(`${state.prefix}/trashed`);
+			commit("all", data);
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	},
+
+	async restore({ commit, state }, payload) {
+		try {
+			let data = await axios.post(`${state.prefix}/${payload.id}/restore`);
+			commit("remove", payload.id);
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	},
+
+	async remove({ commit, state }, payload) {
+		try {
+			let data = await axios.post(`${state.prefix}/${payload.id}`);
+			commit("remove", payload.id);
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	}
+};

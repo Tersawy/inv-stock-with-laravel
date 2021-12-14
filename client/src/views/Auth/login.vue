@@ -44,8 +44,12 @@
 		mounted() {},
 
 		methods: {
-			onSubmit() {
-				this.$store.dispatch("Auth/login", this.login);
+			async onSubmit() {
+				try {
+					await this.$store.dispatch("Auth/login", this.login);
+				} catch (error) {
+					console.log(error);
+				}
 			},
 			onReset() {
 				console.log(this.login);

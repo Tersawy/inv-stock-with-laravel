@@ -1,5 +1,7 @@
+const user = sessionStorage.getItem("user");
+
 const state = {
-	user: sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")) : {},
+	user: user ? JSON.parse(user) : {},
 	token: sessionStorage.getItem("token"),
 	permission: {}
 };

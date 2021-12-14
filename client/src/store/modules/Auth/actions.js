@@ -1,39 +1,57 @@
-import api from "@/plugins/api";
+import axios from "@/plugins/axios";
 
-export const login = async ({ commit }, payload) => {
-	api("post", "login", payload, (err, res) => {
-		if (err) return;
-		commit("login", res.data);
-	});
-};
+export default {
+	async login({ commit }, payload) {
+		try {
+			let data = await axios.post("login", payload);
+			commit("login", data);
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	},
 
-export const logout = ({ commit }) => {
-	api("post", "logout", {}, (err, res) => {
-		if (err) return;
-		commit("logout", res.data);
-	});
-};
+	async logout({ commit }) {
+		try {
+			let data = await axios.post("logout");
+			commit("logout", data);
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	},
 
-export const resetPassword = ({ commit }, data) => {
-	let response = "This where is api action go";
-	console.log(data);
-	commit("resetPassword", response);
-};
+	async me({ commit }) {
+		try {
+			let data = await axios.get("me");
+			commit("me", data);
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	},
 
-export const verifiyToken = ({ commit }, data) => {
-	let response = "This where is api action go";
-	console.log(data);
-	commit("verifiyToken", response);
-};
+	async resetPassword({ commit }, data) {
+		let response = "This where is api action go";
+		console.log(data);
+		commit("resetPassword", response);
+	},
 
-export const newPassword = ({ commit }, data) => {
-	let response = "This where is api action go";
-	console.log(data);
-	commit("newPassword", response);
-};
+	async verifiyToken({ commit }, data) {
+		let response = "This where is api action go";
+		console.log(data);
+		commit("verifiyToken", response);
+	},
 
-export const updateProfile = ({ commit }, data) => {
-	let response = "This where is api action go";
-	console.log(data);
-	commit("updateProfile", response);
+	async newPassword({ commit }, data) {
+		let response = "This where is api action go";
+		console.log(data);
+		commit("newPassword", response);
+	},
+
+	async updateProfile({ commit }, data) {
+		let response = "This where is api action go";
+		console.log(data);
+		commit("updateProfile", response);
+	}
 };

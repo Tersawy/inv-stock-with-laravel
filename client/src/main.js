@@ -19,7 +19,7 @@ Vue.use(vuelidate);
 import store from "@/store";
 Vue.prototype.$store = store;
 
-import $axios from "@/plugins/api";
+import $axios from "@/plugins/axios";
 Vue.prototype.$axios = $axios;
 
 import MainContent from "@/components/layout/MainContent.vue";
@@ -48,11 +48,9 @@ router.afterEach((to) => {
 });
 
 router.beforeEach(async (to, _from, next) => {
-	let user = store.state.user;
+	let user = store.state.Auth.user;
 
-	user = user ? user : sessionStorage.getItem("user");
-
-	user = user ? user : {};
+	user = user || sessionStorage.getItem("user") || {};
 
 	user = typeof user === "object" ? user : JSON.parse(user);
 
@@ -79,3 +77,5 @@ new Vue({
 	i18n,
 	render: (h) => h(App)
 }).$mount("#app");
+
+store.dispatch("Auth/me");

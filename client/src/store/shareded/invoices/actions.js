@@ -1,46 +1,49 @@
-import api from "@/plugins/api";
+import axios from "@/plugins/axios";
 
-const payments = ({ commit, state }) => {
-	return api("get", `${state.prefix}/${state.one.id}/payments`, (err, res) => {
-		if (err) return commit("setErrors", err);
-		commit("payments", res);
-	});
-};
-
-const createPayment = ({ state, commit, dispatch }, item) => {
-	return api("post", `${state.prefix}/${state.one.id}/payments/create`, item, (err, res) => {
-		if (err) {
-			commit("setErrors", err);
-			return Promise.reject(err);
+export default {
+	async payments({ commit, state }) {
+		try {
+			let data = await axios.get(`${state.prefix}/${state.one.id}/payments`);
+			commit("payments", data);
+			return data;
+		} catch (error) {
+			throw error;
 		}
-		dispatch("all");
-		dispatch("payments");
-		return Promise.resolve(res);
-	});
-};
+	},
 
-const updatePayment = ({ state, commit, dispatch }, item) => {
-	return api("put", `${state.prefix}/${state.one.id}/payments/${item.id}`, item, (err, res) => {
-		if (err) {
-			commit("setErrors", err);
-			return Promise.reject(err);
+	async createPayment({ state, commit, dispatch }, payload) {
+		try {
+			let data = await axios.post(`${state.prefix}/${state.one.id}/payments/create`, payload);
+			commit("payments", data);
+			dispatch("all");
+			dispatch("payments");
+			return data;
+		} catch (error) {
+			throw error;
 		}
-		dispatch("all");
-		dispatch("payments");
-		return Promise.resolve(res);
-	});
-};
+	},
 
-const removePayment = ({ state, commit, dispatch }, item) => {
-	return api("post", `${state.prefix}/${state.one.id}/payments/${item.id}`, {}, (err, res) => {
-		if (err) {
-			commit("setErrors", err);
-			return Promise.reject(err);
+	async updatePayment({ state, commit, dispatch }, payload) {
+		try {
+			let data = await axios.put(`${state.prefix}/${state.one.id}/payments/${payload.id}`, payload);
+			commit("payments", data);
+			dispatch("all");
+			dispatch("payments");
+			return data;
+		} catch (error) {
+			throw error;
 		}
-		dispatch("all");
-		dispatch("payments");
-		return Promise.resolve(res);
-	});
-};
+	},
 
-export default { payments, createPayment, updatePayment, removePayment };
+	async removePayment({ state, commit, dispatch }, item) {
+		try {
+			let data = await axios.post(`${state.prefix}/${state.one.id}/payments/${item.id}`);
+			commit("payments", data);
+			dispatch("all");
+			dispatch("payments");
+			return data;
+		} catch (error) {
+			throw error;
+		}
+	}
+};
